@@ -157,6 +157,52 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-singleton"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-09-15 22:59:54" datetime="2019-09-15T14:59:54.000Z"  itemprop="datePublished">2019-09-15</time>
+
+        
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/09/15/singleton/">多种多样的单例模式</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        饿汉模式特点：基于类加载机制， 避免了多线程的同步问题，在类加载时期就已经生成。所以必定只有唯一一个。同时会降低类加载速度，而且如果这个实例不会被使用，会造成内存浪费。
+1234567public class Singleton&#123;    private static Singleton instance = new Singleton();    private Singleton...
+    
+
+        <a href="/2019/09/15/singleton/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计模式/">设计模式</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-monthlysummary"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -556,61 +602,6 @@ Adapter 是一个控制器对象， 从模型层获取数据， 然后提供给 
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-flutterapp2"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-06-18 21:07:04" datetime="2019-06-18T13:07:04.000Z"  itemprop="datePublished">2019-06-18</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/跨平台/">跨平台</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/06/18/flutterapp2/">自己动手Flutter——项目三步走</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        项目的三步走策略
-                
-                    
-                    
-                
-                三步走
-            
-暂时是这个思路，预计如果时间充裕的话，一个月之内到第二阶段是没有问题的，至于联机方面，心里比较没底。
-还有一个问题是今天投了西瓜的移动端开发，在大厂里面实习感...
-    
-
-        <a href="/2019/06/18/flutterapp2/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/开源项目/">开源项目</a></li></ul>
 
     </div>
     
