@@ -34,10 +34,15 @@
 <meta property="og:site_name" content="AllenMistake的小屋">
 <meta property="og:description" content="理论篇什么时候用动态规划一个模型三个特征 模型：多阶段决策最优解模型   解决问题的过程，需要经历多个决策阶段。每个决策阶段都对应着一组状态。然后我们寻找一组决策序列，经过这组决策序列，能够产生最终期望求解的最优值。  最优子结构：   最优子结构指的是，问题的最优解包含子问题的最优解。反过来说就是，我们可以通过子问题的最优解，推导出问题的最优解。  无后效性：   无后效性有两层含义，第一层含义">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-20T15:03:44.276Z">
+<meta property="og:image" content="http://www.allenmistake.top/2019/11/20/dp/01.jpg">
+<meta property="og:image" content="http://www.allenmistake.top/2019/11/20/dp/1.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/11/20/dp/2.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/11/20/dp/3.png">
+<meta property="og:updated_time" content="2019-11-21T14:09:52.230Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="这可能是我见过最全的动态规划讲解">
 <meta name="twitter:description" content="理论篇什么时候用动态规划一个模型三个特征 模型：多阶段决策最优解模型   解决问题的过程，需要经历多个决策阶段。每个决策阶段都对应着一组状态。然后我们寻找一组决策序列，经过这组决策序列，能够产生最终期望求解的最优值。  最优子结构：   最优子结构指的是，问题的最优解包含子问题的最优解。反过来说就是，我们可以通过子问题的最优解，推导出问题的最优解。  无后效性：   无后效性有两层含义，第一层含义">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/11/20/dp/01.jpg">
     
         <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
     
@@ -207,7 +212,13 @@
 </ul>
 <h4 id="举个例子——棋盘问题"><a href="#举个例子——棋盘问题" class="headerlink" title="举个例子——棋盘问题"></a>举个例子——棋盘问题</h4><p>一个机器人从4*4的棋盘的左上角走到右下角，每次走一个，且只能向下或向右，每个格子有自己的权值，请问怎样走权值总和最小？</p>
 <p>这就完全符合上述的情况（每走一格就代表一个阶段，每个阶段对应一个状态集合，最优路径一定由最优子路径组成；我们不关心来的路线，只关心经过路线的权值和；不同路径在相同阶段会有重复）</p>
-<p><a href="01.jpg">棋盘问题</a></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/11/20/dp/01.jpg" alt="棋盘问题" title>
+                </div>
+                <div class="image-caption">棋盘问题</div>
+            </figure>
 <h3 id="两种解题思路"><a href="#两种解题思路" class="headerlink" title="两种解题思路"></a>两种解题思路</h3><ol>
 <li><p>状态转移表法</p>
 <p> 我们先画出一个状态表。状态表一般都是二维的，所以你可以把它想象成二维数组。其中，每个状态包含三个变量，行、列、数组值。我们根据决策的先后过程，从前往后，根据递推关系，分阶段填充状态表中的每个状态。最后，我们将这个递推填表的过程，翻译成代码，就是动态规划代码了。</p>
@@ -246,14 +257,14 @@
 <p>针对于这道题我们可以套用一下：N = 7，M = 5， K = 9， P = 4；</p>
 <ol>
 <li><code>walk</code>函数中，可变参数<code>cur</code>, <code>rest</code>一旦确定，返回值也就确定了。</li>
-<li>如果可变参数<code>cur</code>和 <code>rest</code>组合的所有可能情况组成一张表，这张表便装下了所有的返回值。如下图所示<br><a href="1.png"></a></li>
+<li>如果可变参数<code>cur</code>和 <code>rest</code>组合的所有可能情况组成一张表，这张表便装下了所有的返回值。如下图所示<br><img src="/2019/11/20/dp/1.png" alt="二维数组"></li>
 <li><p>最终要求的位置，标出来。在这里我们最终位置是dp[9][4]，我们已经用星号在上图标出来了位置。</p>
 </li>
 <li><p>base case指问题的规模小到什么程度，就不需要划分子问题，很明显指的是代码如下的情况，表现在二维数组下图所示</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(reset == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> cur == P ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="2.png"></a></p>
+<p><img src="/2019/11/20/dp/2.png" alt="base case"></p>
 </li>
-<li>那么剩下的代码对应的就是非base case，那么如何填写呢？我们要找到下一行是怎样计算得到的，很明显，是有旁边的两个格子相加得出来的（边界条件除外），很容易得出下表<br><a href="3.png"></a></li>
+<li>那么剩下的代码对应的就是非base case，那么如何填写呢？我们要找到下一行是怎样计算得到的，很明显，是有旁边的两个格子相加得出来的（边界条件除外），很容易得出下表<br><img src="/2019/11/20/dp/3.png" alt="计算"></li>
 </ol>
 <h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><p>最后，我们来看一下动态规划的代码</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">ways2</span><span class="params">(<span class="keyword">int</span> N, <span class="keyword">int</span> M, <span class="keyword">int</span> K, <span class="keyword">int</span> P)</span></span>&#123;</span><br><span class="line">   <span class="comment">// 参数无效直接返回0</span></span><br><span class="line">   <span class="keyword">if</span>(N &lt; <span class="number">2</span> || K &lt; <span class="number">1</span> || M &lt; <span class="number">1</span> ||M &gt; N || P &lt; <span class="number">1</span> || P &gt; N )</span><br><span class="line">       <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="keyword">int</span>[][] dp = <span class="keyword">new</span> <span class="keyword">int</span>[K + <span class="number">1</span>][N + <span class="number">1</span>];</span><br><span class="line">   dp[<span class="number">0</span>][M] = <span class="number">1</span>;</span><br><span class="line">   <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= K; i++)&#123;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= N; j++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(j == <span class="number">1</span>)</span><br><span class="line">               dp[i][j] = dp[i - <span class="number">1</span>][<span class="number">2</span>];</span><br><span class="line">           <span class="keyword">else</span> <span class="keyword">if</span>(j == N)</span><br><span class="line">               dp[i][j] = dp[i - <span class="number">1</span>][N - <span class="number">1</span>];</span><br><span class="line">           <span class="keyword">else</span></span><br><span class="line">               dp[i][j] = dp[i - <span class="number">1</span>][j - <span class="number">1</span>] + dp[i - <span class="number">1</span>][j + <span class="number">1</span>];</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> dp[K][P];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -271,7 +282,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2019-11-20T15:03:44.276Z" itemprop="dateUpdated">2019-11-20 23:03:44</time>
+    最后更新时间：<time datetime="2019-11-21T14:09:52.230Z" itemprop="dateUpdated">2019-11-21 22:09:52</time>
 </span><br>
 
 
