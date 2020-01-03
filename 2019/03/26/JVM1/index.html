@@ -36,7 +36,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://www.allenmistake.top/2019/03/26/JVM1/JVM内存布局.png">
 <meta property="og:image" content="http://www.allenmistake.top/2019/03/26/JVM1/JVM年代.png">
-<meta property="og:updated_time" content="2019-07-18T08:26:16.431Z">
+<meta property="og:updated_time" content="2019-12-26T07:20:00.078Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java日常学习总结JVM之垃圾收集器与内存分配策略">
 <meta name="twitter:description" content="JVM经典内存布局              内存布局这一块很重要，要着重看！（在JVM这本书里面有更详细的介绍）  方法区（公有）：  用户存储已被虚拟机加载的类信息，常量，静态常量，即时编译器编译后的代码等数据">
@@ -220,18 +220,23 @@
 </ul>
 <p>在可达性分析算法中，要真正宣告一个对象死亡，至少要经历两次标记过程：</p>
 <ol>
-<li>如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行finalize()方法。当对象没有覆盖finalize()方法，或者finalize()方法已经被虚拟机调用过，虚拟机将这两种情况都视为“没有必要执行”。</li>
-<li>如果这个对象被判定为有必要执行finalize()方法，那么这个对象将会放置在一个叫做F-Queue队列之中，并在稍后由一个由虚拟机自动建立的、低优先级的Finalizer线程去执行它。finalize()方法是对象逃脱死亡命运的最后一次机会，稍候GC将对F-Queue中的对象进行第二次小规模的标记，如果对象要在finalie()中成功拯救自己——只要重新与引用链上的任何一个对象建立关联即可，譬如把自己（this关键字）赋值给某个类变量或者对象的成员变量，那在第二次标记时它将会被移除出“即将回收”的集合；如果对象这时候还没有逃脱，那基本上它就真的被回收了。</li>
+<li>如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行<code>finalize()</code>方法。当对象没有覆盖<code>finalize()</code>，或者<code>finalize()</code>已经被虚拟机调用过，虚拟机将这两种情况都视为“没有必要执行”。</li>
+<li>如果这个对象被判定为有必要执行<code>finalize()</code>，那么这个对象将会放置在一个叫做F-Queue队列之中，并在稍后由一个由虚拟机自动建立的、低优先级的 Finalizer 线程去执行它。<code>finalize()</code>是对象逃脱死亡命运的最后一次机会，稍候GC将对F-Queue中的对象进行第二次小规模的标记，如果对象要在<code>finalie()</code>中成功拯救自己——只要重新与引用链上的任何一个对象建立关联即可，譬如把自己（<code>this</code>关键字）赋值给某个类变量或者对象的成员变量，那在第二次标记时它将会被移除出“即将回收”的集合；如果对象这时候还没有逃脱，那基本上它就真的被回收了。</li>
 </ol>
-<p><strong>注意</strong>：Java并不推荐使用finalize()函数，这和c++的析构不一样，运行代价高昂、不确定性大。</p>
+<p><strong>注意</strong>：Java并不推荐使用<code>finalize()</code>函数，Java中这个表示建议回收，实际开发者并不能掌握到底什么时候JVM才会回收这部分内存，这和c++的析构不一样，运行代价高昂、不确定性大。</p>
 <h3 id="引用再划分"><a href="#引用再划分" class="headerlink" title="引用再划分"></a>引用再划分</h3><ol>
-<li><p>强引用<br>特点：我们平常典型编码Object obj = new Object()中的obj就是强引用。通过关键字new创建的对象所关联的引用就是强引用。 当JVM内存空间不足，JVM宁愿抛出OutOfMemoryError运行时错误（OOM），使程序异常终止，也不会靠随意回收具有强引用的“存活”对象来解决内存不足的问题。对于一个普通的对象，如果没有其他的引用关系，只要超过了引用的作用域或者显式地将相应（强）引用赋值为 null，就是可以被垃圾收集的了，具体回收时机还是要看垃圾收集策略。</p>
+<li><p>强引用<br> 特点：我们平常典型编码<code>Object obj = new Object()</code>中的 obj 就是强引用。通过关键字<code>new</code>创建的对象所关联的引用就是强引用。 当JVM内存空间不足，JVM 宁愿抛出 OutOfMemoryError 运行时错误（OOM），使程序异常终止，也不会靠随意回收具有强引用的“存活”对象来解决内存不足的问题。对于一个普通的对象，如果没有其他的引用关系，只要超过了引用的作用域或者显式地将相应（强）引用赋值为 null，就是可以被垃圾收集的了，具体回收时机还是要看垃圾收集策略。</p>
 </li>
-<li><p>软引用<br>特点：软引用通过SoftReference类实现。 软引用的生命周期比强引用短一些。只有当 JVM认为内存不足时，才会去试图回收软引用指向的对象：即JVM 会确保在抛出 OutOfMemoryError 之前，清理软引用指向的对象。软引用可以和一个引用队列（ReferenceQueue）联合使用，如果软引用所引用的对象被垃圾回收器回收，Java虚拟机就会把这个软引用加入到与之关联的引用队列中。后续，我们可以调用ReferenceQueue的poll()方法来检查是否有它所关心的对象被回收。如果队列为空，将返回一个null,否则该方法返回队列中前面的一个Reference对象。<br>应用场景：软引用通常用来实现内存敏感的缓存。如果还有空闲内存，就可以暂时保留缓存，当内存不足时清理掉，这样就保证了使用缓存的同时，不会耗尽内存。</p>
+<li><p>软引用<br> 特点：软引用通过SoftReference类实现。 软引用的生命周期比强引用短一些。只有当 JVM认为内存不足时，才会去试图回收软引用指向的对象：即JVM 会确保在抛出 OutOfMemoryError 之前，清理软引用指向的对象。软引用可以和一个引用队列（ReferenceQueue）联合使用，如果软引用所引用的对象被垃圾回收器回收，Java虚拟机就会把这个软引用加入到与之关联的引用队列中。后续，我们可以调用 ReferenceQueue 的<code>poll()</code>方法来检查是否有它所关心的对象被回收。如果队列为空，将返回一个 null ,否则该方法返回队列中前面的一个 Reference 对象。</p>
+<p> 应用场景：软引用通常用来实现内存敏感的缓存。如果还有空闲内存，就可以暂时保留缓存，当内存不足时清理掉，这样就保证了使用缓存的同时，不会耗尽内存。</p>
 </li>
-<li><p>弱引用<br>弱引用通过WeakReference类实现。 弱引用的生命周期比软引用短。在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。由于垃圾回收器是一个优先级很低的线程，因此不一定会很快回收弱引用的对象。弱引用可以和一个引用队列（ReferenceQueue）联合使用，如果弱引用所引用的对象被垃圾回收，Java虚拟机就会把这个弱引用加入到与之关联的引用队列中。<br>应用场景：弱应用同样可用于内存敏感的缓存。</p>
+<li><p>弱引用<br> 特点：弱引用通过 WeakReference 类实现。 弱引用的生命周期比软引用短。在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。由于垃圾回收器是一个优先级很低的线程，因此不一定会很快回收弱引用的对象。弱引用可以和一个引用队列（ReferenceQueue）联合使用，如果弱引用所引用的对象被垃圾回收，Java虚拟机就会把这个弱引用加入到与之关联的引用队列中。</p>
+<p> 应用场景：弱应用同样可用于内存敏感的缓存。</p>
 </li>
-<li><p>虚引用<br>特点：虚引用也叫幻象引用，通过PhantomReference类来实现。无法通过虚引用访问对象的任何属性或函数。幻象引用仅仅是提供了一种确保对象被 ﬁnalize 以后，做某些事情的机制。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。<br>ReferenceQueue queue = new ReferenceQueue ();<br>PhantomReference pr = new PhantomReference (object, queue);<br>程序可以通过判断引用队列中是否已经加入了虚引用，来了解被引用的对象是否将要被垃圾回收。如果程序发现某个虚引用已经被加入到引用队列，那么就可以在所引用的对象的内存被回收之前采取一些程序行动。<br>应用场景：可用来跟踪对象被垃圾回收器回收的活动，当一个虚引用关联的对象被垃圾收集器<br>回收之前会收到一条系统通知。</p>
+<li><p>虚引用<br> 特点：虚引用也叫幻象引用，通过 PhantomReference 类来实现。无法通过虚引用访问对象的任何属性或函数。幻象引用仅仅是提供了一种确保对象被 ﬁnalize 以后，做某些事情的机制。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ReferenceQueue queue = <span class="keyword">new</span> ReferenceQueue ();</span><br><span class="line">PhantomReference pr = <span class="keyword">new</span> PhantomReference (object, queue);</span><br></pre></td></tr></table></figure>
+<p> 程序可以通过判断引用队列中是否已经加入了虚引用，来了解被引用的对象是否将要被垃圾回收。如果程序发现某个虚引用已经被加入到引用队列，那么就可以在所引用的对象的内存被回收之前采取一些程序行动。</p>
+<p> <strong>应用场景</strong>：可用来跟踪对象被垃圾回收器回收的活动，当一个虚引用关联的对象被垃圾收集器回收之前会收到一条系统通知。</p>
 </li>
 </ol>
 <h2 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>最基础的收集算法是“标记-清除”（Mark-Sweep）算法，如同它的名字一样，算法分为“标记”和“清除”两个阶段。</p>
@@ -264,7 +269,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2019-07-18T08:26:16.431Z" itemprop="dateUpdated">2019-07-18 16:26:16</time>
+    最后更新时间：<time datetime="2019-12-26T07:20:00.078Z" itemprop="dateUpdated">2019-12-26 15:20:00</time>
 </span><br>
 
 
@@ -435,7 +440,7 @@
         </p>
     </div>
     <div class="bottom">
-        <p><span>weitanori &copy; 2015 - 2019</span>
+        <p><span>weitanori &copy; 2015 - 2020</span>
             <span>
                 
                 Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
