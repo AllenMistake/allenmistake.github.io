@@ -185,12 +185,24 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        题目给定一个字符串，找出不含有重复字符的最长子串的长度。示例 1:
-123输入: &quot;abcabcbb&quot;输出: 3解释: 无重复字符的最长子串是 &quot;abc&quot;，其长度为 3。
-示例 2:
-123输入: &quot;bbbbb&quot;输出: 1解释: 无重复字符的最长子串是 &quot;b&quot;，其长度为 1。
-示例 3:
-1234输入: &quo...
+        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>给定一个字符串，找出不含有重复字符的最长子串的长度。<br>示例 1:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: &quot;abcabcbb&quot;</span><br><span class="line">输出: 3</span><br><span class="line">解释: 无重复字符的最长子串是 &quot;abc&quot;，其长度为 3。</span><br></pre></td></tr></table></figure>
+<p>示例 2:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: &quot;bbbbb&quot;</span><br><span class="line">输出: 1</span><br><span class="line">解释: 无重复字符的最长子串是 &quot;b&quot;，其长度为 1。</span><br></pre></td></tr></table></figure>
+<p>示例 3:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: &quot;pwwkew&quot;</span><br><span class="line">输出: 3</span><br><span class="line">解释: 无重复字符的最长子串是 &quot;wke&quot;，其长度为 3。</span><br><span class="line">请注意，答案必须是一个子串，&quot;pwke&quot; 是一个子序列 而不是子串。</span><br></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这道求让我们求最长的无重复字符的子串，注意这里是子串，不是子序列，所以必须是连续的。我们先不考虑代码怎么实现，如果给一个例子中的例子”abcabcbb”，让你手动找无重复字符的子串，该怎么找。<br>博主会一个字符一个字符的遍历，比如a，b，c，然后又出现了一个a，那么此时就应该去掉第一次出现的a，然后继续往后，又出现了一个b，则应该去掉一次出现的b，以此类推，最终发现最长的长度为3。所以说，我们需要记录之前出现过的字符，记录的方式有很多，最常见的是统计字符出现的个数，但是这道题字符出现的位置很重要，所以我们可以使用HashMap来建立字符和其出现位置之间的映射。进一步考虑，由于字符会重复出现，到底是保存所有出现的位置呢，还是只记录一个位置？我们之前手动推导的方法实际上是维护了一个滑动窗口，窗口内的都是没有重复的字符，我们需要尽可能的扩大窗口的大小。由于窗口在不停向右滑动，所以<strong>我们只关心每个字符最后出现的位置，并建立映射</strong>。窗口的右边界就是当前遍历到的字符的位置，为了求出窗口的大小，我们需要一个变量left来指向滑动窗口的左边界，这样，如果当前遍历到的字符从未出现过，那么直接扩大右边界，如果之前出现过，那么就分两种情况，在或不在滑动窗口内，如果不在滑动窗口内，那么就没事，当前字符可以加进来，如果在的话，就需要先在滑动窗口内去掉这个已经出现过的字符了，去掉的方法并不需要将左边界left一位一位向右遍历查找，由于我们的HashMap已经保存了该重复字符最后出现的位置，所以直接移动left指针就可以了。我们维护一个结果res，每次用出现过的窗口大小来更新结果res，就可以得到最终结果啦。<br>这里我们可以建立一个256位大小的整型数组来代替HashMap，这样做的原因是ASCII表共能表示256个字符，所以可以记录所有字符，然后我们需要定义两个变量<code>res</code>和<code>left</code>，其中<code>res</code>用来记录最长无重复子串的长度，<code>left</code>指向该无重复子串左边的起始位置，然后我们遍历整个字符串，对于每一个遍历到的字符，如果哈希表中该字符串对应的值为0，说明没有遇到过该字符，则此时计算最长无重复子串，<code>i - left +１</code>，其中<code>ｉ</code>是最长无重复子串最右边的位置，<code>left</code>是最左边的位置，还有一种情况也需要计算最长无重复子串，就是当哈希表中的值小于<code>left</code>，这是由于此时出现过重复的字符，<code>left</code>的位置更新了，如果又遇到了新的字符，就要重新计算最长无重复子串。最后每次都要在哈希表中将当前字符对应的值赋值为<code>i+1</code>。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;, res = <span class="number">0</span>, left = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.size(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (m[s[i]] == <span class="number">0</span> || m[s[i]] &lt; left) &#123;</span><br><span class="line">                res = max(res, i - left + <span class="number">1</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                left = m[s[i]];</span><br><span class="line">            &#125;</span><br><span class="line">            m[s[i]] = i + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="代码运行过程"><a href="#代码运行过程" class="headerlink" title="代码运行过程"></a>代码运行过程</h2><p>以”abcabcab”`为例：（这里以a来代替a的Ascll码值）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">判断：m[a]==0（a没出现过） res=1 更新m&#123;a&#125;=1（a出现在第1个位置）</span><br><span class="line">m[b]==0 res=2 更新m[b]=2（b出现在第2个位置）</span><br><span class="line">m[c]==0 res=3 更新m[c]=3 （c出现在第3个位置）</span><br><span class="line">判断：此时m[a]==1!=0，所以执行else left=m[a]（更新起始位置）再次更新m[a]=4</span><br><span class="line">判断：此时m[b]==2!=0，所以执行else left=m[b] m[b]=5</span><br><span class="line">直到最后，滑窗滑到&quot;cab&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="个人总结"><a href="#个人总结" class="headerlink" title="个人总结"></a>个人总结</h2><p><code>m[s[i]]</code>中的索引是以<code>s[i]</code>的字符ASCII，其值为该字符在s中最后出现的位置<br>相当于HashMap中的<br><code>key=字符，value=位置</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (m[s[i]] == <span class="number">0</span> || m[s[i]] &lt; left)</span><br></pre></td></tr></table></figure>
+<p>这个判断可以理解为如果 第i个字符从未出现过，或i在之前曾经出现过，<br>那么我们就将当前最长长度设置为从<code>left-1</code>到i的长度<code>i-left+1</code><br>重要的是我们要了解这个程序的逻辑结构———如何判别一个字符子串重复<br>其次，还要理解滑窗的概念，滑窗的确定需要两个值</p>
+<ol>
+<li>起始位置<code>left</code>，即到目前为止，不重复的第一个字符</li>
+<li>长度<code>res</code>，也是最后要返回的值</li>
+</ol>
+
     
 
         <a href="/2018/11/09/leetcode3/" class="post-more waves-effect waves-button">
@@ -237,14 +249,25 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        我的第一个jekyll博客千辛万苦，终于搭建了自己的博客，个人感觉CSDN还是很不错的，但是有两个很明显的缺点
+        <h2 id="我的第一个jekyll博客"><a href="#我的第一个jekyll博客" class="headerlink" title="我的第一个jekyll博客"></a>我的第一个jekyll博客</h2><p>千辛万苦，终于搭建了自己的博客，个人感觉CSDN还是很不错的，但是有两个很明显的缺点</p>
+<ol>
+<li>广告太多，而且是百度推广的，自己搜索点什么全都能在上面看见，有时候搜个蟑螂药，图片上去是蟑螂；</li>
+<li>界面太混乱，缺少定制性；</li>
+</ol>
+<p>所以我找了很多搭建个人博客的方法，其实有很多方法，有Hexo还有jekyll，最后还是选择了jekyll，jekyll还是有很多优点的</p>
+<ol>
+<li>theme多，界面赏心悦目；</li>
+<li>完美支持Github托管，上手简单；</li>
+<li>全面支持Markdown，而且可以学到一些前端的知识；</li>
+</ol>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>第一篇博客少不了测试环节，首先，我们测试一下代码块</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这是一个测试代码</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;, res = <span class="number">0</span>, left = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.size(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (m[s[i]] == <span class="number">0</span> || m[s[i]] &lt; left) &#123;</span><br><span class="line">                res = max(res, i - left + <span class="number">1</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                left = m[s[i]];</span><br><span class="line">            &#125;</span><br><span class="line">            m[s[i]] = i + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>然后<strong>加粗</strong>看一下效果</p>
+<h2 id="日后计划"><a href="#日后计划" class="headerlink" title="日后计划"></a>日后计划</h2><h3 id="jekyll博客"><a href="#jekyll博客" class="headerlink" title="jekyll博客"></a>jekyll博客</h3><p>把jekyll博客功能逐渐补充完善，补充草稿功能，加入目录导航，添加个性化标签。</p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>把基本功能不值得差不多了，就要开始刷Leetcode题目了，个人感觉把一些重要的加上就行了，不用每个都要分析一下。</p>
+<h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><p>Anroid的内容打算从寒假开始看，现在把Java基础打好，虽然本科学习了一段，但对于JVM的特性还不太清楚；<br>而且c++底层的东西也正在学习，首先要把基础打好。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一个痛并快乐的过程，其实也没有多痛啦~只是需要督促自己学习，总之，努力努力再努力！</p>
 
-广告太多，而且是百度推广的，自己搜索点什么全都能在上面看见，有时候搜个蟑螂药，图片上去是蟑螂；
-界面太混乱，缺少定制性；
-
-所以我找了很多搭建个人博客的方法，其实有很多方法，有Hexo还有jekyll，最后还是选择了jekyll，jekyll还是有很多优点的
-
-theme多，界面...
     
 
         <a href="/2018/11/08/my-first-jekyll-blog/" class="post-more waves-effect waves-button">
