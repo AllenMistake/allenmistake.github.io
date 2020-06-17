@@ -185,121 +185,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><p>例如在Android中，由于主线程的诸多限制，像网络请求等一些耗时的操作我们必须在子线程中运行。我们往往会通过new Thread来开启一个子线程，待子线程操作完成以后通过Handler切换到主线程中运行。这么以来我们无法管理我们所创建的子线程，并且无限制的创建子线程，它们相互之间竞争，很有可能由于占用过多资源而导致死机或者OOM。所以在Java中为我们提供了线程池来管理我们所创建的线程。</p>
-<h3 id="线程池的优势"><a href="#线程池的优势" class="headerlink" title="线程池的优势"></a>线程池的优势</h3><ol>
-<li>降低系统资源消耗，通过重用已存在的线程，降低线程创建和销毁造成的消耗；</li>
-<li>提高系统响应速度，当有任务到达时，无需等待新线程的创建便能立即执行；</li>
-<li>方便线程并发数的管控，线程若是无限制的创建，不仅会额外消耗大量系统资源，更是占用过多资源而阻塞系统或oom等状况，从而降低系统的稳定性。线程池<br>能有效管控线程，统一分配、调优，提供资源使用率；</li>
-<li>更强大的功能，线程池提供了定时、定期以及可控线程数等功能的线程池，使用方便简单。</li>
-</ol>
-<h3 id="线程池创建"><a href="#线程池创建" class="headerlink" title="线程池创建"></a>线程池创建</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService service = <span class="keyword">new</span> ThreadPoolExecutor(....);</span><br></pre></td></tr></table></figure>
-<p>构造方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">    TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">    BlockingQueue&lt;Runnable&gt; workQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">    ThreadFactory threadFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">    RejectedExecutionHandler handler)</span></span></span><br></pre></td></tr></table></figure>
-<p>ThreadPoolExecutor参数含义</p>
-<ol>
-<li>corePoolSize<br>线程池中的核心线程数，默认情况下，<strong>核心线程一直存活在线程池中</strong>，即便他们在线程池中处于闲置状态。除非我们将ThreadPoolExecutor的allowCoreThreadTimeOut属性设为true的时候，这时候处于闲置的核心线程在等待新任务到来时会有超时策略，这个超时时间由keepAliveTime来指定。一旦超过所设置的超时时间，闲置的核心线程就会被终止。</li>
-<li>maximumPoolSize<br>线程池中所容纳的最大线程数，如果活动的线程达到这个数值以后，后续的新任务将会被阻塞。包含核心线程数+非核心线程数。</li>
-<li>keepAliveTime<br>非核心线程闲置时的超时时长，<strong>对于非核心线程，闲置时间超过这个时间，非核心线程就会被回收</strong>。只有对ThreadPoolExecutor的allowCoreThreadTimeOut属性设为true的时候，这个超时时间才会对核心线程产生效果。</li>
-<li>unit<br>用于指定keepAliveTime参数的<strong>时间单位</strong>。他是一个枚举，可以使用的单位有天（TimeUnit.DAYS），小时（TimeUnit.HOURS），分钟（TimeUnit.MINUTES），毫秒(TimeUnit.MILLISECONDS)，微秒(TimeUnit.MICROSECONDS, 千分之一毫秒)和毫微秒(TimeUnit.NANOSECONDS, 千分之一微秒);</li>
-<li>workQueue<br> 线程池中保存等待执行的任务的阻塞队列。通过线程池中的execute方法提交的<br> Runable对象都会存储在该队列中。我们可以选择下面几个阻塞队列。</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>阻塞队列</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ArrayBlockingQueue</td>
-<td>基于数组实现的有界的阻塞队列,该队列按照FIFO（先进先出）原则对队列中的元素进行排序。</td>
-</tr>
-<tr>
-<td>LinkedBlockingQueue</td>
-<td>基于链表实现的阻塞队列，该队列按照FIFO（先进先出）原则对队列中的元素进行排序。</td>
-</tr>
-<tr>
-<td>SynchronousQueue</td>
-<td>内部没有任何容量的阻塞队列。在它内部没有任何的缓存空间。对于SynchronousQueue中的数据元素只有当我们试着取走的时候才可能存在。</td>
-</tr>
-<tr>
-<td>PriorityBlockingQueue</td>
-<td>具有优先级的无限阻塞队列。</td>
-</tr>
-</tbody>
-</table>
-<ol>
-<li><p>threadFactory<br>线程工厂，<strong>为线程池提供新线程的创建</strong>。ThreadFactory是一个接口，里面只有一个newThread方法。默认为DefaultThreadFactory类。</p>
-</li>
-<li><p>handler<br>是RejectedExecutionHandler对象，RejectedExecutionHandler面只有一个rejectedExecution方法。当任务队列已满并且线达到所限定的最大值或者是无法成功执行任务，这时候ThreadPoolExecutor用RejectedExecutionHandler中的rejectedExecution方法ThreadPoolExecutor中有四个内部类实现了RejectedExecutionHandler程池中它默认是AbortPolicy，在无法处理新任务时抛出RejectedExecutionException异常。下面是在ThreadPoolExecutor中提供的四个可选值。</p>
-</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>可选值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CallerRunsPolicy</td>
-<td>只用调用者所在线程来运行任务。</td>
-</tr>
-<tr>
-<td>AbortPolicy</td>
-<td>直接抛出RejectedExecutionException异常。</td>
-</tr>
-<tr>
-<td>DiscardPolicy</td>
-<td>丢弃掉该任务，不进行处理。</td>
-</tr>
-<tr>
-<td>DiscardOldestPolicy</td>
-<td>丢弃队列里最近的一个任务，并执行当前任务。</td>
-</tr>
-</tbody>
-</table>
-<p>ThreadPoolExecutor的使用</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService service = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">5</span>, <span class="number">10</span>, <span class="number">10</span>, TimeUnit.SECONDS, <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;());</span><br></pre></td></tr></table></figure>
-<p>对于ThreadPoolExecutor有多个构造方法，对于上面的构造方法中的其他参数都采用默认值。可以通过execute和submit两种方式来向线程池提交一个任务。execute 当我们使用execute来提交任务时，由于execute方法没有返回值，所以说我们也就无法判定任务是否被线程池执行成功。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">service.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"execute方式"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h3 id="线程池执行流程"><a href="#线程池执行流程" class="headerlink" title="线程池执行流程"></a>线程池执行流程</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/03/12/javadailyplus2/线程池流程.bmp" alt="线程池流程" title>
-                </div>
-                <div class="image-caption">线程池流程</div>
-            </figure>
-<ol>
-<li>如果在线程池中的线程数量没有达到核心的线程数量，这时候就回启动一个核心线程来执行任务。</li>
-<li>如果线程池中的线程数量已经超过核心线程数，这时候任务就会被插入到任务队列中排队等待执行。</li>
-<li>由于任务队列已满，无法将任务插入到任务队列中。这个时候如果线程池中的线程数量没有达到线程池所设定的最大值，那么这时候就会立即启动一个非核心线程来执行任务。</li>
-<li>如果线程池中的数量达到了所规定的最大值，那么就会拒绝执行此任务，这时候就会调用RejectedExecutionHandler中的rejectedExecution方法来通知调用者。</li>
-</ol>
-<h3 id="四种线程池"><a href="#四种线程池" class="headerlink" title="四种线程池"></a>四种线程池</h3><ol>
-<li><p>newFixedThreadPool</p>
-<p> 通过Executors中的newFixedThreadPool方法来创建，该线程池是一种<strong>线程数量固定</strong>的线程池。</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService service = Executors.newFixedThreadPool(<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
-<p> 在这个线程池中所容纳最大的线程数就是我们设置的核心线程数。如果线程池的线程处于空闲状态的话，它们并不会被回收，除非是这个线程池被关闭。<br> 由于newFixedThreadPool只有核心线程，并且这些线程都不会被回收，也就是它能够更快速的响应外界请求。<br> 从下面的newFixedThreadPool方法的实现可以看出，newFixedThreadPool只有核心线程，并且不存在超时机制，采用LinkedBlockingQueue，所以对于任务队列的大小也是没有限制的。</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">    <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">    <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>newCachedThreadPool</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">    <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">    <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 通过s上面的newCachedThreadPool方法在这里我们可以看出它的核心线程数为0，线程池的最大线程数Integer.MAX_VALUE。而Integer.MAX_VALUE是一个很大的数，也差不多可以说这个线程池中的最大线程数可以任意大。当线程池中的线程都处于活动状态的时候，线程池就会创建一个新的线程来处理任务。该线程池中的线程超时时长为60秒，所以当线程处于闲置状态超过60秒的时候便会被回收。这也就意味着若是整个线程池的线程都处于闲置状态超过60秒以后，在newCachedThreadPool线程池中是不存在任何线程的，所以这时候它几乎不占用任何的系统资源。</p>
-<p> 对于newCachedThreadPool他的任务队列采用的是SynchronousQueue，上面说到在SynchronousQueue内部没有任何容量的阻塞队列。SynchronousQueue内部相当于一个空集合，我们无法将一个任务插入到SynchronousQueue中。所以说在线程池中如果现有线程无法接收任务,将会创建新的线程来执行任务。</p>
-</li>
-<li><p>newScheduledThreadPool</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ScheduledThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(corePoolSize, Integer.MAX_VALUE, <span class="number">0</span>, NANOSECONDS,</span><br><span class="line">    <span class="keyword">new</span> DelayedWorkQueue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 它的核心线程数是固定的，对于非核心线程几乎可以说是没有限制的，并且当非核心线程处于限制状态的时候就会立即被回收。</p>
-<p> ScheduledExecutorService功能强大，对于定时执行的任务，建议多采用该方法。</p>
-</li>
-<li>newSingleThreadExecutor<br>通过Executors中的newSingleThreadExecutor方法来创建，在这个线程池中只有一个核心线程，对于任务队列没有大小限制，也就意味着这一个任务处于活动状态时，其他任务都会在任务队列中排队等候依次执行。<br>newSingleThreadExecutor将所有的外界任务统一到一个线程中支持，所以在这个任务执行之间我们不需要处理线程同步的问题。</li>
-</ol>
-<h3 id="线程池的使用技巧"><a href="#线程池的使用技巧" class="headerlink" title="线程池的使用技巧"></a>线程池的使用技巧</h3><p>需要针对具体情况而具体处理，不同的任务类别应采用不同规模的线程池，任务类别可划分为CPU密集型任务、IO密集型任务和混合型任务。(N代表CPU个数)<br>|任务类别|说明|<br>|—|:—|<br>|CPU密集型任务|线程池中线程个数应尽量少，如配置N+1个线程的线程池。|<br>|IO密集型任务|由于IO操作速度远低于CPU速度，那么在运行这类任务时，CPU绝大多数时间处于空闲状态，那么线程池可以配置尽量多些的线程，以提高CPU利用率，如2*N。|<br>|混合型任务|可以拆分为CPU密集型任务和IO密集型任务，当这两类任务执行时间相差无几时，通过拆分再执行的吞吐率高于串行执行的吞吐率，但若这两类任务执行时间有数据级的差距，那么没有拆分的意义。|</p>
-<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>更多关于Java并发多线程请点击<a href="https://allenmistake.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" target="_blank" rel="noopener">Java进阶学习多线程</a></p>
-
+        线程池例如在Android中，由于主线程的诸多限制，像网络请求等一些耗时的操作我们必须在子线程中运行。我们往往会通过new Thread来开启一个子线程，待子线程操作完成以后通过Handler切换到主线程中运行。这么以来我们无法管理我们所创建的子线程，并且无限制的创建子线程，它们相互之间竞争，很有可能由于占用过多资源而导致死机或者OOM。所以在Java中为我们提供了线程池来管理我们所创建的线...
     
 
         <a href="/2019/03/12/javadailyplus2/" class="post-more waves-effect waves-button">
@@ -346,145 +232,15 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/03/09/javadailyplus1/线程状态.png" alt="线程状态图" title>
-                </div>
-                <div class="image-caption">线程状态图</div>
-            </figure>
-<h3 id="新创建"><a href="#新创建" class="headerlink" title="新创建"></a>新创建</h3><p>刚new出来的Thread还没有被运行，<a href="https://allenmistake.github.io/2019/03/09/javadailyplus1/#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95" target="_blank" rel="noopener">创建线程的三种方式</a></p>
-<h3 id="可运行"><a href="#可运行" class="headerlink" title="可运行"></a>可运行</h3><p>一旦调用start 方法，线程处于runnable状态。一个可运行的线桿可能正在运行也可能没有运行， 这取决于操作系统给线程提供运行的时间。</p>
-<h3 id="被阻塞线程和等待线程"><a href="#被阻塞线程和等待线程" class="headerlink" title="被阻塞线程和等待线程"></a>被阻塞线程和等待线程</h3><p>当线程处于被阻塞或等待状态时， 它暂时不活动。它不运行任何代码且消耗最少的资源。直到线程调度器重新激活它。细节取决于它是怎样达到非活动状态的</p>
-<ul>
-<li>当一个线程试图获取一个内部的对象锁（而不是javiutiUoncurrent 库中的锁)，而该锁被其他线程持有， 则该线程进人<strong>阻塞状态</strong>。当所有其他线程释放该锁，并且线程调度器允许本线程持有它的时候，该线程将变成非阻塞状态。</li>
-<li>当线程等待另一个线程通知调度器一个条件时，它自己进入<strong>等待状态</strong>。在调用Object.wait方法或Thread.join方法，或者是等待java,util.concurrent 库中的Lock 或Condition 时，就会出现这种情况。实际上，被阻塞状态与等待状态是有很大不同的。</li>
-<li>有几个方法有一个超时参数。调用它们导致线程进人<strong>计时等待</strong>(timed waiting) 状态。这一状态将一直保持到超时期满或者接收到适当的通知。带有超时参数的方法有Thread.sleep 和Object.wait、Thread.join、Lock,tryLock以及Condition.await的计时版。</li>
-</ul>
-<h3 id="被终止的线程"><a href="#被终止的线程" class="headerlink" title="被终止的线程"></a>被终止的线程</h3><p>线程因如下两个原因之一而被终止：</p>
-<ul>
-<li>因为run方法正常退出而自然死亡。</li>
-<li>因为一个没有捕获的异常终止了run方法而意外死亡。</li>
-</ul>
-<h3 id="同一个线程被-start-两次-2019-7-13更新"><a href="#同一个线程被-start-两次-2019-7-13更新" class="headerlink" title="同一个线程被 start() 两次(2019-7-13更新)"></a>同一个线程被 start() 两次(2019-7-13更新)</h3><p>Java 的线程是不允许启动两次的，第二次调用必然会抛出 IllegalThreadStateException，这是<br>一种运行时异常，多次调用 start 被认为是编程错误。在第二次调用 start() 方法的时候，线程可能处于终止或者其他（非 NEW）状态，但是不论如何，都是不可以再次启动的。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/03/09/javadailyplus1/线程状态之间相互转化.jpg" alt="线程状态之间相互转化" title>
-                </div>
-                <div class="image-caption">线程状态之间相互转化</div>
-            </figure>
-<h2 id="创建一个新线程的三种方法"><a href="#创建一个新线程的三种方法" class="headerlink" title="创建一个新线程的三种方法"></a>创建一个新线程的三种方法</h2><h3 id="通过Runnable接口创建线程类"><a href="#通过Runnable接口创建线程类" class="headerlink" title="通过Runnable接口创建线程类"></a>通过Runnable接口创建线程类</h3><ol>
-<li>定义runnable接口的实现类，并重写该接口的run()方法，该run()方法的方法体同样是该线程的线程执行体。</li>
-<li>创建 Runnable实现类的实例，并依此实例作为Thread的target来创建Thread对象，该Thread对象才是真正的线程对象。</li>
-<li>调用线程对象的start()方法来启动该线程。</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableThreadTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> i;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+ <span class="string">" "</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+ <span class="string">" "</span> + i);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">20</span>) &#123;</span><br><span class="line">            RunnableThreadTest rtt = <span class="keyword">new</span> RunnableThreadTest();</span><br><span class="line">            <span class="keyword">new</span> Thread(rtt, <span class="string">"新线程1"</span>).start();</span><br><span class="line">            <span class="keyword">new</span> Thread(rtt, <span class="string">"新线程2"</span>).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="继承Thread类创建线程类"><a href="#继承Thread类创建线程类" class="headerlink" title="继承Thread类创建线程类"></a>继承Thread类创建线程类</h3><ol>
-<li>定义Thread类的子类，并重写该类的run方法，该run方法的方法体就代表了线程要完成的任务。因此把run()方法称为执行体。</li>
-<li>创建Thread子类的实例，即创建了线程对象。</li>
-<li>调用线程对象的start()方法来启动该线程。</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstThreadTest</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//重写run方法，run方法的方法体就是现场执行体</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">" "</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+ <span class="string">" : "</span> + i);</span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">20</span>) &#123;</span><br><span class="line">                <span class="keyword">new</span> FirstThreadTest().start();</span><br><span class="line">                <span class="keyword">new</span> FirstThreadTest().start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="Callable-接口"><a href="#Callable-接口" class="headerlink" title="Callable 接口"></a>Callable 接口</h3><p>Callable 与 Runable 有两点不同：</p>
-<ul>
-<li>可以通过 call() 获得返回值。</li>
-<li>call() 可以抛出异常</li>
-</ul>
-<h3 id="Thread-和-Runnable-的区别"><a href="#Thread-和-Runnable-的区别" class="headerlink" title="Thread 和 Runnable 的区别"></a>Thread 和 Runnable 的区别</h3><p>如果一个类继承 Thread， 则不适合资源共享。但是如果实现了 Runnable 接口的话，则很容易实现资源共享。</p>
-<p>总结：<br>实现 Runnable 接口比继承 Thread 类具有的优势：</p>
-<ol>
-<li>适合多个和相同的程序代码的线程去共享同一个资源。</li>
-<li>可以避免 java 中的单继承的局限性。</li>
-<li>增加程序的健壮性，实现解耦操作，代码可以被多个线程共享，代码和线程独立。</li>
-<li>线程池只能放入实现 Runnable或 Callable 类线程，不能直接放入继承Thread 的类。</li>
-</ol>
-<h2 id="中断线程"><a href="#中断线程" class="headerlink" title="中断线程"></a>中断线程</h2><p>没有任何语言方面的需求要求一个被中断的线程应该终止。中断一个线程不过是引起它的注意。被中断的线程可以决定如何响应中断。某些线程是如此重要以至于应该处理完异常后， 继续执行， 而不理会中断。但是，更普遍的情况是，线程将简单地将中断作为一个终止的请求。</p>
-<h2 id="线程属性"><a href="#线程属性" class="headerlink" title="线程属性"></a>线程属性</h2><h3 id="线程优先级"><a href="#线程优先级" class="headerlink" title="线程优先级"></a>线程优先级</h3><p>每当线程调度器有机会选择新线程时，它首先选择具有较高优先级的线程。但是，线程优先级是高度依赖于系统的。当虚拟机依赖于宿主机平台的线程实现机制时，Java 线程的优先级被映射到宿主机平台的优先级上，优先级个数也许更多，也许更少。</p>
-<p><code>static void yield( )</code><br>导致当前执行线程处于<strong>让步状态</strong>。如果有其他的可运行线程具有至少与此线程同样高的优先级，那么这些线程接下来会被调度。注意，这是一个静态方法。</p>
-<h3 id="守护线程-2019-7-13更新"><a href="#守护线程-2019-7-13更新" class="headerlink" title="守护线程(2019-7-13更新)"></a>守护线程(2019-7-13更新)</h3><p>有的时候应用中需要一个长期驻留的服务程序，但是不希望其影响应用退出，就可以将其设置为守护线程，如果 JVM 发现只有守护线程存在时，将结束进程，具体可以参考下面代码段。注意，必须在线程启动之前设置。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thread daemonThread = <span class="keyword">new</span> Thread();</span><br><span class="line">daemonThread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">daemonThread.start();</span><br></pre></td></tr></table></figure>
-<h2 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h2><p>为了避免多线程引起的对共享数据的讹误，必须学习如何同步存取。</p>
-<h3 id="竞争条件详解"><a href="#竞争条件详解" class="headerlink" title="竞争条件详解"></a>竞争条件详解</h3><p>当两个线程试图同时更新同一个账户的时候，这个问题就出现了。假定两个线程同时执行指令<code>accounts[to] += amount;</code>问题在于这不是原子操作。该指令可能被处理如下：</p>
-<ol>
-<li>将<code>accounts[to]</code>加载到寄存器。</li>
-<li>增加<code>amount</code> 。</li>
-<li>将结果写回<code>accounts[to]</code>。</li>
-</ol>
-<p>现在，假定第1个线程执行步骤1和2, 然后，它被剥夺了运行权。假定第2个线程被唤醒并修改了accounts 数组中的同一项。然后，第1个线程被唤醒并完成其第3步。<br>这样，这一动作擦去了第二个线程所做的更新。于是，总金额不再正确。<br><strong>因此加入同步锁以避免在该线程没有完成操作之前，被其他线程的调用，从而保证了该变量的唯一性和准确性。</strong></p>
-<h3 id="锁同步"><a href="#锁同步" class="headerlink" title="锁同步"></a>锁同步</h3><h4 id="锁Lock"><a href="#锁Lock" class="headerlink" title="锁Lock"></a>锁Lock</h4><p>有两种机制防止代码块受并发访问的干扰。Java语言提供一个 synchronized 关键字达到这一目的，并且Java SE 5.0引入了ReentrantLock 类。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bank</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Lock bankLock = <span class="keyword">new</span> ReentrantLock0 ；<span class="comment">// ReentrantLock implements the Lock interface</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transfer</span><span class="params">(<span class="keyword">int</span> from, intto, <span class="keyword">int</span> amount)</span></span>&#123;</span><br><span class="line">        bankLock.lock();</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            System.out.print(Thread.currentThread0);</span><br><span class="line">            accounts[from] -= amount;</span><br><span class="line">            System.out.printf(<span class="string">" %10.2f from %A to %d"</span>, amount, from, to);</span><br><span class="line">            accounts[to] += amount;</span><br><span class="line">            System.out.printf(<span class="string">" Total Balance: %10.2f%n"</span>,getTotalBalance());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            banklock.unlockO;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>重入</strong>Lock是一个更强大的工具，他有一个<strong>重入功能</strong>————当一个线程得到一个对象后，再次请求该对象锁时是可以再次得到该对象的锁的。<br>具体概念就是：自己可以再次获取自己的内部锁。因为线程可以重复地获得已经持有的锁。锁保持一个持有计数（holdcount) 来跟踪对lock 方法的嵌套调用。线程在每一次调用lock 都要调用unlock 来释放锁。由于这一特性，被一个锁保护的代码可以调用另一个使用相同的锁的方法。<br>假定一个线程调用transfer, 在执行结束前被剥夺了运行权。假定第二个线程也调用transfer, 由于第二个线程不能获得锁，将在调用lock 方法时被阻塞。它必须等待第一个线程完成transfer 方法的执行之后才能再度被激活。当第一个线程释放锁时，那么第二个线程才能开始运行</p>
-<p><strong>公平锁</strong>CPU在调度线程的时候是在等待队列里随机挑选一个线程，由于这种随机性所以是无法保证线程先到先得的（synchronized控制的锁就是这种非公平锁）。但这样就会产生饥饿现象，即有些线程（优先级较低的线程）可能永远也无法获取CPU的执行权，优先级高的线程会不断的强制它的资源。那么如何解决饥饿问题呢，这就需要公平锁了。公平锁可以保证线程按照时间的先后顺序执行，避免饥饿现象的产生。但<strong>公平锁的效率比较低</strong>，因为要实现顺序执行，需要维护一个有序队列。</p>
-<p><strong>条件对象Condition</strong><br>假定一个线程已经获得锁，将要执行，但是他所需要的条件还没有满足（例如在余额不足的情况下取钱），便会造成有锁却不执行，其他能够提供满足条件的线程（例如存钱）却只能等待，陷入僵局。<br>一个锁对象可以有一个或多个相关的条件对象。你可以用newCondition 方法获得一个条件对象。习惯上给每一个条件对象命名为可以反映它所表达的条件的名字。例如，在此设置一个条件对象来表达“ 余额充足”条件。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bank</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Condition sufficientFunds;</span><br><span class="line">    ···</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Bank</span><span class="params">()</span></span>&#123;</span><br><span class="line">    ···</span><br><span class="line">    sufficientFunds=bankLock.newCondition();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果transfer方法发现余额不足，它调用下面这个方法<br><code>sufficientFunds.await();</code><br>当前线程现在被阻塞了，并放弃了锁。我们希望这样可以使得另一个线程可以进行增加账户余额的操作。等待获得锁的线程和调用await 方法的线程存在本质上的不同。一旦一个线程调用await方法，它进人该条件的等待集。当锁可用时，该线程不能马上解除阻塞。相反，它处于阻塞状态，直到另一个线程调用同一条件上的signalAll 方法时为止。</p>
-<h4 id="synchronized关键字"><a href="#synchronized关键字" class="headerlink" title="synchronized关键字"></a>synchronized关键字</h4><p>在前面一节中，介绍了如何使用 Lock 和 Condition 对象。在进一步深人之前，总结一下有关锁和条件的关键之处：</p>
-<ul>
-<li>锁用来保护代码片段，任何时刻只能有一个线程执行被保护的代码。</li>
-<li>锁可以管理试图进入被保护代码段的线程。</li>
-<li>锁可以拥有一个或多个相关的条件对象。</li>
-<li>每个条件对象管理那些已经进入被保护的代码段但还不能运行的线程。</li>
-</ul>
-<p>Lock 和 Condition 接口为程序设计人员提供了高度的锁定控制。然而，大多数情况下，并不需要那样的控制，并且可以使用一种嵌人到Java 语言内部的机制。</p>
-<p>如果一个方法用synchronized 关键字声明，那么对象的锁将保护整个方法。也就是说，要调用该方法，线程必须获得内部的对象锁。<br>换句话说</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    method body</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其实方法锁其实锁的是实例对象，可以等价于</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//相当于锁实例</span></span><br><span class="line">    <span class="keyword">synchronized</span>(<span class="keyword">this</span>)&#123;</span><br><span class="line">        <span class="comment">//需要同步的代码块</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>将静态方法声明为synchronized 也是合法的。如果调用这种方法，该方法获得相关的类对象的内部锁。例如，如果Bank类有一个静态同步的方法，那么当该方法被调用时，Bankxlass对象的锁被锁住。因此，没有其他线程可以调用同一个类的这个或任何其他的同步静态方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//相当于锁的整个类</span></span><br><span class="line">    <span class="keyword">synchronized</span>(xxx.class)&#123;</span><br><span class="line">        <span class="comment">//需要同步的代码块</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>静态方法同步与非静态方法同步区别：</p>
-<ul>
-<li>静态同步：因此加入同步锁以避免在该线程没有完成操作之前，被其他线程的调用，从而保证了该变量的唯一性和准确性。</li>
-<li>非静态同步：锁住的是该对象,类的其中一个实例，当该对象(仅仅是这一个对象)在不同线程中执行这个同步方法时，线程之间会形成互斥。达到同步效果，<strong>但如果不同线程同时对该类的不同对象执行这个同步方法时，则线程之间不会形成互斥</strong>，因为他们拥有的是不同的锁。</li>
-</ul>
-<p>内部锁和条件存在一些局限。包括：</p>
-<ul>
-<li>不能中断一个正在试图获得锁的线程。</li>
-<li>试图获得锁时不能设定超时。</li>
-<li>每个锁仅有单一的条件，可能是不够的</li>
-</ul>
-<h4 id="synchronized和ReentrantLock的比较"><a href="#synchronized和ReentrantLock的比较" class="headerlink" title="synchronized和ReentrantLock的比较"></a>synchronized和ReentrantLock的比较</h4><p>区别：</p>
-<ol>
-<li>Lock是一个接口，是通过 JDK 来实现的，而 synchronized 是 Java 中的关键字，synchronized 是内置的语言实现，是 JVM 实现的；</li>
-<li>synchronized 在发生异常时，会自动释放线程占有的锁，因此不会导致死锁现象发生；而 Lock 在发生异常时，如果没有主动通过 <code>unLock()</code> 去释放锁，则很可能造成死锁现象，因此使用 Lock 时需要在 finally 块中释放锁；</li>
-<li>Lock可以让等待锁的线程响应中断，而 synchronized 却不行，使用 synchronized 时，等待的线程会一直等待下去，不能够响应中断；</li>
-<li>通过Lock可以知道有没有成功获取锁，而synchronized却无法办到。</li>
-<li>Lock可以提高多个线程进行读操作的效率。</li>
-</ol>
-<p>两者在锁的相关概念上区别：</p>
-<ol>
-<li>可中断锁<br> 顾名思义，就是可以响应中断的锁。<br> 在Java中，synchronized就不是可中断锁，而Lock是可中断锁。如果某一线程A正在执行锁中的代码，另一线程B正在等待获取该锁，可能由于等待时间过长，线程B不想等待了，想先处理其他事情，我们可以让它中断自己或者在别的线程中中断它，这种就是可中断锁。<br> <code>lockInterruptibly()</code>的用法体现了Lock的可中断性。</li>
-<li>公平锁<br> 公平锁即尽量以请求锁的顺序来获取锁。比如同是有多个线程在等待一个锁，当这个锁被释放时，等待时间最久的线程（最先请求的线程）会获得该锁（并不是绝对的，大体上是这种顺序），这种就是公平锁。<br> 非公平锁即无法保证锁的获取是按照请求锁的顺序进行的。这样就可能导致某个或者一些线程永远获取不到锁。<br> 在Java中，synchronized 就是非公平锁，它无法保证等待的线程获取锁的顺序。ReentrantLock可以设置成公平锁。</li>
-<li>读写锁<br> 读写锁将对一个资源（比如文件）的访问分成了2个锁，一个读锁和一个写锁。<br> 正因为有了读写锁，才使得多个线程之间的读操作可以并发进行，不需要同步，而写操作需要同步进行，提高了效率。<br> ReadWriteLock就是读写锁，它是一个接口，ReentrantReadWriteLock实现了这个接口。<br> 可以通过readLock()获取读锁，通过writeLock()获取写锁。</li>
-<li>绑定多个条件<br> 一个ReentrantLock对象可以同时绑定多个Condition对象，而在synchronized中，锁对象的wait()和notify()或notifyAll()方法可以实现一个隐含的条件，如果要和多余一个条件关联的时候，就不得不额外地添加一个锁，而ReentrantLock则无须这么做，只需要多次调用new Condition()方法即可。</li>
-</ol>
-<p>在新版的 JDK 中， synchronize 也逐渐有了很多优化，除非我们需要用到 ReentrantLock 的高级功能(比如上述几个锁)，我们尽量选用 synchronize 关键词。</p>
-<h2 id="final"><a href="#final" class="headerlink" title="final"></a>final</h2><p>还有一种情况可以安全地访问一个共享域，即这个域声明为final 时。考虑以下声明：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Map&lt;String, Double〉accounts = <span class="keyword">new</span> HashMap&lt;&gt;() ；</span><br></pre></td></tr></table></figure>
-<p>其他线程会在构造函数完成构造之后才看到这个accounts变量。</p>
-<h2 id="线程间协作"><a href="#线程间协作" class="headerlink" title="线程间协作"></a>线程间协作</h2><h3 id="join"><a href="#join" class="headerlink" title="join"></a>join</h3><p>在线程中调用另一个线程的 join() 方法，会将当前线程挂起，而不是忙等待，直到目标线程结束。</p>
-<h3 id="wait、notify、notifyall"><a href="#wait、notify、notifyall" class="headerlink" title="wait、notify、notifyall"></a>wait、notify、notifyall</h3><p>调用 wait() 使得线程等待某个条件满足，线程在等待时会被挂起，当其他线程的运行使得这个条件满足时，其它线程会调用 notify() 或者 notifyAll() 来唤醒挂起的线程。</p>
-<p>它们都属于 Object 的一部分，而不属于 Thread。</p>
-<p>只能用在同步方法或者同步控制块中使用，否则会在运行时抛出 IllegalMonitorStateException。</p>
-<p>使用 wait() 挂起期间，线程会<strong>释放锁</strong>。这是因为，如果没有释放锁，那么其它线程就无法进入对象的同步方法或者同步控制块中，那么就无法执行 notify() 或者 notifyAll() 来唤醒挂起的线程，造成死锁。</p>
-<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><h3 id="产生条件"><a href="#产生条件" class="headerlink" title="产生条件"></a>产生条件</h3><ol>
-<li>互斥条件：一个资源每次只能被一个线程使用。</li>
-<li>请求与保持条件：一个线程因请求资源而阻塞时，对已获得的资源保持不放。</li>
-<li>不剥夺条件：线程已获得的资源，在未使用完之前，不能强行剥夺。</li>
-<li>循环等待条件：若干线程之间形成一种头尾相接的循环等待资源关系。</li>
-</ol>
-<p>有3种典型的死锁类型：</p>
-<h3 id="静态的锁顺序死锁"><a href="#静态的锁顺序死锁" class="headerlink" title="静态的锁顺序死锁"></a>静态的锁顺序死锁</h3><p>a和b两个方法都需要获得A锁和B锁。一个线程执行a方法且已经获得了A锁，在等待B锁；另一个线程执行了b方法且已经获得了B锁，在等待A锁。这种状态，就是发生了静态的锁顺序死锁。</p>
-<p>经典面试问题：写一个死锁</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StaticLockOrderDeadLock</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lockA = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lockB = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>(lockA)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span>(lockB)&#123;</span><br><span class="line">                System.out.println(<span class="string">"function a"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>(lockB)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span>(lockA)&#123;</span><br><span class="line">                System.out.println(<span class="string">"function b"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>解决静态的锁顺序死锁的方法就是：所有需要多个锁的线程，都要以相同的顺序来获得锁。</p>
-<h3 id="动态的锁顺序死锁"><a href="#动态的锁顺序死锁" class="headerlink" title="动态的锁顺序死锁"></a>动态的锁顺序死锁</h3><p>动态的锁顺序死锁是指<strong>两个线程调用同一个方法</strong>时，<strong>传入的参数颠倒</strong>造成的死锁。<br>如下代码，一个线程调用了transferMoney方法并传入参数accountA,accountB；另一个线程调用了transferMoney方法并传入参数accountB,accountA。此时就可能发生在静态的锁顺序死锁中存在的问题，即：第一个线程获得了accountA锁并等待accountB锁，第二个线程获得了accountB锁并等待accountA锁。</p>
-<p>动态的锁顺序死锁解决方案如下：使用System.identifyHashCode来定义锁的顺序。确保所有的线程都以相同的顺序获得锁。</p>
-<h3 id="协作对象之间发生的死锁"><a href="#协作对象之间发生的死锁" class="headerlink" title="协作对象之间发生的死锁"></a>协作对象之间发生的死锁</h3><p>有时，死锁并不会那么明显，比如两个相互协作的类之间的死锁，比如下面的代码：一个线程调用了Taxi对象的setLocation方法，另一个线程调用了Dispatcher对象的getImage方法。此时可能会发生，第一个线程持有Taxi对象锁并等待Dispatcher对象锁，另一个线程持有Dispatcher对象锁并等待Taxi对象锁。</p>
-<p>上面的代码中，我们在持有锁的情况下调用了外部的方法，这是非常危险的（可能发生死锁）。为了避免这种危险的情况发生，我们使用开放调用。如果调用某个外部方法时不需要持有锁，我们称之为开放调用。解决协作对象之间发生的死锁：需要使用开放调用，即<strong>避免在持有锁的情况下调用外部的方法</strong>。</p>
-<h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>更多关于Java并发多线程请点击<a href="https://allenmistake.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" target="_blank" rel="noopener">Java进阶学习多线程</a></p>
-
+        线程状态
+                
+                    
+                    
+                
+                线程状态图
+            
+新创建刚new出来的Thread还没有被运行，创建线程的三种方式
+可运行一旦调用start 方法，线程处于runnable状态。一个可运行的线桿可能正在运行也可能...
     
 
         <a href="/2019/03/09/javadailyplus1/" class="post-more waves-effect waves-button">
@@ -531,45 +287,10 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>Given two binary strings, return their sum (also a binary string).</p>
-<p>The input strings are both non-empty and contains only characters 1 or 0.</p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: a = &quot;11&quot;, b = &quot;1&quot;</span><br><span class="line">Output: &quot;100&quot;</span><br></pre></td></tr></table></figure>
-<p><strong>Example 2:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: a = &quot;1010&quot;, b = &quot;1011&quot;</span><br><span class="line">Output: &quot;10101&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这道题本来不想放上来的，不涉及多少算法上的问题，但是记录一些必要的字符串方法是很有必要的</p>
-<h3 id="StringBuffer、StringBuilder与String"><a href="#StringBuffer、StringBuilder与String" class="headerlink" title="StringBuffer、StringBuilder与String"></a>StringBuffer、StringBuilder与String</h3><p>这三兄弟看似一样，实则区别很小，但是终归还是有区别的</p>
-<ol>
-<li><p>运行速度方面：StringBuilder &gt; StringBuffer &gt; String<br>前两个我们抛开不谈，说说为什么  String 最慢，因为 String 为字符串<strong>常量</strong>，而 StringBuilder 和 StringBuffer 均为字符串<strong>变量</strong>，即 String 对象一旦创建之后该对象是不可更改的，但后两者的对象是变量，是可以更改的。</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str=<span class="string">"abc"</span>;</span><br><span class="line">System.out.println(str);</span><br><span class="line">str=str+<span class="string">"de"</span>;</span><br><span class="line">System.out.println(str);</span><br></pre></td></tr></table></figure>
-<p> 如果运行这段代码会发现先输出 “abc”，然后又输出 “abcde” ，好像是 str 这个对象被更改了，其实，这只是一种假象罢了，JVM 对于这几行代码是这样处理的，首先创建一个 String 对象 str ，并把 “abc” 赋值给 str ，然后在第三行中，其实 JVM 又创建了一个新的对象也名为 str ，然后再把原来的 str 的值和 “de” 加起来再赋值给新的 str ，而原来的 str 就会被 JVM 的垃圾回收机制（GC）给回收掉了，所以， str 实际上并没有被更改，也就是前面说的<strong> String 对象一旦创建之后就不可更改了</strong>。所以， Java 中对 String 对象进行的操作实际上是一个不断创建新的对象并且将旧的对象回收的一个过程，所以执行速度很慢。</p>
-</li>
-<li><p>线程安全方面<br> StringBuffer 线程安全，而 StringBuilder 非线程安全，主要由于 Builder 中不带锁方法。这里我们不详细讨论。</p>
-</li>
-<li><p>方法<br>String的方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="string">"Hello World"</span></span><br><span class="line">a.charAt(<span class="number">1</span>);<span class="comment">//寻找第1个元素</span></span><br><span class="line"><span class="keyword">byte</span> b[] = a.getBytes();<span class="comment">//转换成比特数组</span></span><br><span class="line"><span class="keyword">char</span>[]b = a.toCharArray();<span class="comment">//转换成字符数组</span></span><br><span class="line">b.concat(a);<span class="comment">//连接两个字符串</span></span><br><span class="line">a.indexOf(<span class="string">"o"</span>));<span class="comment">//“o”第一次出现的位置</span></span><br><span class="line">a.lastIndexOf(<span class="string">"o"</span>);<span class="comment">//“o”最后一次出现的位置</span></span><br></pre></td></tr></table></figure>
-<p>StringBuffer的方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sb1.append(<span class="string">" World"</span>);<span class="comment">//在尾部添加字符串</span></span><br><span class="line">sb1.insert(<span class="number">1</span>, <span class="string">"ME"</span>);<span class="comment">//在指定位置后面添加字符串</span></span><br><span class="line">sb1.deleteCharAt(<span class="number">0</span>)；<span class="comment">//删除指定位置元素</span></span><br><span class="line">sb1.reverse();<span class="comment">//反转字符串</span></span><br><span class="line">sb1.toString();<span class="comment">//转换成String类型</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将字符串中的字符型数字转换成int</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> number = b.charAt(i) - <span class="string">'0'</span>;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="String-为什么要设计成不可变的？-2019-5-14-更新"><a href="#String-为什么要设计成不可变的？-2019-5-14-更新" class="headerlink" title="String 为什么要设计成不可变的？(2019-5-14 更新)"></a>String 为什么要设计成不可变的？(2019-5-14 更新)</h3><ol>
-<li><p>字符串常量池的需要<br> 字符串常量池(String pool, String intern pool, String保留池) 是Java堆内存中一个特殊的存储区域, 当创建一个String对象时,假如此字符串值已经存在于常量池中,则不会创建一个新的对象,而是引用已经存在的对象。还可以使用 String 的 intern() 方法在运行过程中将字符串添加到 String Pool 中。</p>
-<p> 如下面的代码所示,将会在堆内存中只创建一个实际String对象.</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">"abcd"</span>;</span><br><span class="line">String s2 = <span class="string">"abcd"</span>;</span><br></pre></td></tr></table></figure>
-<p> 示意图如下所示:<br> <img src="/2019/03/07/leetcode67/pool.jpg" alt="string 常量池"><br> 假若字符串对象允许改变,那么将会导致各种逻辑错误,比如改变一个对象会影响到另一个独立对象. 严格来说，这种常量池的思想,是一种优化手段.</p>
-<p> String 不可变性天生具备线程安全，可以在多个线程中安全地使用。</p>
-</li>
-<li><p>允许String对象缓存HashCode<br> Java中String对象的哈希码被频繁地使用, 比如在hashMap 等容器中。<br> 字符串不变性保证了hash码的唯一性,因此可以放心地进行缓存.这也是一种性能优化手段,意味着不必每次都去计算新的哈希码. 在String类的定义中有如下代码:</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> hash;<span class="comment">//用来缓存HashCode</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="回到这道题"><a href="#回到这道题" class="headerlink" title="回到这道题"></a>回到这道题</h3><p>这道题说两个二进制数相加，得到一个二进制数，首先顺序肯定是从后向前，按位计算，其次要选择一个变量来判断是否应该进位（carry）。我们将每位算出的结果取余保存在一个StringBuffer中，然后将得到的数除以2来判断下一个是否进位。最后返回StringBuffer的反转。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">addBinary</span><span class="params">(String a, String b)</span> </span>&#123;</span><br><span class="line">        StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">int</span> i = a.length() - <span class="number">1</span>, j = b.length() -<span class="number">1</span>, carry = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &gt;= <span class="number">0</span> || j &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> sum = carry;</span><br><span class="line">            <span class="keyword">if</span> (j &gt;= <span class="number">0</span>) sum += b.charAt(j--) - <span class="string">'0'</span>;</span><br><span class="line">            <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) sum += a.charAt(i--) - <span class="string">'0'</span>;</span><br><span class="line">            sb.append(sum % <span class="number">2</span>);</span><br><span class="line">            carry = sum / <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (carry != <span class="number">0</span>) sb.append(carry);</span><br><span class="line">        <span class="keyword">return</span> sb.reverse().toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="https://github.com/AllenMistake/Leetcode/blob/master/67.add-binary2.java" target="_blank" rel="noopener">源代码</a></p>
-
+        问题Given two binary strings, return their sum (also a binary string).
+The input strings are both non-empty and contains only characters 1 or 0.
+Example 1:
+12Input: a = &quot;11&quot;, b = &quot;1&qu...
     
 
         <a href="/2019/03/07/leetcode67/" class="post-more waves-effect waves-button">
@@ -616,44 +337,14 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h1 id="Leetcode日记：70-爬楼梯"><a href="#Leetcode日记：70-爬楼梯" class="headerlink" title="Leetcode日记：70.爬楼梯"></a>Leetcode日记：70.爬楼梯</h1><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/03/06/ClimbingStairs/stair.jpg" alt="爬呀爬呀爬楼梯" title>
-                </div>
-                <div class="image-caption">爬呀爬呀爬楼梯</div>
-            </figure>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>You are climbing a stair case. It takes n steps to reach to the top.</p>
-<p>Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?</p>
-<p><strong>Note</strong>: Given n will be a positive integer.</p>
-<p><strong>Example 1</strong>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Input: 2</span><br><span class="line">Output: 2</span><br><span class="line">Explanation: There are two ways to climb to the top.</span><br><span class="line">1. 1 step + 1 step</span><br><span class="line">2. 2 steps</span><br></pre></td></tr></table></figure>
-<p><strong>Example 2:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Input: 3</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: There are three ways to climb to the top.</span><br><span class="line">1. 1 step + 1 step + 1 step</span><br><span class="line">2. 1 step + 2 steps</span><br><span class="line">3. 2 steps + 1 step</span><br></pre></td></tr></table></figure>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>题目很容易理解，可以选择一次爬两节台阶，也可以爬一节，问究竟有多少种情况（不能忽略顺序）。<br>这道题和53题的最长子串题有异曲同工之妙，为什么这么说呢？<br>首先我们来看：<br>最长字串要对前面计算的子串长度进行更新，在更新的过程中，势必要得出<strong>在之前的最长字串是多少</strong>。<br>而爬楼梯这道题，同样和前一状态有关，比如爬n节台阶，就会分为两种情况：</p>
-<ul>
-<li>在n-1的台阶处爬一层台阶</li>
-<li>在n-2的台阶处爬两层台阶</li>
-</ul>
-<p>继续向下延伸思考，到达每一次层一共有几种方法这个问题就变成了2个子问题：</p>
-<ul>
-<li>到达n-1层台阶有几种方法</li>
-<li>到达n-2层台阶有几种方法</li>
-</ul>
-<h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><p>通过把原问题分解为相对简单的子问题的方式求解复杂问题的方法，这就是动态规划。动态规划常常适用于有重叠子问题和最优子结构性质的问题。我们要明确，动态规划是一种思想，并不是一种具体的算法。</p>
-<p>那么适用于动态规划的问题都有哪些特征呢？</p>
-<ul>
-<li><strong>最优子结构</strong>：当问题的最优解包含了其子问题的最优解时，称该问题具有最优子结构性质。</li>
-<li><strong>重叠子问题</strong>：在用递归算法自顶向下解问题时，每次产生的子问题并不总是新问题，有些子问题被反复计算多次。动态规划算法正是利用了这种子问题的重叠性质，对每一个子问题只解一次，而后将其解保存在一个表格中，在以后尽可能多地利用这些子问题的解。</li>
-</ul>
-<h2 id="回到原问题"><a href="#回到原问题" class="headerlink" title="回到原问题"></a>回到原问题</h2><p>让我们回归这道题，我们总结一下之前分析的结果：</p>
-<p><strong>第n个结果=第n-1个结果+第n-2个结果</strong></p>
-<p>好的，我们抛开我们熟悉的斐波那契数列不谈（事实上，在只能走1，2节的时候该题的结果就是斐波那契数列。。），我们可以建立一个dp数组，先将1和2两种情况求出来，之后的3、4、…、n+1<strong>都可以用前两个已经计算出的子结果得到</strong>。</p>
-<p>这就是我们这道题利用到<strong>动态规划</strong>的核心算法。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">climbStairs</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[n + <span class="number">1</span>];</span><br><span class="line">        dp[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        dp[<span class="number">2</span>] = <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            dp[i] = dp[i - <span class="number">1</span>] + dp[i - <span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="https://github.com/AllenMistake/Leetcode/blob/master/70.climbing-stairs.java" target="_blank" rel="noopener">代码源文件</a></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>动态规划问题算法多变，需要多做题熟练掌握这种思想。</p>
-
+        Leetcode日记：70.爬楼梯
+                
+                    
+                    
+                
+                爬呀爬呀爬楼梯
+            
+题目You are climbing a stair case. It takes n steps to reach to the ...
     
 
         <a href="/2019/03/06/ClimbingStairs/" class="post-more waves-effect waves-button">
@@ -700,14 +391,14 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h1 id="你好，Hexo"><a href="#你好，Hexo" class="headerlink" title="你好，Hexo"></a>你好，Hexo</h1><h1 id="hexo的使用技巧"><a href="#hexo的使用技巧" class="headerlink" title="hexo的使用技巧"></a>hexo的使用技巧</h1><h2 id="插入图片"><a href="#插入图片" class="headerlink" title="插入图片"></a>插入图片</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/03/06/hellohexo/coffee1.jpg" alt="喝杯咖啡休息一下" title>
-                </div>
-                <div class="image-caption">喝杯咖啡休息一下</div>
-            </figure>
-<h2 id="评论"><a href="#评论" class="headerlink" title="评论"></a>评论</h2><h1 id="来日方长"><a href="#来日方长" class="headerlink" title="来日方长"></a>来日方长</h1>
+        你好，Hexohexo的使用技巧插入图片
+                
+                    
+                    
+                
+                喝杯咖啡休息一下
+            
+评论来日方长
     
 
         <a href="/2019/03/06/hellohexo/" class="post-more waves-effect waves-button">
@@ -754,18 +445,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>Given a non-empty array of digits representing a non-negative integer, plus one to the integer.</p>
-<p>The digits are stored such that the most significant digit is at the head of the list, and each element in the array contain a single digit.</p>
-<p>You may assume the integer does not contain any leading zero, except the number 0 itself.</p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: [1,2,3]</span><br><span class="line">Output: [1,2,4]</span><br><span class="line">Explanation: The array represents the integer 123.</span><br></pre></td></tr></table></figure>
-<p><strong>Example 2:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: [4,3,2,1]</span><br><span class="line">Output: [4,3,2,2]</span><br><span class="line">Explanation: The array represents the integer 4321.</span><br></pre></td></tr></table></figure>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>题目很明显就是让你把这些数组当成一个数，然后让你返回把这个数+1之后的数组形式，坑爹的是两个例子都没有体现出这道题的特殊值；</p>
-<p>事实上，我们遇到这种+1问题，首先要考虑进位，如果都是题目给的这种例子，末位直接+1，返回OK了，但是如果出现<code>[9]</code>或者是<code>[9,9,9]</code>又该怎么处理呢？</p>
-<h2 id="答案"><a href="#答案" class="headerlink" title="答案"></a>答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">int</span>[] plusOne(<span class="keyword">int</span>[] digits) &#123;</span><br><span class="line">        <span class="keyword">int</span> n = digits.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=n;i!=-<span class="number">1</span>;i--)&#123;</span><br><span class="line">            <span class="keyword">if</span>(digits[i]&lt;<span class="number">9</span>)&#123;</span><br><span class="line">                ++digits[i];</span><br><span class="line">                <span class="keyword">return</span> digits;</span><br><span class="line">            &#125;</span><br><span class="line">            digits[i]=<span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span>[] a = <span class="keyword">new</span> <span class="keyword">int</span>[n+<span class="number">2</span>];</span><br><span class="line">        a[<span class="number">0</span>]=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>从这里可以看出，对付进位，位数溢出的方法，其结果必定是首位是1，后面全是0，明确了这一点，就可以理解最后三行的意图了。</p>
-
+        题目Given a non-empty array of digits representing a non-negative integer, plus one to the integer.
+The digits are stored such that the most significant digit is at the head of the list, and each ele...
     
 
         <a href="/2019/03/05/leetcode66/" class="post-more waves-effect waves-button">
@@ -812,97 +493,10 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="类，超类，子类"><a href="#类，超类，子类" class="headerlink" title="类，超类，子类"></a>类，超类，子类</h2><h3 id="super"><a href="#super" class="headerlink" title="super"></a>super</h3><ol>
-<li><p>super与this<br>有些人认为 super 与 this 引用是类似的概念， 实际上， 这样比较并不太恰当。这是因为super 不是一个对象的引用， 不能将 super 赋给另一个对象变量， 它只是一个指示编译器调用超类方法的特殊关键字。</p>
-</li>
-<li><p>super与构造<br>当子类构造的时候，由于不能对其超类的私有成员进行访问，只能调用超类的构造器。如果子类的构造器没有显式地调用超类的构造器， 则将自动地调用超类默认（没有参数)的构造器。</p>
-</li>
-</ol>
-<h3 id="超类与子类引用关系"><a href="#超类与子类引用关系" class="headerlink" title="超类与子类引用关系"></a>超类与子类引用关系</h3><p>超类可以引用子类，但是，不能将一个超类的引用赋给子类变量。在下面的例子中，超类虽然引用了子类，变量staff[0]与boss引用同一个对象。但编译器将staff[0]看成Employee对象。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Manager boss = <span class="keyword">new</span> Manager(. . .);</span><br><span class="line">Employee[] staff = <span class="keyword">new</span> Employee[<span class="number">3</span>];</span><br><span class="line">staff[<span class="number">0</span>] = boss;<span class="comment">//Correct Employee超类可以引用其子类Manger</span></span><br><span class="line">boss = staff[<span class="number">0</span>];<span class="comment">//Error</span></span><br><span class="line">staff[<span class="number">0</span>].setBonus(<span class="number">5000</span>);<span class="comment">//Error</span></span><br></pre></td></tr></table></figure>
-<p>在Java 中，子类数组的引用可以转换成超类数组的引用， 而不需要采用强制类型转换。例如，下面是一个经理数组</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Manager[] managers = <span class="keyword">new</span> Manager[<span class="number">10</span>];</span><br></pre></td></tr></table></figure>
-<p>将它转换成Employee[]数组完全是合法的：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Employee[] staff = managers; <span class="comment">// OK</span></span><br></pre></td></tr></table></figure>
-<p>这样做肯定不会有问题，请思考一下其中的缘由。毕竟，如果manager[i] 是一个Manager, 也一定是一个Employee。然而， 实际上，将会发生一些令人惊讶的事情。要切记<strong>managers和staff引用的是同一个数组</strong>。现在看一下这条语句：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">staff[<span class="number">0</span>] = <span class="keyword">new</span> Employee(<span class="string">"Harry Hacker"</span>, . . .) ;</span><br></pre></td></tr></table></figure>
-<p>编译器竟然接纳了这个赋值操作。但在这里， staff[0]与manager[0]引用的是同一个对象，似乎我们把一个普通雇员擅自归入经理行列中了。这是一种很忌讳发生的情形，当调用managers[0].setBonus(1000) 的时候，将会导致调用一个不存在的实例域， 进而搅乱相邻存储空间的内容。<br>为了确保不发生这类错误， 所有数组都要牢记<strong>创建它们的元素类型</strong>，并负责监督仅将<strong>类型兼容的引用存储到数组中</strong>。例如，使用new managers[10]创建的数组是一个经理数组。<strong>如果试图存储一个Employee 类型的引用就会引发ArrayStoreException异常</strong>。</p>
-<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
-<li>只能在继承层次内进行类型转换。</li>
-<li>在将超类转换成子类之前，应该使用instanceof 进行检查。</li>
-</ul>
-<p>在一般情况下，应该尽量少用类型转换和instanceof 运算符。</p>
-<h3 id="抽象类abstract"><a href="#抽象类abstract" class="headerlink" title="抽象类abstract"></a>抽象类abstract</h3><p>提示：许多程序员认为，在抽象类中不能包含具体方法。建议尽量将通用的域和方法（不管是否是抽象的）放在超类（不管是否是抽象类）中。</p>
-<p>继承抽象类可以有两种选择。<br>一种是在抽象类中定义部分抽象类方法或不定义抽象类方法，这样就必须将子类也标记为抽<br>象类；另一种是定义全部的抽象方法，这样一来，子类就不是抽象的了。<br>抽象类不能被实例化。可以定义一个抽象类的对象变量，但是它只能引用非抽象子类的对象，这个时候，利用这个对象变量调用抽象类的抽象方法，会自动向下寻找，也就是实际调用的是其子类的方法。</p>
-<h2 id="抽象与接口"><a href="#抽象与接口" class="headerlink" title="抽象与接口"></a>抽象与接口</h2><p>抽象类和接口的区别：</p>
-<ol>
-<li>接口里只能包含抽象方法，静态方法和默认方法，不能为普通方法提供具体的实现。抽象类可以为普通方法提供具体的实现。所以，当一个子类继承抽象类的时候，并不一定要覆盖抽象类的方法（抽象方法除外），而一个类继承一个接口时，<strong>必须要重写接口的所有方法</strong>（毕竟接口中的方法只是个声明）</li>
-<li><p>接口里只能定义静态常量，不能定义普通成员变量。抽象类可以定义普通成员变量和静态变量。在接口中定义成员变量会被自动转化成静态 final 变量，也就是在接口中，下面两个语句等价</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> i = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>接口里不包含构造器。抽象类可以包含构造器（抽象类里的构造器不是用于创建对象的，而是让其子类调用这些构造器来完成类的初始化）。</p>
-</li>
-<li>接口里不能包含初始化块，而抽象类里可以包含初始化块。</li>
-<li>一个类最多只能有一个直接父类，包括抽象类，而一个类可以实现多个接口，通过实现多个接口来弥补Java单继承的不足。<br>抽象类中的成员可以是 <code>private</code>、默认、<code>protected</code>、<code>public</code> 的，而接口中的成员全都是 <code>public</code> 的。</li>
-</ol>
-<h2 id="Object所有类的超类"><a href="#Object所有类的超类" class="headerlink" title="Object所有类的超类"></a>Object所有类的超类</h2><h3 id="equals"><a href="#equals" class="headerlink" title="equals"></a>equals</h3><p>在Object 类中，这个方法将判断两个对象是否具有相同的引用。</p>
-<h2 id="泛型数组列表"><a href="#泛型数组列表" class="headerlink" title="泛型数组列表"></a>泛型数组列表</h2><h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><ol>
-<li><p>构造形式</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> ArrayList&lt;Employee&gt;();</span><br></pre></td></tr></table></figure>
-<p> Java SE 7 中， 可以省去右边的类型参数：</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> ArrayList&lt;&gt;()；</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>添加元素<br><strong>add方法</strong><br>如果调用add且内部数组已经满了， 数组列表就将自动地创建一个更大的数组，并将所有的对象从较小的数组中拷贝到较大的数组中。<br>警告：分配数组列表， 如下所示：</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> ArrayList&lt;&gt;(lOO) <span class="comment">// capacity is 100</span></span><br></pre></td></tr></table></figure>
-<p> 它与为新数组分配空间有所不同：</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Employee[<span class="number">100</span>] <span class="comment">// size is 100</span></span><br></pre></td></tr></table></figure>
-<p> 数组列表的容量与数组的大小有一个非常重要的区别。如果为数组分配100 个元素的存储空间，数组就有100 个空位置可以使用。而容量为100 个元素的数组列表只是拥有保存100 个元素的潜力（ 实际上，重新分配空间的话，将会超过100), 但是在最初，甚至完成初始化构造之后，数组列表根本就不含有任何元素。</p>
-<p> C++ 注释： ArrayList类似于C++ 的vector 模板。ArrayList 与vector 都是泛型类型。但是C++ 的vector 模板为了便于访问元素重栽了[ ] 运算符。由于Java 没有运算符重栽，所以必须调用显式的方法。此外，C++ 向量是值拷贝。如果a 和b 是两个向量，赋值操作a = b 将会构造一个与b 长度相同的新向量a，并将所有的元素由b 拷贝到a, 而在Java 中，这条赋值语句的操作结果是让a和b引用同一个数组列表。</p>
-</li>
-<li><p>总结</p>
-<ul>
-<li>不必指出数组的大小。</li>
-<li>使用add 将任意多的元素添加到数组中。</li>
-<li>使用size() 替代length 计算元素的数目。</li>
-<li>使用a.get(i) 替代a[i] 访问元素。</li>
-</ul>
-</li>
-</ol>
-<p>这就是Java 中不尽如人意的参数化类型的限制所带来的结果。鉴于兼容性的考虑， 编译<br>器在对类型转换进行检査之后， 如果没有发现违反规则的现象， 就将所有的类型化数组列表<br>转换成原始ArrayList 对象。在程序运行时， 所有的数组列表都是一样的， 即没有虚拟机中<br>的类型参数。因此，类型转换<code>ArrayList</code> 和<code>ArrayList&lt;Employee&gt;</code> 将执行相同的运行时检查。</p>
-<h3 id="对象包装器与自动装箱"><a href="#对象包装器与自动装箱" class="headerlink" title="对象包装器与自动装箱"></a>对象包装器与自动装箱</h3><ol>
-<li><p>对象包装器<br>有时， 需要将int这样的基本类型转换为对象。所有的基本类型都冇一个与之对应的类。通常，这些类称为包装器(wrapper) 。<br>这些对象包装器类拥有很明显的名字：Integer、Long、Float、Double、Short、Byte、Character 、Void 和Boolean<br> 下面是声明一个ArrayList里面存放int型</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;()；</span><br></pre></td></tr></table></figure>
-<p> 这种方式适用于小型集合，因为其效率比整型数组int[]要低得多，但是添加成员的方便程度要比整型数组要高。</p>
-</li>
-<li><p>自动装箱<br> 幸运的是， 有一个很有用的特性， 从而更加便于添加int 类型的元素到<code>ArrayList&lt;lnteger&gt;</code>中。下面这个调用</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.add(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
-<p> 将自动地变换成</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.add(Integer.value0f(<span class="number">3</span>)) ;</span><br></pre></td></tr></table></figure>
-<p> 这种变换被称为<strong>自动装箱</strong>（autoboxing)。</p>
-</li>
-</ol>
-<h2 id="枚举类"><a href="#枚举类" class="headerlink" title="枚举类"></a>枚举类</h2><h2 id="内部类-2019-7-12更新"><a href="#内部类-2019-7-12更新" class="headerlink" title="内部类(2019-7-12更新)"></a>内部类(2019-7-12更新)</h2><h3 id="内部类中变量的使用"><a href="#内部类中变量的使用" class="headerlink" title="内部类中变量的使用"></a>内部类中变量的使用</h3><p>如果希望访问所在方法的局部变量，那么这个局部变量必须是<strong>有效 final</strong> 的。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyOuter</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> methodOuter&#123;</span><br><span class="line">        <span class="keyword">int</span> num = <span class="number">10</span>;<span class="comment">//所在方法中的局部变量</span></span><br><span class="line"></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">MyInner</span></span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodfInner</span><span class="params">()</span></span>&#123;</span><br><span class="line">                System.out.println(num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>new 出来的对象在堆内存中</li>
-<li>局部变量是跟着方法走的，在栈内存当中.</li>
-<li>方法运行结束之后，立即出栈，局部变量就会立即消失.</li>
-<li>但是 new 出来的对象会在堆持续存在，直到垃圾回收消失。</li>
-<li>最终当内部类需要使用局部变量时吗，会复制一份到自己的堆内存中，如果这个变量是不确定的，与你形式会带来不确定的后果。</li>
-</ol>
-<h3 id="匿名内部类"><a href="#匿名内部类" class="headerlink" title="匿名内部类"></a>匿名内部类</h3><p>如果接口的实现类（或者是父类的子类）只需要使用唯一的一次，那么这种情况下就可以省略掉该类的定义，而改为使用匿名内部类。</p>
-<h2 id="谈谈反射-2019-7-17更新"><a href="#谈谈反射-2019-7-17更新" class="headerlink" title="谈谈反射(2019-7-17更新)"></a>谈谈反射(2019-7-17更新)</h2><p>每个类都有一个 Class 对象，包含了与类有关的信息。当编译一个新类时，会产生一个同名的 .class 文件，该文件内容保存着 Class 对象。</p>
-<p>类加载相当于 Class 对象的加载，类在第一次使用时才动态加载到 JVM 中。也可以使用 Class.forName(“com.mysql.jdbc.Driver”) 这种方式来控制类的加载，该方法会返回一个 Class 对象。</p>
-<p><strong>反射可以提供运行时的类信息，并且这个类可以在运行时才加载进来，甚至在编译时期该类的 .class 不存在也可以加载进来。</strong></p>
-<p>Class 和 java.lang.reflect 一起对反射提供了支持，java.lang.reflect 类库主要包含了以下三个类：</p>
-<p>Field ：可以使用 get() 和 set() 方法读取和修改 Field 对象关联的字段；<br>Method ：可以使用 invoke() 方法调用与 Method 对象关联的方法；<br>Constructor ：可以用 Constructor 的 newInstance() 创建新的对象。</p>
-<h3 id="反射的优点"><a href="#反射的优点" class="headerlink" title="反射的优点"></a>反射的优点</h3><p>可扩展性 ：应用程序可以利用全限定名创建可扩展对象的实例，来使用来自外部的用户自定义类。<br>类浏览器和可视化开发环境 ：一个类浏览器需要可以枚举类的成员。可视化开发环境（如 IDE）可以从利用反射中可用的类型信息中受益，以帮助程序员编写正确的代码。<br>调试器和测试工具 ： 调试器需要能够检查一个类里的私有成员。测试工具可以利用反射来自动地调用类里定义的可被发现的 API 定义，以确保一组测试中有较高的代码覆盖率。</p>
-<h3 id="反射的缺点"><a href="#反射的缺点" class="headerlink" title="反射的缺点"></a>反射的缺点</h3><p>尽管反射非常强大，但也不能滥用。如果一个功能可以不用反射完成，那么最好就不用。在我们使用反射技术时，下面几条内容应该牢记于心。</p>
-<p>性能开销 ：反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。</p>
-<p>安全限制 ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。</p>
-<p>内部暴露 ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如<strong>访问私有的属性和方法</strong>），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。</p>
+        类，超类，子类super
+super与this有些人认为 super 与 this 引用是类似的概念， 实际上， 这样比较并不太恰当。这是因为super 不是一个对象的引用， 不能将 super 赋给另一个对象变量， 它只是一个指示编译器调用超类方法的特殊关键字。
 
+super与构造当子类构造的时候，由于不能对其超类的私有成员进行访问，只能调用超类的构造器。如果子类的构造器没有显式地调用超类...
     
 
         <a href="/2019/03/04/javadaily3/" class="post-more waves-effect waves-button">
@@ -949,17 +543,9 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.</p>
-<p><strong>Example:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: [-2,1,-3,4,-1,2,1,-5,4],</span><br><span class="line">Output: 6</span><br><span class="line">Explanation: [4,-1,2,1] has the largest sum = 6.</span><br></pre></td></tr></table></figure>
-<p><strong>Follow up:</strong></p>
-<p>If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach, which is more subtle.</p>
-<h2 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h2><h3 id="自己的方法"><a href="#自己的方法" class="headerlink" title="自己的方法"></a>自己的方法</h3><p>利用数据结构：无<br>利用算法：动态规划<br>复杂度O(n)</p>
-<p><strong>代码：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> max=nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">int</span> temp=max;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            temp=Math.max(nums[i]+temp,nums[i]);</span><br><span class="line">            max=Math.max(temp, max);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p><strong>思路：</strong><br>无非就是用一个值(temp)储存中间连续元素的和，在用另外一个值(max)表示到目前为止的最大值，首先比较temp加上后一个元素和那个元素不加temp谁大，如果不加temp说明nums[i]更大，便把它的值赋给temp，继续累加，期间不断更新max值；<br>这种记录中间产生变量，并在循环后加以运用的思想被称作动态规划</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>动态规划在这里刚刚浮出水面，我将在后面做一些专门的补充，来说明动态规划的特点和做题时的应用场景</p>
-
+        题目Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
+Example:
+123Input: [-2,1,-3,4,-1,2,1,-5,4],Output: 6Explan...
     
 
         <a href="/2019/03/04/leetcode53/" class="post-more waves-effect waves-button">
@@ -1006,18 +592,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h1 id="三月的主题是治愈"><a href="#三月的主题是治愈" class="headerlink" title="三月的主题是治愈"></a>三月的主题是治愈</h1><h2 id="一些感悟"><a href="#一些感悟" class="headerlink" title="一些感悟"></a>一些感悟</h2><p>最近去电影院看了绿皮书，拍的不错，原谅我只能用很贫瘠的词汇量来形容它，这是一部反映种族歧视问题的电影，很轻松，不沉重，上次看到一个黑人和一个白人为雇主关系还是《触不可及》，但是《触不可及》偏重讲男人之间的友情，而《绿皮书》更侧重于反映不同种族之间的不理解。看的时候鼻子酸酸的，感觉被治愈了，这个月还有一部《夏目友人帐》也是出名的治愈番电影化，恰巧三月是回暖的一个月份，都说西安没有春天，珍惜这份没有被太阳烤热的时间吧。</p>
-<h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p>这是今年写的第一篇总结，其实应该早就写了的，但是总觉得假期并没做很多东西，带到家里的两本书都没看，全都花时间折腾自己的电脑，不得不说备份的重要性。<br>唯一觉得这个暑假的收获可能就是去北京转了转，恰巧那天下雪了，可惜并不知道故宫要提前预约，要不然就能看看雪中的故宫了。但是银装素裹的北海和什刹海也是一种不错的意境。<br>假期本来也就没几天，回来还要干活，自己也给自己放了个假，希望暑假多学习学习。<br>回到学校来就开始帮老师忙项目，忙里偷闲的回顾了一下Java基础知识，然后就开始学习并发，不得不说，并发还是挺难理解的，各种锁，估计要多看几遍了。</p>
-<h2 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h2><h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><p>前两天在Github看见微软前端2天学习课程，clone到了本地也学习了一下，其实就是今天的事情，奈何自己语言水平不过关，看起来比较吃力，一天才看了本该半天就学完了的东西，而且也谈不上深入理解，希望在三月份能把这份课程学习完。<br>前端我一直比较感兴趣，能做到略知一二就行，会一些基本的语言语法就ok。</p>
-<h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><p>三月是Java月（自己编的），这个月要把java并发和jvm全部搞定，参考书籍有：</p>
-<ul>
-<li>《Java并发编程艺术》</li>
-<li>深入理解JVM虚拟机</li>
-</ul>
-<p>这个月主要就和这两本书玩命了</p>
-<h3 id="Leetcode"><a href="#Leetcode" class="headerlink" title="Leetcode"></a>Leetcode</h3><p>感觉现在刷easy有点感觉了，但是讨论区大神有时候给出的方案真的太优美了，什么时候能像他们一样优秀。3月份定的目标是20道leetcode，加油吧！</p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>今天天气不错，给自己点一首《面具》。每当这个时候都斗志满满呀</p>
-
+        三月的主题是治愈一些感悟最近去电影院看了绿皮书，拍的不错，原谅我只能用很贫瘠的词汇量来形容它，这是一部反映种族歧视问题的电影，很轻松，不沉重，上次看到一个黑人和一个白人为雇主关系还是《触不可及》，但是《触不可及》偏重讲男人之间的友情，而《绿皮书》更侧重于反映不同种族之间的不理解。看的时候鼻子酸酸的，感觉被治愈了，这个月还有一部《夏目友人帐》也是出名的治愈番电影化，恰巧三月是回暖的一个月份，都...
     
 
         <a href="/2019/03/03/weeklysummary/" class="post-more waves-effect waves-button">
@@ -1058,81 +633,11 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><h3 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h3><ol>
-<li><p>一个对象变量并没有实际包含一个对象，而仅仅引用一个对象。在Java 中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。new 操作符的返回值也是一个引用。</p>
-</li>
-<li><p><strong>构造器产生机制</strong><br>很多人错误地认为Java 对象变量与C++ 的引用类似。然而，在C++中没有空引用， 并且引用不能被赋值。可以将Java 的对象变量看作C++ 的对象指针。例如，</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Date birthday; <span class="comment">// Java</span></span><br></pre></td></tr></table></figure>
-<p> 实际上， 等同于</p>
- <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Date* birthday; <span class="comment">// C++</span></span><br></pre></td></tr></table></figure>
-<p> 一旦理解了这一点， 一切问题就迎刃而解了。当然， 一个Date* 指针只能通过调用new进行初始化。就这一点而言，c++与Java 的语法几乎是一样的。</p>
- <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Date* birthday = <span class="keyword">new</span> Date() ; <span class="comment">// C++</span></span><br></pre></td></tr></table></figure>
-<p> 如果把一个变量的值賦给另一个变量， 两个变量就指向同一个日期， 即它们是同一个对象的指针。在 Java 中的null 引用对应 C++ 中的 NULL 指针。所有的 Java 对象都存储在堆中。当一个对象包含另一个对象变量时， 这个变量依然包含着指向另一个堆对象的指针。<br> 在 C++ 中，指针十分令人头疼，并常常导致程序错误。稍不小心就会创建一个错误的指针，或者造成内存溢出。在 Java 语言中， 这些问题都不复存在。如果使用一个没有初始化的指针，运行系统将会产生一个运行时错误，而不是生成一个随机的结果，同时，不必担心内存管理问题，垃圾收集器将会处理相关的事宜。<br> C++ 确实做了很大的努力，它通过拷贝型构造器和复制操作符来实现对象的自动拷贝。例如，一个链表（ linked list ) 拷贝的结果将会得到一个新链表，其内容与原始链表相同， 但却是一组独立的链接。这使得将同样的拷贝行为内置在类中成为可能。在 Java 中， 必须使用 clone 方法获得对象的完整拷贝。</p>
-</li>
-<li><p><strong>使用静态工厂方法来代替构造器</strong><br>这个技巧或者说注意事项在effective java中的第一章第一节就强调过，他有很多便捷之处，其中一个重要的就是可以根据产生的具体对象的特征来对方法命名，而构造器只能有一种名字（即类的名字）</p>
-</li>
-<li><p><strong>访问器和更改器</strong><br> 访问器：只访问对象元素，不会对对象本身进行修改<br> 修改器：会对对象本身进行修改<br> 在C++ 中，带有 const 后缀的方法是访问器方法；默认为更改器方法。但是，在Java 语言中，访问器方法与更改器方法在语法上没有明显的区别，</p>
-</li>
-</ol>
-<h3 id="自定义的类"><a href="#自定义的类" class="headerlink" title="自定义的类"></a>自定义的类</h3><ol>
-<li><p><strong>构造器使用注意事项</strong><br>Java 构造器的工作方式与 C++ 一样。但是，要记住所有Java 对象都是在堆中构造的，构造器总是伴随着 new 操作符一起使用。<br>请注意，不要在构造器中定义与<strong>实例域</strong>重名的局部变量。例如，下面的构造器将无法设置 salary 。</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">(St ring n, <span class="keyword">double</span> s, . .</span></span></span><br><span class="line"><span class="function"><span class="params">&#123;</span></span></span><br><span class="line"><span class="function"><span class="params">    String name = n; // Error</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">double</span> salary = s; // Error</span></span></span><br><span class="line"><span class="function"><span class="params">...</span></span></span><br><span class="line"><span class="function"><span class="params">&#125;</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>this与隐式参数<br>在每一个方法中， 关键字 this 表示隐式参数。<br><strong>C++ 注释</strong>： 在 C++ 中， 通常在类的外面定义方法：</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Employee::raiseSalary(<span class="keyword">double</span> byPercent) <span class="comment">// C++, not Java</span></span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 如果在类的内部定义方法，这个方法将自动地成为内联（inline)方法</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Employee</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">int</span> getNameQ&#123;</span><br><span class="line">    <span class="keyword">return</span> name; </span><br><span class="line">&#125; <span class="comment">// inline in C++</span></span><br></pre></td></tr></table></figure>
-<p> 在 Java 中，<strong>所有的方法都必须在类的内部定义，但并不表示它们是内联方法。是否将某个方法设置为内联方法是Java 虚拟机的任务。即时编译器会监视调用那些简洁、经常被调用、没有被重载以及可优化的方法。</strong></p>
-</li>
-</ol>
-<h3 id="静态域与静态方法"><a href="#静态域与静态方法" class="headerlink" title="静态域与静态方法"></a>静态域与静态方法</h3><ol>
-<li><p>静态域<br>如果将域定义为 static , 每个类中<strong>只有一个</strong>这样的域。而每一个对象对于所有的实例域却都有自己的一份拷贝。</p>
-</li>
-<li><p>静态方法<br>静态方法是一种不能向对象实施操作的方法。<br>静态方法不能有实例域， 因为它不能操作对象。但是，静态方法可以访问自身类中的静态域。<br>在下面两种情况下使用静态方法：</p>
-<ul>
-<li>一方法不需要访问对象状态，其所需参数都是通过显式参数提供（例如：Math.pow)</li>
-<li>一个方法只需要访问类的静态域（例如：Employee.getNextld)</li>
-</ul>
-<p><strong>静态工厂方法</strong><br>静态工厂的功能和构造器基本一致，都是产生一个对象实例。<br>为什么这些类不利用构造器完成这些操作呢？这主要有两个原因：</p>
-<ul>
-<li>无法命名构造器。构造器的名字必须与类名相同。但是，这里希望将得到的不同特征的实例采用不用的名字</li>
-<li>当使用构造器时，无法改变所构造的对象类型。只能是自己类型，不能是其子类</li>
-</ul>
-</li>
-<li><p>父类的静态方法能不能被重写？（2019-5-14 更新）<br>答案是不能。因为静态方法从程序开始运行后就已经分配了内存，也就是说已经写死了。所有引用到该方法的对象（父类的对象也好子类的对象也好）所指向的都是同一块内存中的数据，也就是该静态方法。子类中如果定义了相同名称的静态方法，<strong>并不会重写，而应该是在内存中又分配了一块给子类的静态方法</strong>，没有重写这一说。</p>
-</li>
-</ol>
-<h3 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h3><ol>
-<li><p><strong>Java 程序设计语言总是采用按值调用</strong><br> <strong>也就是说，方法得到的是所有参数值的一个拷贝特别是，方法不能修改传递给它的任何参数变量的内容。</strong> 在这里对象是个特殊情况，可以改变传入对象中成员变量的值，但是<strong>基本类型</strong>例如int、boolean并不能改变（不会报错，但跳出方法外值不变，因为变得是拷贝，而不是其本身）</p>
-</li>
-<li><p>然而，虽然对象是特殊情况，但对象仍然是按值调用，不是引用调用；</p>
-<ul>
-<li>一个方法不能修改一个基本数据类型的参数（即<strong>数值型或布尔型</strong>）。</li>
-<li>一个方法可以改变一个对象参数的状态。</li>
-<li>一个方法不能让对象参数引用一个新的对象。</li>
-</ul>
-</li>
-</ol>
-<h2 id="对象与其他"><a href="#对象与其他" class="headerlink" title="对象与其他"></a>对象与其他</h2><h3 id="对象构造"><a href="#对象构造" class="headerlink" title="对象构造"></a>对象构造</h3><ol>
-<li><p>调用另一个构造器<br> 如果构造器的第一个语句形如this(…) ，这个构造器将调用同一个类的另一个构造器。下面是一个典型的例子：</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">(<span class="keyword">double</span> s)</span></span>&#123;</span><br><span class="line">    <span class="comment">// calls Employee(String, double)</span></span><br><span class="line">    <span class="keyword">this</span>(<span class="string">"Employee #"</span> + nextld, s);</span><br><span class="line">    nextld++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 当调用 new Employee(60000) 时，Employee(double) 构造器将调用 Employee(String ，double) 构造器。采用这种方式使用 this 关键字非常有用，这样对公共的构造器代码部分只编写一次即可。</p>
-</li>
-<li><p>对象析构与 finalize 方法<br> 在析构器中，最常见的操作是回收分配给对象的存储空间。由于 Java 有自动的垃圾回收器，不需要人工回收内存，所以 Java 不支持析构器。</p>
-</li>
-</ol>
-<h3 id="包"><a href="#包" class="headerlink" title="包"></a>包</h3><ol>
-<li>包的导入<br>在C++中，与包机制类似的是命名空间（namespace) 。在Java 中，package 与 import 语句类似于 C++ 中的 namespace 和 using 指令。</li>
-</ol>
-<h2 id="类的设计技巧"><a href="#类的设计技巧" class="headerlink" title="类的设计技巧"></a>类的设计技巧</h2><ol>
-<li>一定要保证数据私有</li>
-<li>一定要对数据初始化</li>
-<li>不要在类中使用过多的基本类型</li>
-<li>不是所有的域都需要独立的域访问器和域更改器</li>
-<li>将职责过多的类进行分解</li>
-<li>类名和方法名要能够体现它们的职责</li>
-</ol>
+        类构造器
+一个对象变量并没有实际包含一个对象，而仅仅引用一个对象。在Java 中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。new 操作符的返回值也是一个引用。
 
+构造器产生机制很多人错误地认为Java 对象变量与C++ 的引用类似。然而，在C++中没有空引用， 并且引用不能被赋值。可以将Java 的对象变量看作C++ 的对象指针。例如，
+ 1Date birthday; /...
     
 
         <a href="/2019/02/28/javadaily2/" class="post-more waves-effect waves-button">

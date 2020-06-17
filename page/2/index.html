@@ -185,32 +185,17 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="智能管家SmartButler"><a href="#智能管家SmartButler" class="headerlink" title="智能管家SmartButler"></a>智能管家SmartButler</h2><p>从PT站发现的 Android 练手小项目，慕课网上面的课程，看过视频之后感觉优点还是挺多的</p>
-<ol>
-<li>上手简单</li>
-<li>老师总结一些代码常用模板，有利于之后编程代码结构</li>
-<li>这个框架虽说是 MVC ，但是对于小项目 MVC 也未尝不可，并且框架分类层次分明</li>
-<li>采用许多开源框架</li>
-</ol>
-<p>缺点</p>
-<ol>
-<li>最重要的，年代稍微有些老，对于新版本（Android6.0 之后不太友好）</li>
-<li>虽然采用了许多开源框架，但是对于框架本身并没有做太多的说明，只是轮子的拼接</li>
-<li>部分后台接口发生改变，用不了</li>
-</ol>
-<h2 id="做了一些微小的工作"><a href="#做了一些微小的工作" class="headerlink" title="做了一些微小的工作"></a>做了一些微小的工作</h2><p>对于这个练手项目，肯定是要抱着学习的态度，但同时，还要结合现在新版本来看旧版代码的一些局限性，<br>自己只能做一些微小的工作</p>
-<p>那么接下来，先从很尴尬的运行时权限说起</p>
-<h2 id="运行时权限"><a href="#运行时权限" class="headerlink" title="运行时权限"></a>运行时权限</h2><p>在 Android6.0 之前，安装软件时，会告诉你该软件都需要什么什么权限，但是就算软件告诉你我要你各种隐私，你装个微信还是要装对吧，所以Android6.0很机智的引入了运行时权限这个概念，有些关键性的权限，你在AndroidManifest文件里面声明了，没有用，等到用的时候你还要申请一遍，而且会直接弹出询问UI。</p>
-<p>这个申请的操作，是留给开发者去做的。</p>
-<p>下面来讨论运行时权限在智能管家的应用</p>
-<h3 id="拍照与写入内存"><a href="#拍照与写入内存" class="headerlink" title="拍照与写入内存"></a>拍照与写入内存</h3><p>调用拍照代码中，我们加入版本检测，并在高版本中引入权限请求</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</span><br><span class="line">    <span class="comment">//如果在Android7.0以上,使用FileProvider获取Uri</span></span><br><span class="line">    intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);</span><br><span class="line">    Uri contentUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName()+<span class="string">".fileprovider"</span>, tempFile);</span><br><span class="line">    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);</span><br><span class="line">    Log.e(<span class="string">"getPicFromCamera"</span>, contentUri.toString());</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;    <span class="comment">//否则使用Uri.fromFile(file)方法获取Uri</span></span><br><span class="line">    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这里引入了FileProvider，我们已经在配置文件中声明了</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">provider</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">"androidx.core.content.FileProvider"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:authorities</span>=<span class="string">"com.example.smartbutler.fileprovider"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:grantUriPermissions</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:name</span>=<span class="string">"android.support.FILE_PROVIDER_PATHS"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:resource</span>=<span class="string">"@xml/provider_paths"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">provider</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>首先，FileProvider 是什么？这个我将在后面博客详细说明，<br>那么为什要引入呢？<br>如果我知道一个文件的uri，是不是就可以随意访问了呢？如果没有FileProvider拦着你，确实是这样，但现在更严格了，Android 7.0后新增了对文件跨进程访问的限制，这个限制会造成，如果使用file://uri的方式访问，则会出现android.os.FileUriExposedException的异常。</p>
-<p>注意，配置文件中的 <code>&quot;@xml/provider_paths&quot;</code>,</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">paths</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">external-path</span></span></span><br><span class="line"><span class="tag">        <span class="attr">path</span>=<span class="string">"com.example.smartbutler"</span>  <span class="attr">name</span>=<span class="string">"images"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">root-path</span></span></span><br><span class="line"><span class="tag">        <span class="attr">name</span>=<span class="string">"root_path"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">path</span>=<span class="string">"."</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">paths</span>&gt;</span></span><br></pre></td></tr></table></figure>
+        智能管家SmartButler从PT站发现的 Android 练手小项目，慕课网上面的课程，看过视频之后感觉优点还是挺多的
 
+上手简单
+老师总结一些代码常用模板，有利于之后编程代码结构
+这个框架虽说是 MVC ，但是对于小项目 MVC 也未尝不可，并且框架分类层次分明
+采用许多开源框架
+
+缺点
+
+最重要的，年代稍微有些老，对于新版本（Android6.0 之后不太友好）
+虽然采用了许多开源框...
     
 
         <a href="/2019/10/18/smartbutler1/" class="post-more waves-effect waves-button">
@@ -257,59 +242,12 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="重庆之行"><a href="#重庆之行" class="headerlink" title="重庆之行"></a>重庆之行</h2><p>不知道什么时候西安重庆之间开始有了动车，赶上国庆，就去一趟呗。</p>
-<p>但是果然还是不能调大假期的时候去，当地人民接到通知，不要去几个热门景点和游客抢位置。。以致于第一次去洪崖洞的我望洋兴叹，不过终于在6号晚上得以见到传说中的洪崖洞夜景了。</p>
-<h2 id="洪崖洞"><a href="#洪崖洞" class="headerlink" title="洪崖洞"></a>洪崖洞</h2><p>真的是很美的夜景，一个洪崖洞也把重庆这个城市的立体感展现的淋漓尽致——11楼出来是马路，1楼出来还是马路。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/10/09/chongqing/洪崖洞.jpg" alt="洪崖洞" title>
-                </div>
-                <div class="image-caption">洪崖洞</div>
-            </figure>
-<p>而且特别感谢 iPhone 店里上课的老师，教了一些拍照的小技巧，让我拍照水平有所提高</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/10/09/chongqing/洪崖洞2.jpg" alt="洪崖洞进阶" title>
-                </div>
-                <div class="image-caption">洪崖洞进阶</div>
-            </figure>
-<p>但是说归说，iPhone 本身的拍照水平真的不行，或者说 iPhone 尽可能地还原原本的光影色彩，如果想让艺术高于生活，少不了后期的加工</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/10/09/chongqing/iphone.jpg" alt="iPhone无加工" title>
-                </div>
-                <div class="image-caption">iPhone无加工</div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/10/09/chongqing/B612.jpg" alt="B612" title>
-                </div>
-                <div class="image-caption">B612</div>
-            </figure>
-<p>高下立判，不过其实这种模式也不错，单反不也都是这样吗，需要后期调整色彩。就是有点不够傻瓜（不懂单反，如果说错了多多包涵）</p>
-<h2 id="8D立体城市"><a href="#8D立体城市" class="headerlink" title="8D立体城市"></a>8D立体城市</h2><p>在蜂窝网上评价中有这么一条，叫做“8D立体城市”，我觉得形容的很贴切，在道路高低起伏的重庆里，楼房，交通，桥，这三种元素将空间利用率达到了极致。著名景点李子坝轻轨站就是最好的证明</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/10/09/chongqing/轻轨.jpg" alt="李子坝" title>
-                </div>
-                <div class="image-caption">李子坝</div>
-            </figure>
-<h2 id="次火锅er"><a href="#次火锅er" class="headerlink" title="次火锅er~"></a>次火锅er~</h2><p>来了重庆，怎么能不吃火锅呢，有点遗憾的是我点的全都是微辣，不能完全领略重庆火锅的魅力，但对于我来说，这个辣度已经相当辣了。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/10/09/chongqing/火锅.jpg" alt="重庆火锅" title>
-                </div>
-                <div class="image-caption">重庆火锅</div>
-            </figure>
-<h2 id="2019年没有假期"><a href="#2019年没有假期" class="headerlink" title="2019年没有假期"></a>2019年没有假期</h2><p>至此，2019年所有假期都已经用完，再放假就是元旦了，现在要好好收收心，搞科研咯。</p>
-<p>PS.发这篇文章真的无语，hexo又抽了，下午查问题查了半个多小时。。</p>
+        重庆之行不知道什么时候西安重庆之间开始有了动车，赶上国庆，就去一趟呗。
+但是果然还是不能调大假期的时候去，当地人民接到通知，不要去几个热门景点和游客抢位置。。以致于第一次去洪崖洞的我望洋兴叹，不过终于在6号晚上得以见到传说中的洪崖洞夜景了。
+洪崖洞真的是很美的夜景，一个洪崖洞也把重庆这个城市的立体感展现的淋漓尽致——11楼出来是马路，1楼出来还是马路。
 
+                
+ ...
     
 
         <a href="/2019/10/09/chongqing/" class="post-more waves-effect waves-button">
@@ -356,25 +294,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="SharePreference应用"><a href="#SharePreference应用" class="headerlink" title="SharePreference应用"></a>SharePreference应用</h2><p>在App中，需要暂时存储的，我们可以利用SharePreference，我们把存储的轻量级数据，例如一个字符串，一个数字，写入shared preferences。当我们需要数据，再从中读取</p>
-<h2 id="何为-sharedPreference"><a href="#何为-sharedPreference" class="headerlink" title="何为 sharedPreference"></a>何为 sharedPreference</h2><p>shared preferences本质上就是文件系统中的文件，可使用SharedPreferences类读写它。<br>SharedPreferences实例用起来更像一个键值对仓库（类似于Bundle），但它可以通过<strong>持久化</strong>存储保存数据。（也就意味着应用关闭之后仍然有效）键值对中的键为字符串，而值是原子数据类型。进一步查看shared preferences文件可知，它们实际上是一种简单的 XML 文件，但SharedPreferences类已屏蔽了读写文件的实现细节。shared preferences文件保存在应用沙盒中，所以，不应用它保存类似密码这样的敏感信息。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/28/sharepreference/sp.png" alt="XML文件格式" title>
-                </div>
-                <div class="image-caption">XML文件格式</div>
-            </figure>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>请看下面代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QueryPreferences</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PREF_SEARCH_QUERY = <span class="string">"searchQuery"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getStoredQuery</span><span class="params">(Context context)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> PreferenceManager.getDefaultSharedPreferences(context)</span><br><span class="line">                .getString(PREF_SEARCH_QUERY, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setStoredQuery</span><span class="params">(Context context, String query)</span></span>&#123;</span><br><span class="line">        PreferenceManager.getDefaultSharedPreferences(context)</span><br><span class="line">                .edit()</span><br><span class="line">                .putString(PREF_SEARCH_QUERY, query)</span><br><span class="line">                .apply();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>QueryPreference 类中，我们定义了两个方法，分别用来存储信息和取出信息。由于我们存储的键值对只有一种，且维持一个，所以我们在类的一开始把 Key 固定。<br>值得注意的是，我们要传递上下文信息 Context ，只有找到自己 context对应的 SharedPrefernce 才可以找到与之对应的键值对。</p>
-<p>需要补充的是，现在android原生库中的sharedPreference被官方标注为不推荐使用。具体原因其实是 扩展库中的 sharedPreference 支持更多的存储类型，可以看一下 Google 开发者在18年11月发布的一段<a href="https://www.youtube.com/watch?v=PS9jhuHECEQ" target="_blank" rel="noopener">新特性视频</a>其中介绍了关于扩展库中 sharedPreference 的特性。<br>我们选择 sharedPreference 时，引进扩展库 androidx 即可，函数逻辑基本一致</p>
-<p>引进库代码：</p>
-<p><code>java
-implementation &quot;androidx.preference:preference:1.1.0&quot;
-`</code></p>
-<p>在build.gradle</p>
-
+        SharePreference应用在App中，需要暂时存储的，我们可以利用SharePreference，我们把存储的轻量级数据，例如一个字符串，一个数字，写入shared preferences。当我们需要数据，再从中读取
+何为 sharedPreferenceshared preferences本质上就是文件系统中的文件，可使用SharedPreferences类读写它。SharedPr...
     
 
         <a href="/2019/09/28/sharepreference/" class="post-more waves-effect waves-button">
@@ -421,83 +342,9 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="从-AsyncTask-说起"><a href="#从-AsyncTask-说起" class="headerlink" title="从 AsyncTask 说起"></a>从 AsyncTask 说起</h2><p>在<a href="https://allenmistake.top/2019/09/17/httpurlconnection/" target="_blank" rel="noopener">Android网络库之HttpURLConnection与数据解析</a>我们提到了利用 AsyncTask 在后台运行耗时操作。</p>
-<p>AsyncTask是执行后台线程的最简单方式，但它不适用于那些重复且长时间运行的任务。虽然耗时操作在后台运行，不会使系统崩溃，但是我们如果加载图片不能等它全都下载之后一起显示（内存占用也是一个问题）。</p>
-<p>考虑到上面的问题，很多应用通常会选择仅在需要显示图片时才需要下载。</p>
-<h2 id="主线程"><a href="#主线程" class="headerlink" title="主线程"></a>主线程</h2><p>Android系统中，线程使用的收件箱叫作消息队列（message queue）。使用消息队列的线程叫作消息循环（message loop）。消息循环会循环检查队列上是否有新消息。消息循环由线程和looper组成。Looper对象管理着线程的消息队列。主线程就是个消息循环，因此也拥有looper。主线程的所有工作都是由其looper完成的。looper不断从消息队列中抓取消息，然后完成消息指定的任务。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ThumbnailDownloader&lt;PhotoHolder&gt; mThumbnailDownloader;</span><br><span class="line">...</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setRetainInstance(<span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">new</span> FetchItemsTask().execute();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 HandlerThread</span></span><br><span class="line">    mThumbnailDownloader = <span class="keyword">new</span> ThumbnailDownloader&lt;&gt;();</span><br><span class="line">    <span class="comment">// 初始化Looper</span></span><br><span class="line">    mThumbnailDownloader.start();</span><br><span class="line">    mThumbnailDownloader.getLooper();</span><br><span class="line">    Log.i(TAG, <span class="string">"Background thread started"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroyView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDestroyView();</span><br><span class="line">    mThumbnailDownloader.clearQueue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>ThumbnailDownloader的 <code>getLooper()</code> 方法是在 <code>start()</code> 方法之后调用的。（稍后会学习更多有关Looper的知识）这能保证线程就绪，避免潜在竞争（尽管极少发生）。因为 <code>getLooper()</code> 方法能执行成功，说明 <code>onLooperPrepared()</code> 方法肯定早已完成。这样，queueThumbnail（）方法因Handler为空而调用失败的情况就能避免了。</li>
-<li>在 <code>onDestroy()</code> 方法内调用 <code>quit()</code> 方法结束线程。这非常关键。如不终止 HandlerThread ，它会一直运行下去，成为僵尸。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(@NonNull PhotoHolder photoHolder, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    GalleryItem galleryItem = mGalleryItems.get(position);</span><br><span class="line">    Drawable placeholder = getResources().getDrawable(R.drawable.bill_up_close);</span><br><span class="line">    photoHolder.bindDrawable(placeholder);</span><br><span class="line">    <span class="comment">// 获取图片 url 传入，添加下载任务</span></span><br><span class="line">    mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Handler、Looper、Message-结构分析"><a href="#Handler、Looper、Message-结构分析" class="headerlink" title="Handler、Looper、Message 结构分析"></a>Handler、Looper、Message 结构分析</h2><h3 id="剖析Message"><a href="#剖析Message" class="headerlink" title="剖析Message"></a>剖析Message</h3><p>Message需要自己定义三个变量，分别是</p>
-<ul>
-<li>What：用户定义的int型消息代码，用来描述消息</li>
-<li>obj：用户指定，随消息发送的对象</li>
-<li>target：处理消息的 Handler</li>
-</ul>
-<h3 id="剖析-Handler"><a href="#剖析-Handler" class="headerlink" title="剖析 Handler"></a>剖析 Handler</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/21/handler/handler1.png" alt="结构图" title>
-                </div>
-                <div class="image-caption">结构图</div>
-            </figure>
-<p>作用：创建、发布、处理 Message</p>
-<p>我们来说一下 Handler 使用时的流程，结合一下代码分析。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">queueThumbnail</span><span class="params">(T target, String url)</span></span>&#123;</span><br><span class="line">    Log.i(TAG, <span class="string">"Got a URL: "</span>+url);</span><br><span class="line">    <span class="keyword">if</span>(url == <span class="keyword">null</span>)&#123;</span><br><span class="line">        mRequestMap.remove(target);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 使用一个标记下载请求的T类型作为key，</span></span><br><span class="line">        <span class="comment">// 我们可以存取和请求关联的URL下载链接</span></span><br><span class="line">        <span class="comment">// 这个标记对象是PhotoHolder， 下载结果就能很方便的发送给显示图片的UI元素</span></span><br><span class="line">        mRequestMap.put(target, url);</span><br><span class="line">        <span class="comment">// 将下载消息添加到后台线程的消息队列中</span></span><br><span class="line">        mRequestHandler.obtainMessage(MESSAGE_DOWNLOAD, target)</span><br><span class="line">            .sendToTarget();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>我们在obtainMessage(…)  方法获取消息，紧接着用让这个Message调用 sendToTarget() 方法将其发送给它的Handler，Handler 会将这个Message放置在 Looper 消息队列的尾部。</li>
-<li>Looper 取得消息队列中的Message后，会将他发送给消息的目标Handler去处理。消息一般实在目标 Handler 的 Handler.handleMessage(…) 实现方法中进行处理的。</li>
-</ol>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/21/handler/handler2.png" alt="Handler创建、发送Message" title>
-                </div>
-                <div class="image-caption">Handler创建、发送Message</div>
-            </figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onLooperPrepared</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mRequestHandler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(@NonNull Message msg)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(msg.what == MESSAGE_DOWNLOAD)&#123;</span><br><span class="line">                T target = (T)msg.obj;</span><br><span class="line">                Log.i(TAG, <span class="string">"Got a request for URL: "</span> + mRequestMap.get(target));</span><br><span class="line">                <span class="comment">// 获取图片的耗时操作</span></span><br><span class="line">                handleRequest(target);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上述代码中，我们是在 <code>onLooperPrepared()</code> 方法里实现 <code>Handler.handleMessage(...)</code> 方法的。HandlerThread.onLooperPrepared() 是在Looper首次检查消息队列之前调用，所以该方法是创建Handler实现的好地方。</p>
-<p>在Handler.handleMessage(…)方法中，首先检查<strong>消息类型</strong>(what)，再获取<strong>obj</strong>值（T类型下载请求），然后将其传递给handleRequest(…)方法处理。（前面说过，队列中的下载消息取出并可以处理时，就会触发调用Handler.handleMessage(…)方法。handleRequest() 方法是下载执行的地方。在这里，确认URL有效后，就将它传递给FlickrFetchr新实例。确切地说，此处使用的是<a href="https://allenmistake.top/2019/09/17/httpurlconnection/" target="_blank" rel="noopener">Android网络库之HttpURLConnection与数据解析</a>中创建的FlickrFetchr.getUrlBytes(…)方法。</p>
-<h3 id="传递-Handler"><a href="#传递-Handler" class="headerlink" title="传递 Handler"></a>传递 Handler</h3><p>我们使用 mRequestHandler，已经可以从主线程安排后台任务。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/21/handler/handler3" alt="从主线程安排 ThumbnailDownloader 上的任务" title>
-                </div>
-                <div class="image-caption">从主线程安排 ThumbnailDownloader 上的任务</div>
-            </figure>
-<p>反过来，也可以从后台线程使用与主线程关联的Handler，安排主线任务</p>
-<p>![从ThumbnailDownloader线程上规划主线程任务]</p>
-<p>主线程是一个拥有 handler 和 Looper 的消息循环。主线程上创建的 Handler 会自动与它的 Looper 相关联。主线程上创建的这个  Handler 也可以传递给另一线程。传递出去的 Handler 与创建它的线程 Looper 始终保持着联系。因此，已传出 Handler 负责处理的所有消息都将在主线程的消息队列中处理。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HandlerThread 文件</span></span><br><span class="line"><span class="comment">// 来自主线程的 Handler</span></span><br><span class="line"><span class="keyword">private</span> Handler mResponseHandler;</span><br><span class="line"><span class="keyword">private</span> ThumbnailDownloadListener&lt;T&gt; mThumbnailDownloadListener;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新增监听器接口 响应下载请求</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ThumbnailDownloadListener</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onThumbnailDownloaded</span><span class="params">(T target, Bitmap bitmap)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setThumbnailDownloadListener</span><span class="params">(ThumbnailDownloadListener&lt;T&gt; listener)</span></span>&#123;</span><br><span class="line">    mThumbnailDownloadListener = listener;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThumbnailDownloader</span><span class="params">(Handler responseHandler)</span></span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(TAG);</span><br><span class="line">    mResponseHandler = responseHandler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主线程创建的Handler</span></span><br><span class="line">Handler responseHandler = <span class="keyword">new</span> Handler();</span><br><span class="line"></span><br><span class="line">mThumbnailDownloader = <span class="keyword">new</span> ThumbnailDownloader&lt;&gt;(responseHandler);</span><br><span class="line">mThumbnailDownloader.setThumbnailDownloadListener(</span><br><span class="line">    <span class="keyword">new</span> ThumbnailDownloader.ThumbnailDownloadListener&lt;PhotoHolder&gt;() &#123;</span><br><span class="line">        <span class="comment">// 实现接口中的抽象方法，来更新UI</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onThumbnailDownloaded</span><span class="params">(PhotoHolder photoHolder, Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">            Drawable drawable = <span class="keyword">new</span> BitmapDrawable(getResources(), bitmap);</span><br><span class="line">            photoHolder.bindDrawable(drawable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<p>那么就有一个疑问了，如果在这里面更新UI，那么在PhotoAdapter中的 <code>onBindViewHolder()</code> 中的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());</span><br></pre></td></tr></table></figure>
-<p>是什么用途呢？</p>
-<p>其实显而易见 <code>queueThumbnail()</code> 方法的作用是向消息队列中添加下载请求，而下载之后负责更新UI是利用在主线程创建的 mResponseHandler 处理的。</p>
-<p>说回正题，现在，通过mResponseHandler，ThumbnailDownloader能够使用与主线程 Looper 绑定的 Handler。同时，还有ThumbnailDownloadListener 使用返回的 Bitmap 执行UI更新操作。具体来说，就是通过 onThumbnailDownloaded 实现，使用新下载的 Bitmap 来设置 PhotoHolder 的 Drawable。</p>
-<p>我们在 handleRequest 方法中添加下面代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mResponseHandler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(mRequestMap.get(target) != url || mHasQuit)&#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mRequestMap.remove(target);</span><br><span class="line">        mThumbnailDownloadListener.onThumbnailDownloaded(target, bitmap);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>Message设有回调方法属性后，取出队列的消息是不会发给target Handler的。相反，存储在回调方法中的 Runnable 的 <code>run()</code> 方法会直接执行。</p>
-<p>那么上述代码有什么作用呢？</p>
-<ul>
-<li>首先，它再次检查 requestMap。这很有必要，因为 RecyclerView 会循环使用其视图。在ThumbnailDownloader下载完成 Bitmap 之后，RecyclerView可能循环使用了 PhotoHolder 并相应请求了一个不同的URL。该检查可保证每个PhotoHolder都能获取到正确的图片，即使中间发生了其他请求也无妨。</li>
-<li>接下来，检查mHasQuit值。如果ThumbnailDownloader已经退出，运行任何回调方法可能都不太安全。</li>
-<li>最后，从requestMap中删除配对的PhotoHolder-URL，然后将位图设置到目标PhotoHolder上。</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后，我们做一个流程总结，当然，很多细节我没有写在里面，例如mResponse的监听器接口、清理队列、处理完一个Handler之后在Map中删除相应的target，仅供参考。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/21/handler/handler5.png" alt="流程总结" title>
-                </div>
-                <div class="image-caption">流程总结</div>
-            </figure>
-<p>之后会从源码的角度继续分析Android的Handler机制。</p>
-
+        从 AsyncTask 说起在Android网络库之HttpURLConnection与数据解析我们提到了利用 AsyncTask 在后台运行耗时操作。
+AsyncTask是执行后台线程的最简单方式，但它不适用于那些重复且长时间运行的任务。虽然耗时操作在后台运行，不会使系统崩溃，但是我们如果加载图片不能等它全都下载之后一起显示（内存占用也是一个问题）。
+考虑到上面的问题，很多应用通常会选择仅...
     
 
         <a href="/2019/09/21/handler/" class="post-more waves-effect waves-button">
@@ -544,83 +391,16 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>一直想写一篇关于计算机网络的总结，这次算是实现了，肯定不会一次性写完， 我会不定期的更新， 感兴趣的朋友可以持续关注一下。</p>
-<h2 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h2><h3 id="七层模型（从下到上排序）"><a href="#七层模型（从下到上排序）" class="headerlink" title="七层模型（从下到上排序）"></a>七层模型（从下到上排序）</h3><ul>
-<li><p><strong>物理层</strong></p>
-<p>  建立、维护、断开物理连接</p>
-</li>
-<li><p><strong>数据链路层</strong>  </p>
-<p>  建立逻辑连接、进行硬件地址寻址、差错校验等功能。将比特组合成字节进而组合成帧，用MAC地址访问介质，错误发现但不能纠正。</p>
-</li>
-<li><p><strong>网络层</strong></p>
-<p>  进行逻辑地址寻址，实现不同网络之间的路径选择。<br>  我们熟悉的 IP 协议，还有 ARP、ICMP都是在这一层</p>
-</li>
-<li><p><strong>传输层</strong></p>
-<p>  定义传输数据的协议端口号，以及流控和差错校验。<br>  最著名的就是TCP、UDP</p>
-</li>
-<li><p><strong>会话层</strong></p>
-<p>  建立、管理、终止会话。</p>
-</li>
-<li><p><strong>表示层</strong></p>
-<p>  数据的表示、安全、压缩</p>
-</li>
-<li><p><strong>应用层</strong></p>
-<p>  网络服务的用户的接口。直接与用户相连。日常使用的HTTP、HTTPS都是在这一层。</p>
-</li>
-</ul>
-<h3 id="五层协议"><a href="#五层协议" class="headerlink" title="五层协议"></a>五层协议</h3><p>我们重点了解现在的五层模型，在七层模型的基础上，将数据链路层和物理层合并为网络接口层，应用层、表示层、会话层合并为应用层。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/18/net/mod.png" alt="HTTP协议传输时报文内容结构变化" title>
-                </div>
-                <div class="image-caption">HTTP协议传输时报文内容结构变化</div>
-            </figure>
-<p>下面我们专门说几个重点的层级、协议</p>
-<h2 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h2><p>这一层其实没什么可说的， 他们把上一层（网络层）数据报加头和尾，封装成帧， 其中包含源 MAC 地址 和目的 MAC 地址。<br>这里的差错控制方式基本没有，只有差错检验(CRC)， 那么数据链路层是怎么知道目的地址的 MAC 地址呢？<br>这就要说到网络层的 ARP 和 RARP 协议</p>
-<h2 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h2><h3 id="ARP-和-RARP协议"><a href="#ARP-和-RARP协议" class="headerlink" title="ARP 和 RARP协议"></a>ARP 和 RARP协议</h3><p>ARP（地址解析）协议是一种解析协议，本来主机是完全不知道这个IP对应的是哪个主机的哪个接口，当主机要发送一个IP包的时候，会首先查一下自己的ARP高速缓存（就是一个IP-MAC地址对应表缓存）。</p>
-<p>如果查询的IP-MAC值对不存在，那么主机就向网络发送一个ARP协议广播包，这个广播包里面就有待查询的IP地址，而直接收到这份广播的包的所有主机都会查询自己的IP地址。如果收到广播包的某一个主机发现自己符合条件，那么就准备好一个包含自己的MAC地址的ARP包传送给发送ARP广播的主机。</p>
-<p>而广播主机拿到ARP包后会更新自己的ARP缓存（就是存放IP-MAC对应表的地方）。发送广播的主机就会用新的ARP缓存数据准备好数据链路层的的数据包发送工作。</p>
-<p>RARP协议的工作与此相反，不做赘述。</p>
-<h3 id="IP-协议"><a href="#IP-协议" class="headerlink" title="IP 协议"></a>IP 协议</h3><p>注意，IP 是不可靠传输协议，他并没有提供数据传达以后的差错控制机制。</p>
-<h3 id="TCP、UDP"><a href="#TCP、UDP" class="headerlink" title="TCP、UDP"></a>TCP、UDP</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/18/net/tcpudp.bmp" alt="TCP、UDP" title>
-                </div>
-                <div class="image-caption">TCP、UDP</div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/18/net/协议.jpg" alt="TCP、UDP相应应用层协议" title>
-                </div>
-                <div class="image-caption">TCP、UDP相应应用层协议</div>
-            </figure>
-<p>什么时候应该使用TCP？<br>当对网络通讯质量有要求的时候，比如：整个数据要准确无误的传递给对方，这往往用于一些要求可靠的应用，比如HTTP、HTTPS、FTP等传输文件的协议，POP、SMTP等邮件传输的协议。</p>
-<p>什么时候应该使用UDP？<br>当对网络通讯质量要求不高的时候，要求网络通讯速度能尽量的快，这时就可以使用UDP。<br>例如：QQ电话、QQ视频</p>
-<h2 id="TCP连接的建立与终止"><a href="#TCP连接的建立与终止" class="headerlink" title="TCP连接的建立与终止"></a>TCP连接的建立与终止</h2><h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><ol>
-<li>客户端 - &gt; 服务端 （SYN = 1， Seq = X）</li>
-<li>服务端 - &gt; 客户端 （SYN = 1, ACK = X + 1, Seq = Y）</li>
-<li>客户端 - &gt; 服务端 （ACK = Y + 1, Seq = Z）</li>
-</ol>
-<p><strong>为什么要三次握手？</strong><br>如果有消息在传输的过程中由于某些原因没有及时传到服务端，等到在传到服务端的时候，服务端已经不需要了，但是此时接收到过期消息的服务端仍然认为这是一个请求建立连接的报文，那么他就会向客户端发送一个确认连接（第二次握手），如果仅有两次握手，此时连接建立，而客户端并没有消息传入服务端，（本来就是服务端自作多情嘛），那么服务端就会一直变为等待消息传入状态，造成资源浪费。</p>
-<h3 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h3><ol>
-<li>主动方 - &gt;  被动方（Fin = 1，ACK = Z Seq = X）</li>
-<li>被动方 - &gt; 主动方 （ACK = X + 1, Seq = Z）</li>
-<li>被动方 - &gt; 主动方 （Fin = 1， ACK = X, Seq = Y）</li>
-<li>主动方 - &gt; 被动方 （ACK = Y, Seq = X）</li>
-</ol>
-<p>关于四次挥手，我本人是比较生疏的，所以这里我分别解释一下4次挥手的含义</p>
-<ol>
-<li>主动方表示：我没有数据要发给你了 进入FIN_WAIT_1状态</li>
-<li>被动方表示：我同意了，稍等 主动方收到之后，进入FIN_WAIT_2状态（半连接，等待被动方忙完手头工作）</li>
-<li>被动方表示：关闭连接吧 被动方正式进入LAST_ACK状态 主动方进入</li>
-<li>主动方表示：好的 主动方进入 TIME_WAIT状态， 被动方接收之后关闭连接，主动方等2MSL之后没有收到回复，也关闭连接</li>
-</ol>
-<p>为什么要进行四次挥手呢？<br>TCP协议是一种面向连接的、可靠的、基于字节流的运输层通信协议。TCP是全双<br>工模式，也就是你传给我的同时我也可以传给你。这就意味着，当主机1发出FIN报文段时，只是表示主机1已经没有数据要发送了，主机1告诉主机2，它的数据已经全部发送完毕了；但是，这个时候主机1还是可以接受来自主机2的数据；当主机2返回ACK报文段时，表示它已经知道主机<br>1没有数据发送了，但是主机2还是可以发送数据到主机1的；当主机2也发送了FIN报文段时，这个时候就表示主机2也没有数据要发送了，就会告诉主机1，我也没有数据要发送了，之后彼此就会愉快的中断这次TCP连接。</p>
-<h2 id="Http请求和响应"><a href="#Http请求和响应" class="headerlink" title="Http请求和响应"></a>Http请求和响应</h2><p>（未完待续）</p>
+        一直想写一篇关于计算机网络的总结，这次算是实现了，肯定不会一次性写完， 我会不定期的更新， 感兴趣的朋友可以持续关注一下。
+网络模型七层模型（从下到上排序）
+物理层
+  建立、维护、断开物理连接
 
+数据链路层  
+  建立逻辑连接、进行硬件地址寻址、差错校验等功能。将比特组合成字节进而组合成帧，用MAC地址访问介质，错误发现但不能纠正。
+
+网络层
+  进行逻辑地址寻址，实现不同网络之间的路径...
     
 
         <a href="/2019/09/18/net/" class="post-more waves-effect waves-button">
@@ -667,37 +447,8 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="网络连接基本"><a href="#网络连接基本" class="headerlink" title="网络连接基本"></a>网络连接基本</h2><p>对于 Android 中的网络问题， 我们要着重学习其中的工作原理，这篇文章主要来说一说 Android 自己的库中，是怎样利用 Http 协议请求数据的。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">byte</span>[] getUrlBytes(String urlSpec) <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">    URL url = <span class="keyword">new</span> URL(urlSpec);</span><br><span class="line">    HttpURLConnection connection = (HttpURLConnection) url.openConnection();</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        ByteArrayOutputStream out = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">        InputStream in = connection.getInputStream();</span><br><span class="line">        <span class="keyword">if</span>(connection.getResponseCode() != HttpURLConnection.HTTP_OK)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IOException(connection.getResponseMessage() +</span><br><span class="line">                    <span class="string">":with "</span> +</span><br><span class="line">                    urlSpec);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> bytesRead = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">while</span>((bytesRead = in.read(buffer)) &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            out.write(buffer, <span class="number">0</span>, bytesRead);</span><br><span class="line">        &#125;</span><br><span class="line">        out.close();</span><br><span class="line">        <span class="keyword">return</span> out.toByteArray();</span><br><span class="line">    &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">        connection.disconnect();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>getUrlBytes（String）方法能从指定URL获取原始数据并返回一个字节流数组。getUrlString<br>（String）方法则将getUrlBytes（String）方法返回的结果转换为String。</p>
-<p> 在 getUrlBytes( String ) 方法中，首先<strong>根据传入的字符串参数</strong>，如 <a href="https://www.baidu.com" target="_blank" rel="noopener">https://www.baidu.com</a> （顺带提一句，http后面的s时一定要加的），<strong>创建一个 URL对象</strong>。然后调用 openConnection() 方法创建一个<strong>指向要访问URL的连接对象</strong>。URL.openConnection() 方法默认返回的是 URLConnection 对象， 但要链接的是http URL， 因此需将其强制类型转换为 HttpURLConnection 对象。这让我们得以调用他的 <code>getInputStream()</code> 、<code>getResponseCode()</code> 方法。</p>
-<p>虽然 HttpURLConnection 对象提供了一个连接欸， 但只有调用 getInputStream() 方法时（如果是 POST 请求， 则调用 getOutputStream() 方法）， 它才会真正连接到指定的URL地址，才会给你反馈代码。</p>
-<h2 id="AsyncTask-在后台线程上运行代码"><a href="#AsyncTask-在后台线程上运行代码" class="headerlink" title="AsyncTask 在后台线程上运行代码"></a>AsyncTask 在后台线程上运行代码</h2><p>首先在主程序中创建一个内部类来声明 AsyncTask 工具类，定义自己要在线程中做什么耗时操作</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">FetchItemsTask</span> <span class="keyword">extends</span> <span class="title">AsyncTask</span>&lt;<span class="title">Void</span>, <span class="title">Void</span>, <span class="title">Void</span>&gt;</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Void <span class="title">doInBackground</span><span class="params">(Void... params)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            String result = <span class="keyword">new</span> FlickrFetchr().getUrlString(<span class="string">"https://www.baidu.com"</span>); </span><br><span class="line">            Log.i(TAG,<span class="string">"Fetched contents of URL:"</span> + result);</span><br><span class="line">        &#125; <span class="keyword">catch</span>(IOException ioe)&#123;</span><br><span class="line">            Log.e(TAG,<span class="string">"Failed to fetch URL:"</span>, ioe);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>随后，我们在 fragnment 主程序中调用 让AsyncTask在后台运行</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setRetainInstance(<span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">new</span> FetchItemsTask().execute();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用 <code>execute()</code> 方法会启动 AsyncTask， 进而触发后台线程并调用 <code>doInBackground(...)</code>方法。</p>
-<h2 id="Android中的线程"><a href="#Android中的线程" class="headerlink" title="Android中的线程"></a>Android中的线程</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/17/httpurlconnection/线程.png" alt="Android中的线程" title>
-                </div>
-                <div class="image-caption">Android中的线程</div>
-            </figure>
-<p>关于线程的详细说明，会在下一篇中展开介绍，JSON解析有待补充</p>
-<h2 id="网络中-JSON-解析"><a href="#网络中-JSON-解析" class="headerlink" title="网络中 JSON 解析"></a>网络中 JSON 解析</h2><p>当浏览器向服务器请求数据时，成功之后服务器会返回数据，这个数据的格式多种多样，其中有XML，HTML，JSON，在这里面我们用 JSON 举个例子。请看下面代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;GalleryItem&gt; <span class="title">fetchItems</span><span class="params">()</span></span>&#123;</span><br><span class="line">    List&lt;GalleryItem&gt; items = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        String url = Uri.parse(<span class="string">"https://api.flickr.com/services/rest/"</span>)</span><br><span class="line">                .buildUpon()</span><br><span class="line">                .appendQueryParameter(<span class="string">"method"</span>, <span class="string">"flickr.photos.getRecent"</span>)</span><br><span class="line">                .appendQueryParameter(<span class="string">"api_key"</span>, API_KEY)</span><br><span class="line">                .appendQueryParameter(<span class="string">"format"</span>, <span class="string">"json"</span>)</span><br><span class="line">                .appendQueryParameter(<span class="string">"nojsoncallback"</span>, <span class="string">"1"</span>)</span><br><span class="line">                .appendQueryParameter(<span class="string">"extras"</span>, <span class="string">"url_s"</span>)</span><br><span class="line">                .build().toString();</span><br><span class="line">        String jsonString = getUrlString(url);</span><br><span class="line">        Log.i(TAG, <span class="string">"Received JSON: "</span> + jsonString);</span><br><span class="line">        JSONObject jsonBody = <span class="keyword">new</span> JSONObject(jsonString);</span><br><span class="line">        parseItems(items, jsonBody);</span><br><span class="line">    &#125;<span class="keyword">catch</span> (IOException ioe)&#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"Failed to fetch items？？？"</span>, ioe);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (JSONException je) &#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"Failed to parse"</span>, je);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> items;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从程序上来看，我们首先构建了请求URL，随后 <code>getURLString()</code> 来获取返回的数据，官方的API中含有getRecent方法， 我们首先指定请求的具体方法，然后输入ID来获取请求资格， 注意，有些网页默认返回 XML 格式数据，我们需要指定 format 为 json。</p>
-<p>当然，我们现在获取的 JSON 是乱糟糟的一坨，我们需要从这里面找到我们真正需要的数据，请看下面代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将读到的json分name解析</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">parseItems</span><span class="params">(List&lt;GalleryItem&gt; items, JSONObject jsonBody)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> IOException, JSONException</span>&#123;</span><br><span class="line">    <span class="comment">// 通过JSON解析，注意JSON获取的是对象树结构，详细结构参考下图</span></span><br><span class="line">    JSONObject photosJsonObject = jsonBody.getJSONObject(<span class="string">"photos"</span>);</span><br><span class="line">    JSONArray photoJsonArray = photosJsonObject.getJSONArray(<span class="string">"photo"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; photoJsonArray.length(); i++)&#123;</span><br><span class="line">        <span class="comment">// 获取JSONArray中每一个成员，加入List</span></span><br><span class="line">        JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);</span><br><span class="line"></span><br><span class="line">        GalleryItem item = <span class="keyword">new</span> GalleryItem();</span><br><span class="line">        item.setId(photoJsonObject.getString(<span class="string">"id"</span>));</span><br><span class="line">        item.setCaption(photoJsonObject.getString(<span class="string">"title"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!photoJsonObject.has(<span class="string">"url_s"</span>))&#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        item.setUrl(photoJsonObject.getString(<span class="string">"url_s"</span>));</span><br><span class="line">        items.add(item);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/09/17/httpurlconnection/json解析.png" alt="JSON数据解析过程" title>
-                </div>
-                <div class="image-caption">JSON数据解析过程</div>
-            </figure>
-
+        网络连接基本对于 Android 中的网络问题， 我们要着重学习其中的工作原理，这篇文章主要来说一说 Android 自己的库中，是怎样利用 Http 协议请求数据的。
+12345678910111213141516171819202122public byte[] getUrlBytes(String urlSpec) throws IOException&#123;    URL url...
     
 
         <a href="/2019/09/17/httpurlconnection/" class="post-more waves-effect waves-button">
@@ -742,20 +493,8 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="饿汉模式"><a href="#饿汉模式" class="headerlink" title="饿汉模式"></a>饿汉模式</h2><p>特点：基于类加载机制， 避免了多线程的同步问题，在类加载时期就已经生成。所以必定只有唯一一个。同时会降低类加载速度，而且如果这个实例不会被使用，会造成内存浪费。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="懒汉模式（线程不安全）"><a href="#懒汉模式（线程不安全）" class="headerlink" title="懒汉模式（线程不安全）"></a>懒汉模式（线程不安全）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="title">Singketon</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance == <span class="keyword">null</span>)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="懒汉模式（线程安全）"><a href="#懒汉模式（线程安全）" class="headerlink" title="懒汉模式（线程安全）"></a>懒汉模式（线程安全）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance == <span class="keyword">null</span>)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="双重检查模式（DCL）"><a href="#双重检查模式（DCL）" class="headerlink" title="双重检查模式（DCL）"></a>双重检查模式（DCL）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class)&#123;</span><br><span class="line">                <span class="keyword">if</span>(instance == <span class="keyword">null</span>)&#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h2><p>特点：首先我们要明确一点，类加载的时候，外部类中的静态内部类是不会被加载的，只有在被调用的时候才会被加载。<br>这也是静态内部类方法区别于饿汉模式的地方。只有在 <code>getInstance()</code> 方法被调用后，才会产生实例，且唯一。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.sInstance;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton sInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="枚举单例"><a href="#枚举单例" class="headerlink" title="枚举单例"></a>枚举单例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton&#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomeThing</span><span class="params">()</span></span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
-<li>整个项目需要一个共享访问点或共享数据</li>
-<li>创建一个对象需要消耗的资源过多， 比如访问 I/O 或者数据库等资源。</li>
-<li>工具类对象</li>
-</ul>
-
+        饿汉模式特点：基于类加载机制， 避免了多线程的同步问题，在类加载时期就已经生成。所以必定只有唯一一个。同时会降低类加载速度，而且如果这个实例不会被使用，会造成内存浪费。
+1234567public class Singleton&#123;    private static Singleton instance = new Singleton();    private Singleton...
     
 
         <a href="/2019/09/15/singleton/" class="post-more waves-effect waves-button">
@@ -800,8 +539,8 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>我发现hexo博客部署真的有太多问题，最近又出现了很多之前没有出现过的小毛病，虽说不是致命问题，但也是很恶心。</p>
-<p>所以考虑之后还是转到CSDN里面，尽管广告界面杂乱，但好在部署方便，这二者未来要好好权衡一下。</p>
+        我发现hexo博客部署真的有太多问题，最近又出现了很多之前没有出现过的小毛病，虽说不是致命问题，但也是很恶心。
+所以考虑之后还是转到CSDN里面，尽管广告界面杂乱，但好在部署方便，这二者未来要好好权衡一下。
 
     
 
@@ -843,28 +582,9 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="从逐渐被弱化的ListView说起"><a href="#从逐渐被弱化的ListView说起" class="headerlink" title="从逐渐被弱化的ListView说起"></a>从逐渐被弱化的ListView说起</h2><p>说到ListView，它曾经是Android UI开发中用的最多的组件之一，直到现在，很多应用还是用的ListView结构，但是现在逐渐被 androidx 中的 RecyclerView 所取代。</p>
-<p>ListView的布局是自己实现的，</p>
-<h2 id="使用ViewHolder提高运行效率"><a href="#使用ViewHolder提高运行效率" class="headerlink" title="使用ViewHolder提高运行效率"></a>使用ViewHolder提高运行效率</h2><p>ViewHolder 模式是提高 ListView 效率的一个很重要的方法。 ViewHolder 模式充分利用了 ListView 的视图缓存机制，避免了每次在调用 getView() 都通过 findViewById() 实例化控件。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getView</span><span class="params">(<span class="keyword">int</span> position，View convertView，ViewGroup parent)</span></span>&#123;</span><br><span class="line">    Fruit fruit = getItem(position);</span><br><span class="line">    View view;</span><br><span class="line">    ViewHolder viewHolder;</span><br><span class="line">    <span class="keyword">if</span>(convertView == <span class="keyword">null</span>&#123;</span><br><span class="line">        view = LayoutInflater.from(getContext()).inflate(resourceId，parent，<span class="keyword">false</span>);</span><br><span class="line">        viewHolder = <span class="keyword">new</span> ViewHolder();</span><br><span class="line">        viewHolder.fruitImage=(ImageViewview.findViewById(R.id.fruit_image);</span><br><span class="line">        viewHolder.fruitName=(TextViewview.findViewById(R.id.fruit_name);</span><br><span class="line">        view.setTag(viewHolder);</span><br><span class="line">    <span class="comment">//将 ViewHolder存储在View中</span></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        view = convertView;</span><br><span class="line">        <span class="comment">//通过Tag找到缓存的布局</span></span><br><span class="line">        viewHolder = (ViewHolder)view.getTag());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//重新获取ViewHolder viewHolder.fruitImage.setImageResource(fruit.getImageId(;</span></span><br><span class="line">    viewHolder.fruitName.setText(fruit.getName());</span><br><span class="line">    <span class="keyword">return</span> view;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="孰优孰劣"><a href="#孰优孰劣" class="headerlink" title="孰优孰劣"></a>孰优孰劣</h2><p>在谷歌建议使用recyclerView的现在，为什么我们还在这里讨论孰优孰劣呢？</p>
-<p>那么我们就先看看两个组件的优缺点：</p>
-<p>ListView：<br><strong>优点</strong>：</p>
-<ul>
-<li>轻量级，当 view 只提供显示功能的话，代码简单。<br><strong>缺点</strong>：</li>
-<li>实现功能相对有限，如果对于子view有更多功能要求的话，代码复杂。</li>
-<li>只能纵向滑动，实现横向滑动代码复杂。</li>
-<li>性能较差，需要自己改善代码，避免内存泄露。</li>
-</ul>
-<p>RecyclerView<br><strong>优点</strong>：</p>
-<ul>
-<li>集成多个接口，功能强大。</li>
-<li>由于交给LayoutManager，可实现各种滑动方向。</li>
-<li>有完善的回收机制。<br><strong>缺点</strong>：</li>
-<li>重量级，实现简单功能代码量较大。</li>
-</ul>
-<p>所以说，对于一些功能简单的应用程序来说，ListView已经足够用了。例如现在微信中的卡券，由于没有实现复杂的动画以及其他事件，用ListView是刚好合适的。</p>
-
+        从逐渐被弱化的ListView说起说到ListView，它曾经是Android UI开发中用的最多的组件之一，直到现在，很多应用还是用的ListView结构，但是现在逐渐被 androidx 中的 RecyclerView 所取代。
+ListView的布局是自己实现的，
+使用ViewHolder提高运行效率ViewHolder 模式是提高 ListView 效率的一个很重要的方法。 View...
     
 
         <a href="/2019/08/22/listview-vs-recyclerview/" class="post-more waves-effect waves-button">
@@ -905,50 +625,11 @@ implementation &quot;androidx.preference:preference:1.1.0&quot;
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="项目中的逻辑结构图"><a href="#项目中的逻辑结构图" class="headerlink" title="项目中的逻辑结构图"></a>项目中的逻辑结构图</h2><p><img src="/2019/08/16/fragmentdata/对话.png" alt="CrimeFragment 和 DatePickerFragment间的对话"></p>
-<p>主要思想：</p>
-<ul>
-<li>要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。</li>
-<li>要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityResult(…)方法，并传入准备好的Intent参数</li>
-</ul>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/08/16/fragmentdata/事件流.png" alt="CrimeFragment 和 DatePickerFragment间的事件流" title>
-                </div>
-                <div class="image-caption">CrimeFragment 和 DatePickerFragment间的事件流</div>
-            </figure>
-<h2 id="argument回顾"><a href="#argument回顾" class="headerlink" title="argument回顾"></a>argument回顾</h2><p>在之前Activity 和 Fragment 传值的过程中，我们使用了 Argument，下面我们回顾一下我们是如何使用它的。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/08/16/fragmentdata/args.png" alt="Argument使用" title>
-                </div>
-                <div class="image-caption">Argument使用</div>
-            </figure>
-<p>为满足以上要求，通常添加名为 newInstance() 的静态方法给 Fragment类。使用该方法，完成fragment实例及Bundle对象的创建，然后将argument 放入bundle中，最后附加给fragment。</p>
-<p>托管activity需要fragment实例时，转而调用newInstance() 方法，而非直接调用其构造函数。并且，为满足fragment创建argument的要求，activity可给newInstance()传入任何需要的参数</p>
-<h2 id="传值"><a href="#传值" class="headerlink" title="传值"></a>传值</h2><p>那么，fragment之间传值同样也需要借助argument</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//DatePickerFragment 中的 newInstance 方法，返回一个DPF实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DatePickerFragment <span class="title">newInstance</span><span class="params">(Date date)</span></span>&#123;</span><br><span class="line">    Bundle args = <span class="keyword">new</span> Bundle();</span><br><span class="line">    args.putSerializable(ARG_DATE, date);</span><br><span class="line">    DatePickerFragment fragment = <span class="keyword">new</span> DatePickerFragment();</span><br><span class="line">    fragment.setArguments(args);</span><br><span class="line">    <span class="keyword">return</span> fragment;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当然，与之对应，在 CrimeFragment 中创建 dialog 语句也要改成调用 newInstance 的形式</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//CrimeFragment 中点击事件开启DatePickerFragment</span></span><br><span class="line">DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());</span><br></pre></td></tr></table></figure>
-<p>另外，这里的Date不能直接被 DatePickerFragment 所识别，我们需要对 DatePickerFragment 所接收到的 Date 进行处理，当然这不是重点，这里不展开。</p>
-<h2 id="返回更新数据"><a href="#返回更新数据" class="headerlink" title="返回更新数据"></a>返回更新数据</h2><p>首先，我们要弄清这两个fragment之间的关系。如果是activity的数据回传，我们调用startActivityForResult(…)方法，ActivityManager负责跟踪管理activity父子关系。回传数据后，子activity被销毁，但ActivityManager知道接收数据是哪个activity。</p>
-<h3 id="设置目标fragment-关联"><a href="#设置目标fragment-关联" class="headerlink" title="设置目标fragment(关联)"></a>设置目标fragment(关联)</h3><p>可将CrimeFragment设置成DatePickerFragment的Target fragment。<br>这样，在CrimeFragment 和 DatePickerFragment 被销毁并重建后，操作系统会重新关联他们。调用以下方法可建立这种关联</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTargetFragment</span><span class="params">(Fragment fragment, <span class="keyword">int</span> requestCode)</span></span></span><br></pre></td></tr></table></figure>
-<p>在CrimeFragment 中，创建请求代码常量，然后将CrimeFragment设为DatePickerFragment 实例的目标fragment<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> REQUEST_DATE = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//在onCreatView中设置按钮监听器</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        FragmentManager manager = getFragmentManager();</span><br><span class="line">        DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());</span><br><span class="line">        dialog.setTargetFragment(CrimeFragment.<span class="keyword">this</span>, REQUEST_DATE);</span><br><span class="line">        dialog.show(manager, DIALOG_DATE);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="传递数据给目标fragment-传值"><a href="#传递数据给目标fragment-传值" class="headerlink" title="传递数据给目标fragment(传值)"></a>传递数据给目标fragment(传值)</h3><p>处理有同一个activity托管的两个fragment之间的数据返回时，可借用Fragment.onActivityResult(…)方法。因此，直接调用目标fragment的Fragment.onActivityResult(…)方法，就能实现数据回传。需要以下信息：</p>
-<ul>
-<li>请求代码：与传入 setTargetFragment(…) 方法的代码相匹配，告诉目标 fragment 返回结果来自哪里</li>
-<li>结果代码：决定下一步该采取什么行动</li>
-<li>Intent：包含extra数据</li>
-</ul>
-<p>我们来看一下具体怎么做的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXTRA_DATE = <span class="string">"com.example.criminalintent.date"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sendResult</span><span class="params">(<span class="keyword">int</span> resultCode, Date date)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(getTargetFragment() == <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">    intent.putExtra(EXTRA_DATE, date);</span><br><span class="line"></span><br><span class="line">    getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>随后，我们将 DatePickerFragment 的确定按钮点击事件修改为调用sendResult(…)方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> AlertDialog.Builder(getActivity())</span><br><span class="line">    .setView(v)</span><br><span class="line">    .setTitle(R.string.date_picker_title)</span><br><span class="line">    .setPositiveButton(android.R.string.ok, <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialogInterface, <span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> year = mDatePicker.getYear();</span><br><span class="line">            <span class="keyword">int</span> month = mDatePicker.getMonth();</span><br><span class="line">            <span class="keyword">int</span> day = mDatePicker.getDayOfMonth();</span><br><span class="line">            Date date = <span class="keyword">new</span> GregorianCalendar(year, month, day).getTime();</span><br><span class="line">            sendResult(Activity.RESULT_OK, date);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
-<p>最后，在CrimeFragment接收数据</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="keyword">int</span> resultCode, Intent data)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(resultCode != Activity.RESULT_OK)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(requestCode == REQUEST_DATE)&#123;</span><br><span class="line">        Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);</span><br><span class="line">        mCrime.setDate(date);</span><br><span class="line">        updateDate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateDate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mDateButton.setText(mCrime.getDateStr());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        项目中的逻辑结构图
+主要思想：
+
+要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。
+要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityRe...
     
 
         <a href="/2019/08/16/fragmentdata/" class="post-more waves-effect waves-button">

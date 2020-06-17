@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.allenmistake.top/"/>
-  <updated>2020-06-17T09:01:31.595Z</updated>
+  <updated>2020-06-17T09:35:46.117Z</updated>
   <id>http://www.allenmistake.top/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://www.allenmistake.top/2020/06/17/musicInSummer/"/>
     <id>http://www.allenmistake.top/2020/06/17/musicInSummer/</id>
     <published>2020-06-17T08:38:53.000Z</published>
-    <updated>2020-06-17T09:01:31.595Z</updated>
+    <updated>2020-06-17T09:35:46.117Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>夏天到了，有点闷，来点音乐~</p>        <div id="aplayer-xsXnUTsk" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">            <pre class="aplayer-lrc-content"></pre>        </div>        <script>          var ap = new APlayer({            element: document.getElementById("aplayer-xsXnUTsk"),            narrow: false,            autoplay: false,            showlrc: false,            music: {              title: "月半弯",              author: "陈坤",              url: "月半弯.mp3",              pic: "/2020/06/17/musicInSummer/月半弯.jfif",              lrc: ""            }          });          window.aplayers || (window.aplayers = []);          window.aplayers.push(ap);        </script>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><!-- Summer Coming~ --><p>夏天到了，有点闷，来点音乐~</p>        <div id="aplayer-cHrDsVfN" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">            <pre class="aplayer-lrc-content"></pre>        </div>        <script>          var ap = new APlayer({            element: document.getElementById("aplayer-cHrDsVfN"),            narrow: false,            autoplay: false,            showlrc: false,            music: {              title: "月半弯",              author: "陈坤",              url: "月半弯.mp3",              pic: "/2020/06/17/musicInSummer/月半弯.jfif",              lrc: ""            }          });          window.aplayers || (window.aplayers = []);          window.aplayers.push(ap);        </script>]]></content>
     
     <summary type="html">
     

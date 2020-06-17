@@ -185,40 +185,12 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="从功能说起"><a href="#从功能说起" class="headerlink" title="从功能说起"></a>从功能说起</h2><p>ViewPager 是什么？是一种布局结构，并且还是一个类。<br>当为UI添加ViewPager后，用户可左右滑动屏幕，切换查看不同列表项的明细页面。</p>
-<h2 id="需要做哪些工作"><a href="#需要做哪些工作" class="headerlink" title="需要做哪些工作"></a>需要做哪些工作</h2><p>为了添加ViewPager具体功能实现，我们要做以下工作：</p>
-<ul>
-<li>创建 Activity 实例，这个 Activity 里来存放 ViewPager 视图</li>
-<li>定义包含 ViewPager 的视图层级结构</li>
-<li>在 Activity 类中关联使用 ViewPager 以及 Adapter</li>
-</ul>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/08/15/viewpager/结构.png" alt="项目中MVC层级结构" title>
-                </div>
-                <div class="image-caption">项目中MVC层级结构</div>
-            </figure>
-<p>通过这个结构图我们可以看出，通过点击事件 CrimeListFragment 来启动 CrimePagerActivity ，并且CrimePagerActivity 中包含了一个 ViewPager</p>
-<h2 id="PagerAdapter"><a href="#PagerAdapter" class="headerlink" title="PagerAdapter"></a>PagerAdapter</h2><p>ViewPager 需要 PagerAdapter 的支持， Google提供了PagerAdapter的子类FragmentStatePaferAdapter ，它能协助处理许多事情。如下面代码所示</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">FragmentManager fragmentManager = getSupportFragmentManager();</span><br><span class="line">mViewPager.setAdapter(<span class="keyword">new</span> FragmentStatePagerAdapter(fragmentManager) &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Fragment <span class="title">getItem</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        Crime crime = mCrimes.get(position);</span><br><span class="line">        <span class="keyword">return</span> CrimeFragment.newInstance(crime.getId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mCrimes.size();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>FragmentStatePagerAdapter 提供了两个有用的方法，我们必须进行方法覆盖</p>
-<ul>
-<li><code>getItem(int)</code> 获取并显示crime 数组中指定位置的Crime时，他会返回配置过得CrimeFragment来显示指定的Crime</li>
-<li><code>getCount()</code> 返回数组列表中包含的列表项数目</li>
-</ul>
-<p>注意，创建FragmentStatePagerAdapter实例需要FragmentManager</p>
-<h2 id="FragmentStatePagerAdapter-与FragmentPagerAdapter"><a href="#FragmentStatePagerAdapter-与FragmentPagerAdapter" class="headerlink" title="FragmentStatePagerAdapter 与FragmentPagerAdapter"></a>FragmentStatePagerAdapter 与FragmentPagerAdapter</h2><ul>
-<li>区别：前者在滑动过后，调用 remove() 方法将 fragment 移除。而后者不会移除，只是销毁了视图，fragment 实例还保存在 FragmentManager 中。</li>
-<li>应用：由此看来，后者会占用大量内存来换取加载速度，所以前者在大容量 fragment 的情况下，例如每个 fragment 都是一个高清图片且数量上百上千，那么适合用前者。如果数量少或者比较重视响应or加载速度，建议用后者，加载速度快。</li>
-</ul>
-<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><h3 id="为何不用RecyclerView"><a href="#为何不用RecyclerView" class="headerlink" title="为何不用RecyclerView"></a>为何不用RecyclerView</h3><p>上一篇博客提到，RecyclerView也可以提供横着翻的实例，为什么不用它呢？</p>
-<p>由于无法使用现有的fragment， 因此在 CriminalIntent 应用中使用 RecyclerView 需处理大量内部实现工作。Adapter 需要我们及时地提供View。然而，决定 fragment 视图何时创建的是 FragmentManager 。因此， 当RecyclerView 要求Adapter提供fragment视图时，我们无法立即创建fragment并提供视图。<br>所以，核心的区别在于Adapter和PagerAdapter的区别。</p>
-<h3 id="PagerAdapter-1"><a href="#PagerAdapter-1" class="headerlink" title="PagerAdapter"></a>PagerAdapter</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destoryItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View view, Object object)</span></span></span><br></pre></td></tr></table></figure>
-<p>PagerAdapter.instantiateItem告诉pager adapter创建指定位置的列表项视图， 然后将其添加给ViewGroup视图容器， 而destroyItem告诉pager adapter销毁已建视图。<br>视图创建完成之后，ViewPager会在某个时间点看到它。未确定该视图所属对象， ViewPager会调用isViewFromObject，这里的Obj是instantiateItem返回的对象。因此假设ViewPager调用instantiateItem(ViewGroup, 5)返回A对象，那么只要传入的View参数是第5个对象的视图，isViewFromObject(View, A)方法就应该返回true，否则返回false。</p>
-<p>当然，以上这些其实都封装在了FragemntPagerAdapter和FragemntStatePagerAdapter 中，当我们使用的时候并不需要具体实现。</p>
-<p>(2019-8-20更新)<br>注意：这里面 FragmentStatePagerAdapter 并不是绝对的退出视野就调用 destoryItem ,当我在Android 模拟器里观察内部调用机制时，我们发现pagerAdapter会保留三个视图，当前视图，上一个视图和下一个视图，猜测是方便加载。举个例子，当我们从第二个视图跳转到第一个视图时，并不会调用 <code>creatItem()</code>，因为 3 -&gt; 2 时已经预先创建了 1。</p>
+        从功能说起ViewPager 是什么？是一种布局结构，并且还是一个类。当为UI添加ViewPager后，用户可左右滑动屏幕，切换查看不同列表项的明细页面。
+需要做哪些工作为了添加ViewPager具体功能实现，我们要做以下工作：
 
+创建 Activity 实例，这个 Activity 里来存放 ViewPager 视图
+定义包含 ViewPager 的视图层级结构
+在 Activity 类中...
     
 
         <a href="/2019/08/15/viewpager/" class="post-more waves-effect waves-button">
@@ -259,41 +231,11 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="RecyclerView、ViewHolder和Adapter"><a href="#RecyclerView、ViewHolder和Adapter" class="headerlink" title="RecyclerView、ViewHolder和Adapter"></a>RecyclerView、ViewHolder和Adapter</h2><p>首先，我们要明确这三个类各自的任务和逻辑结构。</p>
-<p>RecyclerView 任务仅限于回收和定位屏幕上的 View ，RecyclerView 自身不会创建视图， 他通过 Adapter 创建。</p>
-<p>Adapter 是一个控制器对象， 从模型层获取数据， 然后提供给 RecyclerView 显示，是沟通的桥梁。 他负责：</p>
-<ol>
-<li>创建必要的 ViewHolder</li>
-<li>绑定 ViewHolder 至模型层数据<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/08/13/recyclerview/adapter.png" alt="Adpater 与 RecyclerView 之间的桥梁" title>
-                </div>
-                <div class="image-caption">Adpater 与 RecyclerView 之间的桥梁</div>
-            </figure>
-</li>
-</ol>
-<p>ViewHolder 负责容纳 View 视图<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/08/13/recyclerview/桥梁.png" alt="ViewHolder 配合 RecyclerView 使用" title>
-                </div>
-                <div class="image-caption">ViewHolder 配合 RecyclerView 使用</div>
-            </figure></p>
-<h2 id="使用-RecyclerView"><a href="#使用-RecyclerView" class="headerlink" title="使用 RecyclerView"></a>使用 RecyclerView</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mCrimeRecyclerView = view.findViewById(R.id.crime_recycler_view);</span><br><span class="line">mCrimeRecyclerView.setLayoutManager(<span class="keyword">new</span> LinearLayoutManager(getActivity()));</span><br></pre></td></tr></table></figure>
-<p>当我们创建一个 RecyclerView 时， 我们首先要对他进行布局加载， 更要注意的是托管给 LayoutManager。没有 LayoutManager 的支持， 不仅 RecyclerView 无法正常工作， 还会导致应用崩溃。这是为什么呢？实际上， RecyclerView 不会亲自摆放屏幕上的列表项， 摆放的任务委托给了 LayoutManager。 LayoutManager 还负责定义屏幕上的滚动行为（竖着滚还是横着滚等等） </p>
-<h2 id="ViewHolder-显示视图"><a href="#ViewHolder-显示视图" class="headerlink" title="ViewHolder 显示视图"></a>ViewHolder 显示视图</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CrimeHolder</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CrimeHolder</span><span class="params">(LayoutInflater inflater, ViewGroup parent)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(inflater.inflate(R.layout.list_item_crime, parent, <span class="keyword">false</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在 CrimeHolder 的构造方法中， 我们首先实例化list_item_crime布局，然后传给 super 方法， 也就是 ViewHolder 的构造方法。 基类ViewHolder 因而实际引用这个视图。</p>
-<h2 id="Adapter架起桥梁（绑定ViewHolder）"><a href="#Adapter架起桥梁（绑定ViewHolder）" class="headerlink" title="Adapter架起桥梁（绑定ViewHolder）"></a>Adapter架起桥梁（绑定ViewHolder）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CrimeAdapter</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">Adapter</span>&lt;<span class="title">CrimeHolder</span>&gt;</span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> List&lt;Crime&gt; mCrimes;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">CrimeAdapter</span><span class="params">(List&lt;Crime&gt; crimes)</span></span>&#123;</span><br><span class="line">            mCrimes = crimes;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> mCrimes.size();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@NonNull</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> CrimeHolder <span class="title">onCreateViewHolder</span><span class="params">(@NonNull ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> CrimeHolder(layoutInflater, parent);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(@NonNull CrimeHolder holder, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">            Crime crime = mCrimes.get(position);</span><br><span class="line">            <span class="comment">//令每个ViewHolder绑定数据，具体bind函数略</span></span><br><span class="line">            holder.bind(crime);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>RecyclerView 需要新的ViewHolder 来显示列表时，会调用 onCcreateViewHolder 方法。在这个方法内部， 我们创建一个 LayoutInflater， 然后用他创建 CrimeHolder。</p>
-<p>CrimeAdapter 必须覆盖 onBindViewHolder 方法。<br>桥梁的具体过程：</p>
-<ul>
-<li>首先，调用 Adapter 的 getItemCount() 方法， RecyclerView 询问数组里列表中包含多少个对象。</li>
-<li>接着，RecyclerView  调用 Adapter 的 onCreateViewHolder(ViewGroup, int) 方法创建 ViewHolder 及其要显示的视图。</li>
-<li>最后，RecyclerView 会传入 ViewHolder 及其位置， 调用 onBindViewHolder(ViewHolder, int)方法。Adapter 会找到目标位置的数据并将其绑定到 ViewHolder 的视图上。所谓绑定，就是使用模型数据填充视图。</li>
-</ul>
-<h2 id="最后，别忘了关联-Adapter-和-RecyclerView"><a href="#最后，别忘了关联-Adapter-和-RecyclerView" class="headerlink" title="最后，别忘了关联 Adapter 和 RecyclerView"></a>最后，别忘了关联 Adapter 和 RecyclerView</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateUI</span><span class="params">()</span></span>&#123;</span><br><span class="line">        CrimeLab crimeLab = CrimeLab.get(getActivity());</span><br><span class="line">        List&lt;Crime&gt; crimes = crimeLab.getCrimes();</span><br><span class="line">        mAdapter = <span class="keyword">new</span> CrimeAdapter(crimes);</span><br><span class="line">        <span class="comment">//将具体的 RecyclerView 和 Adapter 关联到一起</span></span><br><span class="line">        mCrimeRecyclerView.setAdapter(mAdapter);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+        RecyclerView、ViewHolder和Adapter首先，我们要明确这三个类各自的任务和逻辑结构。
+RecyclerView 任务仅限于回收和定位屏幕上的 View ，RecyclerView 自身不会创建视图， 他通过 Adapter 创建。
+Adapter 是一个控制器对象， 从模型层获取数据， 然后提供给 RecyclerView 显示，是沟通的桥梁。 他负责：
 
+创建必要的...
     
 
         <a href="/2019/08/13/recyclerview/" class="post-more waves-effect waves-button">
@@ -334,20 +276,10 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="六月工作总结"><a href="#六月工作总结" class="headerlink" title="六月工作总结"></a>六月工作总结</h2><p>六月做的最有意义的事情就是尝试了 Flutter 这个新技术，与此同时也通过一件事明白了一个道理，这件事情有时间我会详细讲。不过首先就 Flutter 来讲：</p>
-<ul>
-<li>学习一种语言如何使用是很简单的，像 Flutter，学习怎么布局和添加组件时容易的，但是Flutter的渲染机制是怎么样的，你只知道是60FPS，但是她是怎么做到60FPS的，要做到知其然又要知其所以然。</li>
-<li>项目很重要，但自己的理解同样重要，做一个简单的小项目不如花点时间把内核思想理解了，把源码看一看，把机制熟悉熟悉。</li>
-<li>可以扩展到其他任何学习，Java、JVM、数据结构与算法，不能死记硬背，拿我们最常见的快排来说，不能只是背一下代码，更重要的是知道他的排序过程，做到根据过程知道代码怎么写。</li>
-</ul>
-<h2 id="七月展望"><a href="#七月展望" class="headerlink" title="七月展望"></a>七月展望</h2><ul>
-<li>数据结构与算法</li>
-<li>Java基础知识</li>
-<li>做小项目来理解原理部分</li>
-<li>并发何网络编程这块最好结合视频观看，有实战操作会好很多</li>
-</ul>
-<h2 id="其他感悟"><a href="#其他感悟" class="headerlink" title="其他感悟"></a>其他感悟</h2><p>电脑前些日子又坏了，最近重装了一下系统，配置环境越来越熟练了，这种老物件还是有点感情在里面的，希望他能陪我走完研究生旅程。</p>
+        六月工作总结六月做的最有意义的事情就是尝试了 Flutter 这个新技术，与此同时也通过一件事明白了一个道理，这件事情有时间我会详细讲。不过首先就 Flutter 来讲：
 
+学习一种语言如何使用是很简单的，像 Flutter，学习怎么布局和添加组件时容易的，但是Flutter的渲染机制是怎么样的，你只知道是60FPS，但是她是怎么做到60FPS的，要做到知其然又要知其所以然。
+项目很重要，但...
     
 
         <a href="/2019/07/03/newtrip/" class="post-more waves-effect waves-button">
@@ -388,56 +320,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Dart是一个<strong>单线程</strong>的语言，遇到有延迟的运算（比如IO操作、延时执行）时，线程中按顺序执行的运算就会阻塞，用户就会感觉到卡顿，于是通常用异步处理来解决这个问题。当遇到有需要延迟的运算（async）时，将其放入到延迟运算的队列（await）中去，把不需要延迟运算的部分先执行掉，最后再来处理延迟运算的部分。和 Java 中的多线程不同，dart 采用的基于事件的异步模型。简单说就是在某个单线程中存在一个事件循环和一个事件队列，事件循环不断的从事件队列中取出事件来执行，因此，耗时事件不会阻塞整个事件循环，这让它后面的事件也会有机会得到执行。讲到这里，你想起来什么了么。对！Android 中的多线程 Handler/Looper 也是采取这个模式！</p>
-<h2 id="async-和-await"><a href="#async-和-await" class="headerlink" title="async 和 await"></a>async 和 await</h2><p>async 和 await 在项目中的耗时操作有很大应用空间，例如登陆等待操作、网络请求操作。下面我们利用官方文档来具体说明 async 的用途和具体执行流程</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span>;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="keyword">void</span>&gt; printDailyNewsDigest() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> newsDigest = <span class="keyword">await</span> gatherNewsReports();</span><br><span class="line">  <span class="built_in">print</span>(newsDigest);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">  printDailyNewsDigest();</span><br><span class="line">  printWinningLotteryNumbers();</span><br><span class="line">  printWeatherForecast();</span><br><span class="line">  printBaseballScore();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">printWinningLotteryNumbers() &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Winning lotto numbers: [23, 63, 87, 26, 2]'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">printWeatherForecast() &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"Tomorrow's forecast: 70F, sunny."</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">printBaseballScore() &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Baseball score: Red Sox 10, Yankees 0'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> news = <span class="string">'&lt;gathered news goes here&gt;'</span>;</span><br><span class="line"><span class="keyword">const</span> oneSecond = <span class="built_in">Duration</span>(seconds: <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Imagine that this function is more complex and slow. :)</span></span><br><span class="line">Future&lt;<span class="built_in">String</span>&gt; gatherNewsReports() =&gt;</span><br><span class="line">    Future.delayed(oneSecond, () =&gt; news);</span><br></pre></td></tr></table></figure>
-<p>其中，gatherNewsReport 执行耗时操作，如果不将这个函数进行异步处理，代码执行将会受到阻塞。当使用了异步处理之后，执行顺序如下图所示：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/27/flutterapp4/async-await.png" alt="异步程序执行顺序" title>
-                </div>
-                <div class="image-caption">异步程序执行顺序</div>
-            </figure>
-<p>可以看到，程序的执行顺序如下</p>
-<ol>
-<li>程序开始执行</li>
-<li>main 函数同步执行 <code>printDailyNewsDigest()</code> 这个异步函数</li>
-<li><code>printDailyNewsDigest()</code> 利用 await 关键词调用<code>gatherNewsReports()</code>耗时操作，并开始执行.</li>
-<li><code>gatherNewsReports()</code> 函数返回一个未完成的 future (一个 <code>Future&lt;String&gt;</code> 实例).</li>
-<li>因为 <code>printDailyNewsDigest()</code> 是一个异步函数并且正在 await 一个返回值, 他<strong>暂停执行</strong>并给调用它的main函数返回一个未完成的 future (在这个例子中, 是一个 <code>Future&lt;void&gt;</code> 实例)</li>
-<li>剩余的 print 函数被执行，由于他们是同步的，每个函数都可以在下一个函数调用之前被完全执行. </li>
-<li>当 <code>main()</code> 函数结束, 异步函数被重新执行. 首先, gatherNewsReports() 返回一个已经完成确定的future值(<code>Future&lt;String&gt;</code>). 随后 <code>printDailyNewsDigest()</code> 函数继续执行打印 news.</li>
-<li>当 <code>printDailyNewsDigest()</code> 函数执行完毕, 给 main 函数返回的 future(<code>Future&lt;void&gt;</code>)也完成了, app 退出.</li>
-</ol>
-<p>关于异步的讨论，我们在这里先告一段落，之后会更详细的了解，现在只需要知道执行的顺序。下面我们来说一说 firebase。</p>
-<h2 id="firebase"><a href="#firebase" class="headerlink" title="firebase"></a>firebase</h2><p>Firebase 让移动端应用具有访问后端服务的能力，包括鉴权、存储、数据库以及无服务器托管的服务。国内的话应该类似于 Bmob 系统，不过感觉 firebase 网络体验要差一些，毕竟谷歌的东西。</p>
-<p>第一次配置firebase，首先要注册一个firebase账号，如果有的话直接登录就可以。接下来步骤依次是</p>
-<ol>
-<li>pubspec.yaml，添加 cloud_firestore 依赖包并保存（如果出现问题打开 <code>android/app/build.gradle</code>，然后找到 minSdkVersion 16 这一行，把这一行改为 minSdkVersion 21，并保存文件。）</li>
-<li>在你的 Firebase console 中，点击 Add project，新建一个 Firebase 项目；</li>
-<li>在 Flutter 项目目录中，打开文件 <code>android/app/src/main/AndroidManifest.xml</code>；在 manifest 中，找到 package 属性中的值，它代表的是 Android 的包名（类似于 com.yourcompany.yourproject 这样的）复制这个值；这个值填入 package name；</li>
-<li>点击 Register App；在 Firebase 中按照里面的步骤下载 google-services.json 文件；回到 Flutter 应用目录，将 google-services.json（就是你刚刚下载的文件）放入到 android/app 目录中；</li>
-<li>在 IDE 或者编辑器中，打开 android/app/build.gradle 文件，然后将下列这一行粘贴到文本中：</li>
-</ol>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.google.gms.google-services'</span></span><br></pre></td></tr></table></figure>
-<ol start="6">
-<li><p>打开 android/build.gradle 文件，然后在里面的 buildscript 标签下，新增一个依赖：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  dependencies &#123;</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">      classpath <span class="string">'com.google.gms:google-services:3.2.1'</span>   <span class="comment">// new</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在 cloud firestore 中添加自己的数据集</p>
-</li>
-</ol>
-<h2 id="获取数据"><a href="#获取数据" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Widget _buildBody(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> StreamBuilder&lt;QuerySnapshot&gt;(</span><br><span class="line">    stream: Firestore.instance.collection(<span class="string">'user'</span>).snapshots(),</span><br><span class="line">    builder: (context, snapshot) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!snapshot.hasData) </span><br><span class="line">        <span class="keyword">return</span> LinearProgressIndicator();</span><br><span class="line">      <span class="keyword">return</span> _buildList(context, snapshot.data.documents);</span><br><span class="line">    &#125;,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当然，在这之前别忘了导入包。然后我们利用 <code>Firestore.instance.collection(&#39;user&#39;).snapshots()</code> 语句得到对应的数据集，即声明中的Collection，将这些文件传给snapshot</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//读取firebase数据</span></span><br><span class="line">DocumentSnapshot ds;</span><br><span class="line"><span class="built_in">List</span>&lt;DocumentSnapshot&gt; l;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> userMap = <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">String</span>&gt;();</span><br><span class="line">l = snapshot.map((data) =&gt; ds = data).toList();</span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>;i&lt;l.length;i++)&#123;</span><br><span class="line">  record = Record.fromSnapshot(l[i]);</span><br><span class="line">  userMap.putIfAbsent(record.name, () =&gt; record.pw);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首先我们定义了DocumentSnapshot类型变量，随后核心代码</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l = snapshot.map((data) =&gt; ds = data).toList();</span><br></pre></td></tr></table></figure>
-<p>(data)相当于一个迭代器(这个语法查了半天才知道)，随后我们将snapshot中存储的DocumentSnapshot 转换为 List 类型，方便我们读取。<br>在此之前，我们要定义一个接受数据的类型，在我的项目里定义了一个 Record 类型，来存储 firestore 中的数据类型 userName 和 passWord，代码如下</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Record</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> name;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> pw;</span><br><span class="line">  <span class="keyword">final</span> DocumentReference reference;</span><br><span class="line">  Record.fromMap(<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; map, &#123;<span class="keyword">this</span>.reference&#125;)</span><br><span class="line">      : <span class="keyword">assert</span>(map[<span class="string">'userName'</span>] != <span class="keyword">null</span>),</span><br><span class="line">        <span class="keyword">assert</span>(map[<span class="string">'passWord'</span>] != <span class="keyword">null</span>),</span><br><span class="line">        name = map[<span class="string">'userName'</span>],</span><br><span class="line">        pw = map[<span class="string">'passWord'</span>];</span><br><span class="line">  Record.fromSnapshot(DocumentSnapshot snapshot)</span><br><span class="line">      : <span class="keyword">this</span>.fromMap(snapshot.data, reference: snapshot.reference);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">String</span> toString() =&gt; <span class="string">"Record&lt;<span class="subst">$name</span>:<span class="subst">$pw</span>&gt;"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最后，为了方便在程序中使用，我们建立了一个 Map ，首先将我们需要的数据（在这个项目中是用户名和密码）加入 Map ，来使得数据之间通过映射关系可以相互查找，</p>
-<p>码那么多字好累啊，加油干！</p>
-
+        概述Dart是一个单线程的语言，遇到有延迟的运算（比如IO操作、延时执行）时，线程中按顺序执行的运算就会阻塞，用户就会感觉到卡顿，于是通常用异步处理来解决这个问题。当遇到有需要延迟的运算（async）时，将其放入到延迟运算的队列（await）中去，把不需要延迟运算的部分先执行掉，最后再来处理延迟运算的部分。和 Java 中的多线程不同，dart 采用的基于事件的异步模型。简单说就是在某个单线...
     
 
         <a href="/2019/06/27/flutterapp4/" class="post-more waves-effect waves-button">
@@ -484,25 +367,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="动画基本原理"><a href="#动画基本原理" class="headerlink" title="动画基本原理"></a>动画基本原理</h2><p>我们首先在 State 类里声明 Animation 类型和 AnimationControler 类型，<br>Animation 是负责产生变化值的控件，而 Controler 是 负责动画的生成的。<br>注意，如果需要用的动画控件，类声明必须要跟着 <code>with SingleTickerProviderStateMixin</code>如果在不同时刻有着不同的动画效果，就涉及多个 controler 此时就要声明 <code>with TickerProviderStateMixin</code></p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Animation&lt;<span class="built_in">double</span>&gt; animation;</span><br><span class="line">AnimationController controller;</span><br><span class="line">Animation&lt;<span class="built_in">double</span>&gt; animationAI;</span><br></pre></td></tr></table></figure>
-<h2 id="方法重写"><a href="#方法重写" class="headerlink" title="方法重写"></a>方法重写</h2><p>如果想要具体定义动画是怎样进行的，一定要重写 <code>initState()</code> 和 <code>dispose()</code>。如下方代码所示</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> initState() &#123;</span><br><span class="line">  <span class="keyword">super</span>.initState();</span><br><span class="line">  <span class="comment">//设置 control 的持续时间</span></span><br><span class="line">  controller = <span class="keyword">new</span> AnimationController(</span><br><span class="line">      duration: <span class="keyword">const</span> <span class="built_in">Duration</span>(seconds: <span class="number">2</span>), vsync: <span class="keyword">this</span>);</span><br><span class="line">  <span class="comment">//以下是产生动画的核心代码，设置了开始状态和结束状态</span></span><br><span class="line">  <span class="comment">//这个值和animation应用的控件属性有关，下面会细说</span></span><br><span class="line">  animation = <span class="keyword">new</span> Tween(begin: <span class="number">-1.0</span>, end: <span class="number">-0.25</span>).animate(</span><br><span class="line">      CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn))</span><br><span class="line">    ..addStatusListener((status) &#123;</span><br><span class="line">        <span class="comment">//..addStateListener 可以监听动画是否完成</span></span><br><span class="line">      <span class="keyword">if</span> (status == AnimationStatus.completed) &#123;</span><br><span class="line">        _pressCard(myCard);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (status == AnimationStatus.dismissed) &#123;</span><br><span class="line">        controller.forward();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  animationAI = <span class="keyword">new</span> Tween(begin: <span class="number">1.0</span>, end: <span class="number">0.25</span>).animate(</span><br><span class="line">      CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> dispose() &#123;</span><br><span class="line">  controller.dispose();</span><br><span class="line">  <span class="keyword">super</span>.dispose();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们在 build 函数外面定义了动画之后，我们就可以在控件中应用他们了</p>
-<h2 id="在控件中应用动画"><a href="#在控件中应用动画" class="headerlink" title="在控件中应用动画"></a>在控件中应用动画</h2><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">AnimatedBuilder(</span><br><span class="line">    animation: controller,</span><br><span class="line">    builder: (BuildContext context, Widget child) &#123;</span><br><span class="line">        <span class="keyword">return</span> Transform(</span><br><span class="line">            transform: Matrix4.translationValues(</span><br><span class="line">                animationAI.value * width, <span class="number">0.0</span>, <span class="number">0.0</span>),</span><br><span class="line">            child: <span class="keyword">new</span> Center(</span><br><span class="line">                child: Container(</span><br><span class="line">                    padding: <span class="keyword">const</span> EdgeInsets.only(top: <span class="number">16.0</span>),</span><br><span class="line">                    width: <span class="number">100.0</span>,</span><br><span class="line">                    height: <span class="number">100.0</span>,</span><br><span class="line">                    child: Image(</span><br><span class="line">                        image: ExactAssetImage(<span class="string">"<span class="subst">$aiPicPath</span>"</span>),</span><br><span class="line">                        width: <span class="number">40</span>,</span><br><span class="line">                        height: <span class="number">40</span>,</span><br><span class="line">                    ),</span><br><span class="line">                ),</span><br><span class="line">            ),</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
-<p>在要使用动画的控件位置，首先要声明一个 AnimationBuilder ，并且首先定义它的 animation属性，将这个控件的动画发生与 control 绑定在一起，最后再builder 返回一个动画类型，我的 App 里返回的是一个 Transform 类似于平移的一个动画，核心代码是 <code>transform: Matrix4.translationValues(animationAI.value * width, 0.0, 0.0),</code> 此段代码效果则是产生平移效果。效果如下</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/23/flutterapp3/transform.gif" alt="平移动画效果" title>
-                </div>
-                <div class="image-caption">平移动画效果</div>
-            </figure>
-<h3 id="重置、开启动画"><a href="#重置、开启动画" class="headerlink" title="重置、开启动画"></a>重置、开启动画</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">controller.reset();</span><br><span class="line">controller.forward();</span><br></pre></td></tr></table></figure>
-<p>我们将以上两行代码添加到 onPressed 属性中，这样每次点击按钮的时候都会重置并且播放动画。</p>
-<h2 id="setState-和-addStatusListener"><a href="#setState-和-addStatusListener" class="headerlink" title="setState 和 addStatusListener"></a>setState 和 addStatusListener</h2><p>在 Flutter 中，带有 State 字样的基本都会更新UI，onPressed 中的 setState 函数可以让其中改变的参数马上更新到 UI ，其中的函数一经修改，setState 会立即寻找页面中会调用到该参数的位置，迅速刷新。</p>
-<p>addStateListener 同样也是这个含义，他监听动画的状态，以便在动画停止时（或其他状态）用户可以定义参数变化，来改变UI，在这里的应用就是，当动画播放完之后，再调用结果通知 dialog，如果不这样做的话，动画和 dialog 同时触发，没有效果。</p>
-
+        动画基本原理我们首先在 State 类里声明 Animation 类型和 AnimationControler 类型，Animation 是负责产生变化值的控件，而 Controler 是 负责动画的生成的。注意，如果需要用的动画控件，类声明必须要跟着 with SingleTickerProviderStateMixin如果在不同时刻有着不同的动画效果，就涉及多个 controler 此时...
     
 
         <a href="/2019/06/23/flutterapp3/" class="post-more waves-effect waves-button">
@@ -549,140 +414,9 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>本文大部分内容翻译自 Github 中 <a href="https://github.com/Solido/awesome-flutter" target="_blank" rel="noopener">Awesome Flutter</a> 项目，该项目集合了当下学习 Flutter 的优秀文章及开源项目，然而该项目对于所陈列的项目只有简单的分类，并没有做简要的说明。</p>
-<p>当然如果看不了英文可以去看这篇翻译的文章，<a href="https://github.com/xitu/awesome-flutter" target="_blank" rel="noopener">Awesome Flutter中文版</a> 是由国内Coder翻译的，翻译质量不错，但仍缺少对文章内容的概括。</p>
-<p>这篇文章的目的是想做一个简单的梳理，并对文章内容进行简化，整理成适合初学者。</p>
-<h2 id="手把手教你动手Flutter"><a href="#手把手教你动手Flutter" class="headerlink" title="手把手教你动手Flutter"></a>手把手教你动手Flutter</h2><p>如果你觉得自己对属于自己的 Flutter App 一筹莫展时，你可以看看其他人是怎么开发的App，一下这些 App 功能简单，但是对于初学者，手打出来是很有帮助的，建议大家在编译器好好敲一敲，体会一下：</p>
-<ul>
-<li><a href="https://code.tutsplus.com/tutorials/developing-an-android-app-with-flutter--cms-28270" target="_blank" rel="noopener">开发一个安卓应用</a> —— 配置和开发第一个应用，作者是 Ashraff Hathibelagal。注意：采用的是IntelliJ IDEA，个别设置可能和 AS 不同，不过不影响程序的编写。这里并没有给出 Flutter 官方的教程，不知道为什么，可以通过第二篇跳转到官方给出的 Flutter 超级入门教学。<br>难度：★</li>
-<li><a href="https://codelabs.developers.google.com/codelabs/flutter/#0" target="_blank" rel="noopener">Animated Chat</a> —— 创建漂亮的 UI，来自谷歌代码实验室（Google Code Labs）。<br>如果说第一个侧重于如何使用编译器编写运行Flutter App，那么这个则是将内容具体到对于布局和控件的使用。<br>难度：★</li>
-<li><a href="https://codelabs.developers.google.com/codelabs/flutter-firebase/#0" target="_blank" rel="noopener">Firebase Chat</a> —— Firebase integration，来自谷歌代码实验室。<br>如果你想快速了解 Firebase 这个 Flutter 工具，那么这篇文章是你的入门之选，只需要你对<strong>面向对象语言</strong>有所掌握即可。</li>
-<li>难度：★</li>
-<li><a href="https://sergiandreplace.com//tags/flutter/" target="_blank" rel="noopener">Planets-Flutter</a>：从设计到开发 —— 详细的 planets design 教程。<br>这是一个手把手教你做出好看应用的博客，设计到基础动画，页面跳转等知识，缺点是全英文，而且停更了<br>难度：★~★★</li>
-</ul>
-<h2 id="个人博客"><a href="#个人博客" class="headerlink" title="个人博客"></a>个人博客</h2><ul>
-<li><a href="https://flutter.institute/" target="_blank" rel="noopener">Flutter Institute</a><br>既含有手把手教你写 App 的教程，并且更新一些开发中会遇到的问题。还算不错<br>难度：★~★★★</li>
-<li><a href="https://flutterbyexample.com/" target="_blank" rel="noopener">Flutter by Example</a><br>很推荐看的博客，里面涵盖了很多常用的控件工具库，例如网络库，动画库，登陆界面等等。强烈推荐！<br>难度：★★</li>
-</ul>
-<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ul>
-<li><a href="https://github.com/flutter/flutter/tree/master/examples/flutter_gallery" target="_blank" rel="noopener">官方 Gallery</a> —— 来自 Flutter 团队的展示 Material Design 风格的 Widget 和一些其他功能展示的示例 APP。<br>对于一些新功能，基础控件，参考官方的写法可能是最简单直白的，缺点是官网没有讲解部分，但是很全！<br>实用度：★★★★</li>
-<li><a href="https://github.com/nisrulz/flutter-examples" target="_blank" rel="noopener">Flutter 示例</a>（708 ★）—— 为 Flutter 开发者提供的一个简单基础的独立应用，作者是 <a href="https://github.com/nisrulz" target="_blank" rel="noopener">Nishant Srivastava</a>。<br>类似于官方给出的，这两个结合观看基本上就可以设计出美观的 Flutter App 了<br>实用度：★★★★</li>
-</ul>
-<h3 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h3><p>这些 UI 设计是我挑出来比较实用的设计，其实都是很实用的，只不过对于我来说应用场景比较小，于是就落榜了。</p>
-<ul>
-<li><a href="https://github.com/goderbauer/contact_picker" target="_blank" rel="noopener">Contact Picker</a> —— 从通讯录里选取一个联系人，作者是 <a href="https://github.com/goderbauer" target="_blank" rel="noopener">Michael Goderbauer</a></li>
-<li><a href="https://github.com/letsar/flutter_staggered_grid_view" target="_blank" rel="noopener">StaggeredGridView</a>（115 ★）—— 具有不同尺寸磁贴（tile）的 GridView，作者是 <a href="https://github.com/letsar" target="_blank" rel="noopener">Romain Rastel</a>。<br>实用度：★★★★</li>
-<li><a href="https://github.com/letsar/flutter_sticky_header" target="_blank" rel="noopener">Sticky Header</a> (27 ★) - 长条式固定headers by <a href="https://github.com/letsar" target="_blank" rel="noopener">Romain Rastel</a>.<br>实用度：★★★</li>
-<li><a href="https://github.com/slightfoot/flutter_sticky_headers" target="_blank" rel="noopener">Sticky Headers</a> (73 ★) - Configurable sticky headers by <a href="http://www.devangels.london/" target="_blank" rel="noopener">Simon Lightfoot</a>.<br>可以设置内容的固定headers。<br>实用度：★★★</li>
-<li><a href="https://github.com/xqwzts/flutter_radial_menu" target="_blank" rel="noopener">径向菜单</a>（76 ★）—— 带动画的径向菜单，作者是 <a href="https://github.com/xqwzts" target="_blank" rel="noopener">Victor Choueiri</a>。</li>
-<li><a href="https://github.com/Ivaskuu/tinder_cards" target="_blank" rel="noopener">Tinder 卡片</a>（58 ★）—— Tinder like 卡片滑动效果，作者是 <a href="https://github.com/Ivaskuu" target="_blank" rel="noopener">Ivascu Adrian</a>。<br>实用度：★★★</li>
-<li><a href="https://github.com/GeekyAnts/flutter-login-home-animation" target="_blank" rel="noopener">Login Animation</a> (119 ★) - 从登录平滑过渡到主页的动画 <a href="https://github.com/geekruchika" target="_blank" rel="noopener">Ruchika Gupta</a>.<br>实用度：★★★★★</li>
-<li><a href="https://github.com/Norbert515/flutter_list_drag_and_drop" target="_blank" rel="noopener">List Drag&amp;Drop</a> (55 ★) - 表单内容拖拽by <a href="https://github.com/Norbert515" target="_blank" rel="noopener">Norbert515</a>.<br>实用度：★★★★</li>
-<li><a href="https://github.com/pinkfish/flutter_calendar" target="_blank" rel="noopener">Calendar Widget</a> (8 ★) - 按照时间顺序记录事件的 widget by <a href="https://github.com/pinkfish" target="_blank" rel="noopener">David Bennett</a>.<br>实用度：★★</li>
-<li><a href="https://github.com/hnvn/flutter_shimmer" target="_blank" rel="noopener">Shimmer</a> (55 ★) - Shimmer effect while content is loading by <a href="https://github.com/hnvn" target="_blank" rel="noopener">HungHD</a>.<br>给 widget 加波浪阴影特效<br>实用度：★★★</li>
-</ul>
-<h3 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h3><ul>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages/image_picker" target="_blank" rel="noopener">Image Picker</a> —— 图片选择器，作者是 <a href="http://www.collinjackson.com" target="_blank" rel="noopener">Collin Jackson</a>。<br>很实用的库，用来选择照片库中的一个图片，或是自己拍一张。<br>实用度：★★★★★</li>
-<li><a href="https://github.com/serenader2014/flutter_carousel_slider" target="_blank" rel="noopener">Carousel Slider</a>（42 ★）—— 旋转滑动小部件，支持无限滚动和自定义子部件，作者是 <a href="https://github.com/serenader2014" target="_blank" rel="noopener">serenader</a>。<br>图片无限滑动<br>实用度：★★★★</li>
-<li><a href="https://github.com/renancaraujo/photo_view" target="_blank" rel="noopener">Photo View</a> (25 ★) - Scalable image view with loading placeholder by <a href="https://github.com/renancaraujo" target="_blank" rel="noopener">Renan C. Araújo</a>.<br>图片放缩、截图管理、照片Galaxy集合<br>实用度：★★★</li>
-</ul>
-<h3 id="导航、路由"><a href="#导航、路由" class="headerlink" title="导航、路由"></a>导航、路由</h3><ul>
-<li><a href="https://github.com/goposse/fluro" target="_blank" rel="noopener">Fluro</a>（292 ★）—— 具有导航、通配符、查询、过渡动画的最亮、最时尚、最酷的 Flutter 路由器，作者是 <a href="http://goposse.com" target="_blank" rel="noopener">Posse</a>。</li>
-<li><a href="https://pub.dartlang.org/packages/circle_indicator" target="_blank" rel="noopener">Circle Indicator</a>（12 ★）—— PageViewer 的圆形指示器，作者是 <a href="https://github.com/long1eu" target="_blank" rel="noopener">Lung Razvan</a>。</li>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages/quick_actions" target="_blank" rel="noopener">Quick Actions</a> —— 与应用程序的主屏幕快速操作进行交互。</li>
-<li><a href="https://github.com/jzoom/flutter_swiper" target="_blank" rel="noopener">Swiper</a> (12 ★) - Horizontal, Vertical, Partial swipe with indicator by <a href="https://github.com/jzoom" target="_blank" rel="noopener">Xueliang Ren</a>.</li>
-</ul>
-<h3 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h3><ul>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages/local_auth" target="_blank" rel="noopener">本地身份验证</a> —— Ios 和 Android 上的 Touch ID、锁屏密码和指纹验证</li>
-<li><a href="https://github.com/AppleEducate/flutter_login" target="_blank" rel="noopener">Flutter 登录</a>（96 ★）—— FaceID, TouchID, 还有指纹扫描，作者是 <a href="http://appleeducate.com" target="_blank" rel="noopener">Rody Davis</a>。</li>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages/google_sign_in" target="_blank" rel="noopener">Google Sign-In</a> —— Google 身份验证。</li>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages/firebase_auth" target="_blank" rel="noopener">Firebase Auth</a> —— Firebase 身份验证。</li>
-<li><a href="https://github.com/roughike/flutter_facebook_login" target="_blank" rel="noopener">Facebook Login</a> (62 ★) - Authenticate with native Android &amp; iOS Facebook login SDKs by <a href="https://github.com/roughike" target="_blank" rel="noopener">Iiro Krankka</a>.</li>
-<li><a href="https://github.com/hitherejoe/FlutterOAuth" target="_blank" rel="noopener">Flutter OAuth</a>（44 ★）—— Buffer、Strava、Unsplash 和 Github 身份验证，作者是 <a href="http://www.hitherejoe.com" target="_blank" rel="noopener">Joe Birch</a>。</li>
-<li><a href="https://hackernoon.com/instagram-authentication-with-flutter-df6424d2d56c" target="_blank" rel="noopener">Instagram</a> —— Instagram 身份验证，作者是 <a href="http://developer-journey.com/" target="_blank" rel="noopener">Wilfried Mbouenda Mbogne</a>。</li>
-</ul>
-<h3 id="文字和富文本"><a href="#文字和富文本" class="headerlink" title="文字和富文本"></a>文字和富文本</h3><ul>
-<li><a href="https://github.com/benhurott/flutter-masked-text" target="_blank" rel="noopener">Masked Text</a> (6 ★) - Masked text with custom and monetary formatting by <a href="https://github.com/benhurott" target="_blank" rel="noopener">Ben-hur Santos Ott</a>.<br>给文本输入加上自定义mask，比如信息遮盖 * 、或者自动添加 - 。等</li>
-</ul>
-<h3 id="风格"><a href="#风格" class="headerlink" title="风格"></a>风格</h3><ul>
-<li><a href="https://github.com/rxlabz/flutterial" target="_blank" rel="noopener">Flutterial</a>（46 ★）—— Flutter Material 主题的探索者，作者是 <a href="https://twitter.com/rxlabz" target="_blank" rel="noopener">Erick Ghaumez</a>。</li>
-<li><a href="http://stackoverflow.com/questions/43550853/how-do-i-do-the-frosted-glass-effect-in-flutter" target="_blank" rel="noopener">Frosted Glass</a> —— 渲染器效果，作者是 <a href="http://www.collinjackson.com" target="_blank" rel="noopener">Collin Jackson</a>。</li>
-<li><a href="https://pub.dartlang.org/packages/font_awesome_flutter" target="_blank" rel="noopener">Font Awesome</a> —— Font Awesome 图标包，作者是 <a href="https://github.com/brianegan" target="_blank" rel="noopener">Brian Egan</a>。</li>
-<li><a href="http://fluttericon.com/" target="_blank" rel="noopener">FlutterIcon</a> —— 图标字体生成器。</li>
-<li><a href="https://github.com/bregydoc/pigment" target="_blank" rel="noopener">Pigment</a>（27 ★）—— 简单但是很实用的在 Flutter 里面使用颜色的包。</li>
-</ul>
-<h3 id="多媒体"><a href="#多媒体" class="headerlink" title="多媒体"></a>多媒体</h3><ul>
-<li><a href="https://github.com/rxlabz/audioplayer" target="_blank" rel="noopener">音频插件</a>（95 ★）—— Beta 版，作者是 <a href="https://twitter.com/rxlabz" target="_blank" rel="noopener">Erick Ghaumez</a>。</li>
-<li><a href="https://github.com/ZaraclaJ/audio_recorder" target="_blank" rel="noopener">录音机</a>（24 ★）—— 录制音频并存储在本地，作者是 <a href="https://twitter.com/jordanalcrz" target="_blank" rel="noopener">Jordan Alcaraz</a>。</li>
-<li><a href="https://github.com/2find/stereo" target="_blank" rel="noopener">Stereo</a>（22 ★）—— 在 iOS 和 Android 上面播放音乐，作者是 <a href="https://github.com/2find" target="_blank" rel="noopener">2Find</a>。</li>
-<li><a href="https://github.com/cloudwebrtc/flutter-webrtc" target="_blank" rel="noopener">WebRTC</a> (80 ★) - WebRTC plugin for iOS/Android by <a href="https://github.com/cloudwebrtc" target="_blank" rel="noopener">CloudWebRtc</a>.</li>
-<li><a href="https://github.com/brianegan/chewie" target="_blank" rel="noopener">Chewie</a> (70 ★) - Provides low-level access to video playback by <a href="https://github.com/brianegan" target="_blank" rel="noopener">Brian Egan</a>.</li>
-</ul>
-<h3 id="语音"><a href="#语音" class="headerlink" title="语音"></a>语音</h3><ul>
-<li><a href="https://github.com/rxlabz/speech_recognition" target="_blank" rel="noopener">Speech Recognition</a>（41 ★）—— 语音转文字，作者是 <a href="https://twitter.com/rxlabz" target="_blank" rel="noopener">Erick Ghaumez</a>。</li>
-<li><a href="https://marcinszalek.pl/flutter/ok-google-flutter/" target="_blank" rel="noopener">OK Google</a> —— 整合了 Google 语音助手，作者是 <a href="https://marcinszalek.pl/" target="_blank" rel="noopener">Marcin Szalek</a>。</li>
-</ul>
-<h3 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h3><ul>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages/firebase_storage" target="_blank" rel="noopener">Firebase Storage</a> —— 用 Firebase 作为数据存储设备。</li>
-<li><a href="https://github.com/mogol/flutter_secure_storage" target="_blank" rel="noopener">Secure Storage</a> (23 ★) - Keychain and Keystore storage by <a href="https://github.com/mogol" target="_blank" rel="noopener">German Saprykin</a>.</li>
-</ul>
-<h2 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h2><ul>
-<li><a href="https://github.com/FlutterRocks/movie-details-ui" target="_blank" rel="noopener">Movie Details</a>（93 ★）—— 电影详情页面，作者是 <a href="https://github.com/roughike" target="_blank" rel="noopener">Iiro Krankka</a>。</li>
-<li><a href="https://github.com/CodemateLtd/FlutterMates" target="_blank" rel="noopener">Flutter Mates</a>（160 ★）—— 如何从 randomuser.me API 加载个人信息列表，并通过一个漂亮的页面展示个人信息详情，作者是 <a href="https://github.com/roughike" target="_blank" rel="noopener">Iiro Krankka</a>。</li>
-<li><a href="https://github.com/alessandroaime/Weather" target="_blank" rel="noopener">Weather</a>（50 ★）—— 学习如何使用 Canvas 和动画去制作天气应用，作者是 <a href="https://github.com/alessandroaime" target="_blank" rel="noopener">Alessandro Aime</a>。</li>
-<li><a href="https://github.com/brianegan/flutter_architecture_samples" target="_blank" rel="noopener">TodoMVC</a>（644 ★）—— 准备使用不同框架的备忘录应用：Vanilla, Redux, built_redux，作者是 <a href="https://github.com/brianegan" target="_blank" rel="noopener">Brian Egan</a>。</li>
-<li><a href="https://github.com/braulio94/menu_flutter" target="_blank" rel="noopener">Restaurant Menu</a>（219 ★）—— 饭店菜单，作者是 <a href="https://github.com/braulio94" target="_blank" rel="noopener">Braulio Cassule</a>。</li>
-<li><a href="https://github.com/tomialagbe/flutter_ui_challenges" target="_blank" rel="noopener">UI 挑战</a>（222 ★）—— 个人信息应用、旅行应用、美食应用，作者是 <a href="https://github.com/tomialagbe" target="_blank" rel="noopener">Tomi Alagbe</a>。</li>
-<li><a href="https://github.com/matthinc/flutter_cupertino_settings" target="_blank" rel="noopener">Cupertino Settings</a>（19 ★）—— iOS 设置，作者是 <a href="https://github.com/matthinc" target="_blank" rel="noopener">Matthias Rupp</a>。</li>
-<li><a href="https://github.com/thosakwe/flutter_music_player" target="_blank" rel="noopener">Music Player</a>（59 ★）—— 音乐播放器部件，作者是 <a href="https://thosakwe.com/" target="_blank" rel="noopener">Tobe O</a>。</li>
-<li><a href="https://github.com/Ivaskuu/dashboard" target="_blank" rel="noopener">Dashboard</a>（142 ★）—— 仪表板和商品列表，作者是 <a href="https://github.com/Ivaskuu" target="_blank" rel="noopener">Ivascu Adrian</a>。</li>
-<li><a href="https://github.com/littlemarc2011/FlutterTodo" target="_blank" rel="noopener">Todo</a> (94 ★) - Todo template from Dribble by <a href="https://www.marc-little.com/" target="_blank" rel="noopener">Marc L</a>.</li>
-<li><a href="https://github.com/geekruchika/FlutterCardSwipe" target="_blank" rel="noopener">Card Swipe Animation</a> (40 ★) - Swipe cards template by <a href="https://github.com/geekruchika" target="_blank" rel="noopener">Ruchika Gupta</a>.</li>
-</ul>
-<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><ul>
-<li><a href="https://github.com/flutter/plugins/tree/master/packages" target="_blank" rel="noopener">Flutter 插件</a> —— Flutter 团队的官方插件</li>
-<li><a href="https://github.com/tekartik/sqflite" target="_blank" rel="noopener">Sqflite</a>（221 ★）—— SQLite 的 Flutter 插件，作者是 <a href="https://www.linkedin.com/in/alextekartik/" target="_blank" rel="noopener">Alexandre Roux</a>。</li>
-<li><a href="https://github.com/dart-flitter/flutter_webview_plugin" target="_blank" rel="noopener">WebView</a>（152 ★）—— 作者是 <a href="https://twitter.com/HadrienLejard" target="_blank" rel="noopener">Hadrien Lejard</a>。</li>
-<li><a href="https://pub.dartlang.org/flutter/plugins" target="_blank" rel="noopener">Pub Plugins</a> —— Dart Pub Repository 的筛选插件。</li>
-<li><a href="https://github.com/Lyokone/flutterlocation" target="_blank" rel="noopener">Flutter Location</a>（79 ★）—— 处理位置，处理回调以获得连续的位置，作者是 <a href="https://github.com/Lyokone" target="_blank" rel="noopener">Lyokone</a>。</li>
-<li><a href="https://github.com/villela/flutter_qrcode_reader" target="_blank" rel="noopener">QR Code Reader</a>（32 ★）—— 二维码扫描插件，作者是 <a href="https://github.com/villela" target="_blank" rel="noopener">Matheus Villela</a>。</li>
-<li><a href="https://pub.dartlang.org/packages/battery" target="_blank" rel="noopener">Battery</a> —— 获取电池相关的各种信息。</li>
-<li><a href="https://github.com/acaliaro/flutterZebraEmdk" target="_blank" rel="noopener">Zebra EMDK</a>（3 ★）—— 使用 Zebra EMDK 来获取 Barcode Scanner API。</li>
-<li><a href="https://pub.dartlang.org/packages/proximity_plugin" target="_blank" rel="noopener">Proximity Sensor Plugin</a> —— 一个可以访问你设备上的距离传感器（proximity sensor）的插件，作者是 <a href="https://github.com/Samaritan1011001" target="_blank" rel="noopener">Manoj NB</a>。</li>
-<li><a href="https://github.com/loup-v/geolocation" target="_blank" rel="noopener">Geolocation</a>（72 ★）—— 功能齐全的地理位置插件：当前位置，位置更新，地理编码，地点等等，作者是 <a href="http://intheloup.io" target="_blank" rel="noopener">Loup</a>。</li>
-<li><a href="https://github.com/MaikuB/flutter_local_notifications" target="_blank" rel="noopener">Local Notifications</a>（62 ★）—— 展示本地通知的插件，作者是 <a href="https://github.com/MaikuB" target="_blank" rel="noopener">Michael Bui</a>。</li>
-<li><a href="https://github.com/AppleEducate/app_review" target="_blank" rel="noopener">App Rating</a>（20 ★）—— 为 App Store 和 Google Play 评分和写评论，作者是 <a href="http://appleeducate.com" target="_blank" rel="noopener">Rody Davis</a>。</li>
-<li><a href="https://github.com/AppleEducate/get_version" target="_blank" rel="noopener">Get Version</a>（13 ★）—— 获取版本名、版本号、App ID 和带有操作系统版本的平台信息，作者是 <a href="http://appleeducate.com" target="_blank" rel="noopener">Rody Davis</a>。</li>
-<li><a href="https://github.com/hnvn/flutter_downloader" target="_blank" rel="noopener">Downloader</a> (23 ★) - Create and manage download tasks by <a href="https://github.com/hnvn" target="_blank" rel="noopener">HungHD</a>.</li>
-<li><a href="https://github.com/pinkfish/flutter_places_dialog" target="_blank" rel="noopener">Place Dialog</a> (9 ★) - Places picker dialog returning the places to the app by <a href="https://github.com/pinkfish" target="_blank" rel="noopener">David Bennett</a>.</li>
-<li><a href="https://github.com/renefloor/flutter_cached_network_image" target="_blank" rel="noopener">Cached Network Image</a> (61 ★) - Show images from the internet and keep them in the cache directory by <a href="https://github.com/renefloor" target="_blank" rel="noopener">Rene Floor</a>.</li>
-<li><a href="https://github.com/builttoroam/flutter_plugins/tree/develop/device_calendar" target="_blank" rel="noopener">Device Calendar</a> - Plugin for modifying calendars on the user’s device by <a href="http://builttoroam.com" target="_blank" rel="noopener">Built to Roam</a>.</li>
-</ul>
-<h3 id="蓝牙-NFC-Beacon"><a href="#蓝牙-NFC-Beacon" class="headerlink" title="蓝牙 / NFC / Beacon"></a>蓝牙 / NFC / Beacon</h3><ul>
-<li><a href="https://github.com/Polidea/FlutterBleLib" target="_blank" rel="noopener">Flutter Ble</a>（45 ★）—— 蓝牙，作者是 <a href="http://www.polidea.com" target="_blank" rel="noopener">Polidea</a></li>
-<li><a href="https://github.com/pauldemarco/flutter_blue" target="_blank" rel="noopener">Flutter Blue</a>（142 ★）—— 蓝牙，作者是 <a href="https://github.com/pauldemarco" target="_blank" rel="noopener">Paul DeMarco</a>。</li>
-<li><a href="https://github.com/guyulmaz/flutter-nfc-app" target="_blank" rel="noopener">NFC</a> (12 ★) - Connect IsoDep iso 14443-4 cards for android by <a href="https://github.com/guyulmaz" target="_blank" rel="noopener">Göksel Uyulmaz</a>.</li>
-<li><a href="https://github.com/loup-v/beacons" target="_blank" rel="noopener">Beacons</a> (4 ★) - Flutter beacons plugin by <a href="http://intheloup.io" target="_blank" rel="noopener">Loup</a>.</li>
-</ul>
-<h2 id="开源-APP"><a href="#开源-APP" class="headerlink" title="开源 APP"></a>开源 APP</h2><p>当学会了一些基础之后，可以去看看别人编写的 App 来提高自己对于 App 设计模式以及层级结构的理解，没有结构和层次的 App 是很糟糕的。</p>
-<ul>
-<li><a href="https://github.com/flutter/friendlychat-flutter" target="_blank" rel="noopener">FriendlyChat</a>（106 ★）—— 一群谷歌员工开发的离线或者是基于 Firebase 的聊天应用。</li>
-<li><a href="https://github.com/efortuna/memechat" target="_blank" rel="noopener">Meme Chat</a>（244 ★）——  Flutter 上的聊天应用，用到了 Firebase、谷歌登陆和设备相机集成，作者是谷歌员工。</li>
-<li><a href="https://github.com/dart-flitter/flitter" target="_blank" rel="noopener">Flitter</a>（83 ★）—— Glitter 客户端，作者是 <a href="https://twitter.com/HadrienLejard" target="_blank" rel="noopener">Hadrien Lejard</a> 和 <a href="https://twitter.com/kevin_segaud" target="_blank" rel="noopener">Kevin Segaud</a>。里面用到了 Redux 和 Jaguar。</li>
-<li><a href="https://github.com/fablue/lime-flutter" target="_blank" rel="noopener">Lime</a> ——（129 ★）Lime 是 Sebastian Sellmair 开发的社交网络应用。</li>
-<li><a href="https://github.com/sergiandreplace/flutter_planets_tutorial" target="_blank" rel="noopener">Planets-Flutter</a>（149 ★）—— 显示了丰富 UI 的行星探索应用，作者是 <a href="http://sergiandreplace.com" target="_blank" rel="noopener">Sergi Martínez</a>。</li>
-<li><a href="https://github.com/theankurkedia/NewsBuzz" target="_blank" rel="noopener">NewsBuzz</a>（175 ★）—— 从 News API 获取数据并使用 Firebase 做后台的新闻阅读器，作者是 <a href="https://github.com/theankurkedia" target="_blank" rel="noopener">Ankur Kedia</a>。</li>
-<li><a href="https://github.com/konifar/droidkaigi2018-flutter" target="_blank" rel="noopener">DroidKaigi2018-flutter</a>（226 ★）—— 东京 DroidKaigi 2018 的非官方会议应用，作者是 <a href="https://github.com/konifar" target="_blank" rel="noopener">konifar</a>。</li>
-<li><a href="https://github.com/iampawan/Flutter-Music-Player" target="_blank" rel="noopener">Music Player</a>（178 ★）—— <a href="https://about.me/imthepk" target="_blank" rel="noopener">Pawan Kumar</a> 开发的全功能音乐播放器。</li>
-<li><a href="https://github.com/roughike/inKino" target="_blank" rel="noopener">InKino</a>（820 ★）—— 完整的电影应用程序，使用 Flutter_Redux 框架进行状态管理，具有很好的过渡动画，以及一套很全面的小部件还有单元测试，作者是 <a href="https://github.com/roughike" target="_blank" rel="noopener">Iiro Krankka</a>。</li>
-<li><a href="https://github.com/burhanrashid52/WhatTodo" target="_blank" rel="noopener">WhatTodo</a> (105 ★) - Todoist like UI by <a href="https://about.me/burhanrashid52" target="_blank" rel="noopener">Burhanuddin Rashid</a>.</li>
-<li><a href="https://github.com/mdanics/fluttergram" target="_blank" rel="noopener">FlutterGram</a> (74 ★) - Complete Instagram based on Firestore &amp; Google Functions by <a href="https://github.com/mdanics" target="_blank" rel="noopener">MDanics</a>.</li>
-<li><a href="https://github.com/Norbert515/BookSearch" target="_blank" rel="noopener">BookSearch</a> (97 ★) - Digital BookShelf for your reading progress by <a href="https://github.com/Norbert515" target="_blank" rel="noopener">Norbert515</a>.</li>
-<li><a href="https://github.com/aaronoe/FlutterCinematic" target="_blank" rel="noopener">Cinematic</a> (145 ★) - UI for Movie DB Public API by <a href="https://github.com/aaronoe" target="_blank" rel="noopener">Aaron Oertel</a>.</li>
-<li><a href="https://github.com/benoitletondor/Beer-Me-Up" target="_blank" rel="noopener">Beer-Me-Up</a> (75 ★) - Beer tracking nicely designed by <a href="https://github.com/benoitletondor" target="_blank" rel="noopener">Benoit Letondor</a>.</li>
-</ul>
-<p>以上这些开源代码质量都还是比较高的，大家可以有针对性地看其中的一两个。</p>
-
+        简介本文大部分内容翻译自 Github 中 Awesome Flutter 项目，该项目集合了当下学习 Flutter 的优秀文章及开源项目，然而该项目对于所陈列的项目只有简单的分类，并没有做简要的说明。
+当然如果看不了英文可以去看这篇翻译的文章，Awesome Flutter中文版 是由国内Coder翻译的，翻译质量不错，但仍缺少对文章内容的概括。
+这篇文章的目的是想做一个简单的梳理，并对...
     
 
         <a href="/2019/06/21/FlutterStudy/" class="post-more waves-effect waves-button">
@@ -729,24 +463,15 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="项目的三步走策略"><a href="#项目的三步走策略" class="headerlink" title="项目的三步走策略"></a>项目的三步走策略</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/18/flutterapp2/stage.png" alt="三步走" title>
-                </div>
-                <div class="image-caption">三步走</div>
-            </figure>
-<p>暂时是这个思路，预计如果时间充裕的话，一个月之内到第二阶段是没有问题的，至于联机方面，心里比较没底。</p>
-<p>还有一个问题是今天投了西瓜的移动端开发，在大厂里面实习感觉会尽可能的提升自己敲代码的能力。</p>
-<h2 id="最近的问题及解决方案"><a href="#最近的问题及解决方案" class="headerlink" title="最近的问题及解决方案"></a>最近的问题及解决方案</h2><h3 id="onPressed"><a href="#onPressed" class="headerlink" title="onPressed"></a>onPressed</h3><p>如果点击事件涉及到当前页面的UI更新，onPressed: (){<br>}函数里面一定要定义<code>setState()</code>函数，在这个函数中进行 UI 相关参数修改，不然系统不会即时刷新 UI</p>
-<p>关于这点，初始 App 源码说的比较精髓：</p>
-<p> This call to setState tells the Flutter framework that something has changed in this State, which causes it to rerun the build method below so that the display can reflect the updated values. If we changed _counter(更新 UI 所需参数) without calling setState(), then the build method would not be called again, and so nothing would appear to happen.</p>
-<h3 id="页面间传值"><a href="#页面间传值" class="headerlink" title="页面间传值"></a>页面间传值</h3><p>不得不说，页面间传值这个问题困扰了我一天的时间，在网上查相关资料查得焦头烂额，其实现在来看还是蛮简单的：</p>
-<p>传入参数：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Navigator.push&lt;<span class="built_in">List</span>&gt;(</span><br><span class="line">    context,</span><br><span class="line">    <span class="keyword">new</span> MaterialPageRoute(</span><br><span class="line">        builder: (BuildContext context) =&gt;</span><br><span class="line">            <span class="keyword">new</span> SetPage(widget.card1, widget.card2, widget.card3),</span><br><span class="line">    ),</span><br><span class="line">).then((<span class="built_in">List</span> result) &#123;</span><br><span class="line">    <span class="keyword">if</span> (result[<span class="number">0</span>] != <span class="string">''</span>) widget.card1.cardName = result[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">if</span> (result[<span class="number">1</span>] != <span class="string">''</span>) widget.card2.cardName = result[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">if</span> (result[<span class="number">2</span>] != <span class="string">''</span>) widget.card3.cardName = result[<span class="number">2</span>];</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>可以看出，传入参数还是比较简单的，只要给新 new Page 加一个构造函数，然后生成新页面的时候把参数传过去就行；难点在于参数返回，核心代码在于 Navigator 中的 push 操作，首先要在 push 后面加上 &lt;返回的数据类型&gt; 这么一个泛型结构，随后在 push 后面 接上 .then 函数，这个函数的参数就是你要接受的参数括号里面是接受的类型和值，花括号里面接受的是后续相关处理操作。</p>
-<h3 id="Widget界面的溢出"><a href="#Widget界面的溢出" class="headerlink" title="Widget界面的溢出"></a>Widget界面的溢出</h3><p>在网上找了半天关于溢出的相关问题，溢出的问题通常都是由 Row 或是 Column 设置不当导致，最终大家都倾向于将 Row、Column 中的 children 放入 Expanded 中，保持安全边界，这会使得被 Expanded 保护的 widget 以Row、Column方式撑满整个屏幕，并且这个边界是自适应的。</p>
-
+        项目的三步走策略
+                
+                    
+                    
+                
+                三步走
+            
+暂时是这个思路，预计如果时间充裕的话，一个月之内到第二阶段是没有问题的，至于联机方面，心里比较没底。
+还有一个问题是今天投了西瓜的移动端开发，在大厂里面实习感...
     
 
         <a href="/2019/06/18/flutterapp2/" class="post-more waves-effect waves-button">
@@ -793,41 +518,14 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>有着上次对 Flutter 的认识，于是我马不停蹄的着手开发了一个基于 Flutter 的 App，一开始真的是很难，Flutter 对于我来说简直就是未知的领域。</p>
-<h2 id="所做的工作"><a href="#所做的工作" class="headerlink" title="所做的工作"></a>所做的工作</h2><h3 id="界面展示"><a href="#界面展示" class="headerlink" title="界面展示"></a>界面展示</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/16/flutterapp1/main.png" alt="主界面" title>
-                </div>
-                <div class="image-caption">主界面</div>
-            </figure>
-<p>主界面含有一个 Drawer 实现设置页面(SetPage)和关于界面(AboutPage)的跳转</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/16/flutterapp1/side.png" alt="drawer" title>
-                </div>
-                <div class="image-caption">drawer</div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/16/flutterapp1/about.png" alt="关于作者" title>
-                </div>
-                <div class="image-caption">关于作者</div>
-            </figure>
-<h3 id="图片的引入"><a href="#图片的引入" class="headerlink" title="图片的引入"></a>图片的引入</h3><p>pubspec.yaml这个文件中 assets 部分进行声明，再在类中调用即可。<br>注意，调用本地图片用 ExactAssetImage 函数。</p>
-<h3 id="页面跳转"><a href="#页面跳转" class="headerlink" title="页面跳转"></a>页面跳转</h3><p>页面路由 <code>Navigator</code> 的使用</p>
-<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><p>第一天开发认识了关于 Text 的属性，对于 Row 和 Column 的 children 布局稍有掌握（毕竟这俩用的情形还是很多的）</p>
-<h3 id="Widget"><a href="#Widget" class="headerlink" title="Widget"></a>Widget</h3><p>参考了无数篇关于 widget 的使用，感觉这一块的知识太过于零散，层次很难分清楚，比如什么时候该用 Center、什么时候该用 Container ，没有概念，导致开发时候 View 极其混乱。</p>
-<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>引入新的依赖之后，App 在运行编译的时候总是卡在 resolving depencenies ，如果卡了很长时间并且报 Error running Gradle:，那很大一部分可能是你被墙挡住了，解决办法我不多说。</p>
-<h3 id="图片的加载"><a href="#图片的加载" class="headerlink" title="图片的加载"></a>图片的加载</h3><p>我现在也不明白图片加载嵌套那个是什么机制，只是知道使用一个 <code>DecoratedBox</code> 嵌套 ，其中有个属性是 <code>BoxDecoration</code> ，</p>
-<h2 id="接下来要做的"><a href="#接下来要做的" class="headerlink" title="接下来要做的"></a>接下来要做的</h2><ul>
-<li>三张卡片的逻辑做出来，不要再是“1，2，3”这样的 text widget，要是图片加文字。</li>
-<li>设置界面中加入模式调整，并学会在两个页面中间传值。</li>
-<li>点击相应的卡片，将点击的结果传递给同页面的 Container</li>
-</ul>
-
+        有着上次对 Flutter 的认识，于是我马不停蹄的着手开发了一个基于 Flutter 的 App，一开始真的是很难，Flutter 对于我来说简直就是未知的领域。
+所做的工作界面展示
+                
+                    
+                    
+                
+                主界面
+        ...
     
 
         <a href="/2019/06/16/flutterapp1/" class="post-more waves-effect waves-button">
@@ -874,56 +572,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="是时候搞一点新东西了"><a href="#是时候搞一点新东西了" class="headerlink" title="是时候搞一点新东西了"></a>是时候搞一点新东西了</h2><p>其实我在去年就对 Flutter 有所了解，当时的 Flutter 已经可以和 react native 相互竞争了，但是但是 flutter 生态化没有完全建立起来，根本和 RN 比不了，虽然在 Github 有了几十万 star 但是也只是作为 Android 和 iOS 之间跨平台的一种方案。</p>
-<p>然而在2019年5月，谷歌在其官方博客宣布，Flutter 已支持移动、Web、桌面和嵌入式设备，这意味着它正式成为了支持多平台的轻量级 UI 框架。</p>
-<p>所以，是时候搞一点新东西了。</p>
-<h2 id="Flutter-优势"><a href="#Flutter-优势" class="headerlink" title="Flutter 优势"></a>Flutter 优势</h2><p>我简单说一下 Flutter 的优势，首先就是跨平台特性；其次，其采用 Dart 语言，这个语言内部机制决定了 Flutter 有一个很优秀的功能——热重载，也就是说改动代码后不需要重新运行应用（Init…resolve…），<strong>代码的改动可以直接作用于正在运行的程序</strong>；最后一点就是渲染，他采用 GPU 渲染应用，体验上我完全不输 RN 原生应用。</p>
-<h2 id="Flutter-配置"><a href="#Flutter-配置" class="headerlink" title="Flutter 配置"></a>Flutter 配置</h2><p>可以参照官方文档进行配置:<br><a href="https://flutter-io.cn/docs" target="_blank" rel="noopener">https://flutter-io.cn/docs</a></p>
-<p>我踩到的坑：<br>国内用户提示加的那两个环境变量（两个网站）<strong>一定要加在系统变量中</strong>，不要加在用户变量，会由于权限问题导致没有效果，导致新建 Flutter 出现卡死情况（网站上不去、解析不了当然卡死）</p>
-<h2 id="构建自己的第一个-flutter-App（假的）"><a href="#构建自己的第一个-flutter-App（假的）" class="headerlink" title="构建自己的第一个 flutter App（假的）"></a>构建自己的第一个 flutter App（假的）</h2><p>项目地址：<a href="https://github.com/AllenMistake/flutter_app" target="_blank" rel="noopener">https://github.com/AllenMistake/flutter_app</a></p>
-<p>之所以是假的，是因为完全参考官方给出的示例代码，毕竟，我刚刚上手，API都不懂，怎么码代码嘛，还是要一步一步来，不要一口吃个胖子。</p>
-<p>我在这里分析几个源码中我认为比较重点的几个点：</p>
-<h3 id="单行函数"><a href="#单行函数" class="headerlink" title="单行函数"></a>单行函数</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() =&gt; runApp(<span class="keyword">new</span> MyApp());</span><br></pre></td></tr></table></figure>
-<p>=&gt;在dart中表示单行函数或方法，算是提高代码简洁度的一个语法糖吧。</p>
-<h3 id="widget结构分析"><a href="#widget结构分析" class="headerlink" title="widget结构分析"></a>widget结构分析</h3><p>首先我们看一下最初的源码</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    Widget build(BuildContext context) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MaterialApp(</span><br><span class="line">            title: <span class="string">'Welcome to Flutter'</span>,</span><br><span class="line">            home: <span class="keyword">new</span> Scaffold(</span><br><span class="line">                appBar: <span class="keyword">new</span> AppBar(</span><br><span class="line">                    title: <span class="keyword">const</span> Text(<span class="string">'Welcome to Flutter'</span>),</span><br><span class="line">                ),</span><br><span class="line">                body: <span class="keyword">const</span> Center(</span><br><span class="line">                    child: <span class="keyword">const</span> Text(<span class="string">'Hello World'</span>),</span><br><span class="line">                ),</span><br><span class="line">            ),</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Scaffold 是 Material library 中提供的一个 widget，它提供了默认的导航栏、标题和包含主屏幕 widget 树的 body 属性。widget 树可以很复杂。</p>
-<p>一个 widget 的主要工作是<strong>提供一个 build() 方法</strong>(总是要重写，类似于activity中的 onCreate)来描述如何根据其他较低级别的 widgets 来显示自己。</p>
-<p>本示例中的 body 的 widget 树中包含了一个 Center widget，Center widget 又包含一个 Text 子 widget，Center widget 可以将其子 widget 树对其到屏幕中心。</p>
-<h3 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h3><p>添加依赖在 pubspec.yaml 中，然后点击右上角出现的Packages get，当然别忘了在主程序中引入包。</p>
-<h3 id="添加一个-Stateful-widget"><a href="#添加一个-Stateful-widget" class="headerlink" title="添加一个 Stateful widget"></a>添加一个 Stateful widget</h3><p>Stateless widgets 是不可变的，这意味着它们的属性不能改变——所有的值都是 final。</p>
-<p>Stateful widgets 持有的状态可能在 widget 生命周期中发生变化，实现一个 stateful widget 至少需要两个类：1）一个 <a href="https://docs.flutter.io/flutter/widgets/StatefulWidget-class.html" target="_blank" rel="noopener">StatefulWidget</a> 类；2）一个 <a href="https://docs.flutter.io/flutter/widgets/State-class.html" target="_blank" rel="noopener">State</a> 类，StatefulWidget 类本身是不变的，但是 State 类在 widget 生命周期中始终存在。</p>
-<h2 id="万物皆是-widget"><a href="#万物皆是-widget" class="headerlink" title="万物皆是 widget"></a>万物皆是 widget</h2><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ListTile(</span><br><span class="line">      title: <span class="keyword">new</span> Text(</span><br><span class="line">        pair.asPascalCase,</span><br><span class="line">        style: _biggerFont,</span><br><span class="line">      ),</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
-<p>这个代码中 ListTile 和 Text 都是 widget 他们各自的属性用括号括起来，记住，每个属性写完之后要加逗号，这个很容易忘。</p>
-<h2 id="二阶段：加入Icon和跳转页面"><a href="#二阶段：加入Icon和跳转页面" class="headerlink" title="二阶段：加入Icon和跳转页面"></a>二阶段：加入Icon和跳转页面</h2><p>我们看一下最终结构关系图</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/14/startflutter/construction.png" alt="第二阶段结构图" title>
-                </div>
-                <div class="image-caption">第二阶段结构图</div>
-            </figure>
-<p>来看看第二阶段学习了哪些内容吧</p>
-<h3 id="在-stateful-widget-上添加交互"><a href="#在-stateful-widget-上添加交互" class="headerlink" title="在 stateful widget 上添加交互"></a>在 stateful widget 上添加交互</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Widget _buildRow(WordPair pair) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="built_in">bool</span> alreadySaved = _saved.contains(pair);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ListTile(</span><br><span class="line">      title: <span class="keyword">new</span> Text(</span><br><span class="line">        pair.asPascalCase,</span><br><span class="line">        style: _biggerFont,</span><br><span class="line">      ),</span><br><span class="line">      trailing: <span class="keyword">new</span> Icon(</span><br><span class="line">        alreadySaved ? Icons.favorite : Icons.favorite_border,</span><br><span class="line">        color: alreadySaved ? Colors.red : <span class="keyword">null</span>,</span><br><span class="line">      ),</span><br><span class="line">      onTap: () &#123;</span><br><span class="line">        setState(() &#123;</span><br><span class="line">          <span class="keyword">if</span> (alreadySaved) &#123;</span><br><span class="line">            _saved.remove(pair);</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            _saved.add(pair);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;,</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>在 <code>onTap</code> 属性中，我们添加了点击事件的逻辑。我们在 _buildRow 中让心形 ❤️图标变得可以点击。如果单词条目已经添加到收藏夹中， 再次点击它将其从收藏夹中删除。当心形 ❤️图标被点击时，函数调用 setState() 通知框架状态已经改变。</p>
-<p><strong>提示</strong>: 在 Flutter 的响应式风格的框架中，调用 setState() 会为 State 对象触发 build() 方法，从而导致对 UI 的更新</p>
-<h3 id="导航到第二个页面；"><a href="#导航到第二个页面；" class="headerlink" title="导航到第二个页面；"></a>导航到第二个页面；</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> _pushSaved() &#123;</span><br><span class="line">    Navigator.of(context).push(</span><br><span class="line">      <span class="keyword">new</span> MaterialPageRoute&lt;<span class="keyword">void</span>&gt;(</span><br><span class="line">        builder: (BuildContext context) &#123;</span><br><span class="line">          <span class="keyword">final</span> <span class="built_in">Iterable</span>&lt;ListTile&gt; tiles = _saved.map(</span><br><span class="line">            (WordPair pair) &#123;</span><br><span class="line">              <span class="keyword">return</span> <span class="keyword">new</span> ListTile(</span><br><span class="line">                title: <span class="keyword">new</span> Text(</span><br><span class="line">                  pair.asPascalCase,</span><br><span class="line">                  style: _biggerFont,</span><br><span class="line">                ),</span><br><span class="line">              );</span><br><span class="line">            &#125;,</span><br><span class="line">          );</span><br><span class="line">          <span class="keyword">final</span> <span class="built_in">List</span>&lt;Widget&gt; divided = ListTile.divideTiles(</span><br><span class="line">            context: context,</span><br><span class="line">            tiles: tiles,</span><br><span class="line">          ).toList();</span><br><span class="line"></span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Scaffold(</span><br><span class="line">            appBar: <span class="keyword">new</span> AppBar(</span><br><span class="line">              title: <span class="keyword">const</span> Text(<span class="string">'Saved Suggestion'</span>),</span><br><span class="line">            ),</span><br><span class="line">            body: <span class="keyword">new</span> ListView(children: divided),</span><br><span class="line">          );</span><br><span class="line">        &#125;,</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>添加一个显示收藏夹内容的新页面（在 Flutter 中称为路由［route］）。</p>
-<p>在 Flutter 中，Navigator (导航器)管理应用程序的路由栈。将路由推入（push）到导航器的栈中，将会显示更新为该路由页面。 从导航器的栈中弹出（pop）路由，将显示返回到前一个路由。</p>
-<p>我们在 RandomWordsState 的 build 方法中为 AppBar 添加一个列表图标。当用户点击列表图标时，包含收藏夹的新路由页面入栈显示。</p>
-<p>添加 <code>Navigator.push</code> 调用，这会使路由入栈（以后路由入栈均指推入到导航管理器的栈）</p>
-<p>在新的 route（路由）页面中显示收藏的内容。Navigator（导航器）会在应用栏中自动添加一个”返回”按钮，无需调用Navigator.pop，点击后退按钮就会返回到主页路由。</p>
-<p>接下来，添加 MaterialPageRoute 及其 builder。 现在，添加生成 ListTile 行的代码，ListTile 的 <code>divideTiles()</code> 方法在每个 ListTile 之间添加 1 像素的分割线。 该 <code>divided</code> 变量持有最终的列表项，并通过 <code>toList()</code> 方法非常方便的转换成列表显示。</p>
-<p>builder 返回一个 Scaffold，其中包含名为”Saved Suggestions”的新路由的应用栏。新路由的body 由包含 ListTiles 行的 ListView 组成；每行之间通过一个分隔线分隔。</p>
-<p>最终，我们可以通过 Flutter Inspector 查看 Widget Tree 具体结构</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/14/startflutter/inspector.png" alt="Widget Tree" title>
-                </div>
-                <div class="image-caption">Widget Tree</div>
-            </figure>
-
+        是时候搞一点新东西了其实我在去年就对 Flutter 有所了解，当时的 Flutter 已经可以和 react native 相互竞争了，但是但是 flutter 生态化没有完全建立起来，根本和 RN 比不了，虽然在 Github 有了几十万 star 但是也只是作为 Android 和 iOS 之间跨平台的一种方案。
+然而在2019年5月，谷歌在其官方博客宣布，Flutter 已支持移动、...
     
 
         <a href="/2019/06/14/startflutter/" class="post-more waves-effect waves-button">
@@ -970,56 +620,10 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="S-amp-C算法"><a href="#S-amp-C算法" class="headerlink" title="S&amp;C算法"></a>S&amp;C算法</h2><p>S&amp;C 算法是 Schimidl&amp;Cox 同步算法的简称，是一种基于训练序列的同步估计算法，它是由 Schimidl 和 Cox 提出的。它是最经典的一种基于训练序列的同步估计算法，后续的 Minn 算法和 Park 算法都在它基础上做改进的。 S&amp;C 算法的训练序列的结构图如图 3-2 所示。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/10/classictiming/sc.png" alt="S&C训练序列结构图" title>
-                </div>
-                <div class="image-caption">S&C训练序列结构图</div>
-            </figure>
-<p>如图 3-2 所示，训练序列 1 由两个长度为 N/ 2 训练序列 A 组成，这两个 A 是完全一样的序列；训练序列 2 由长度为 N 的训练序列 B 组成。训练序列 1 通常是用来完成符号定时估计和小数倍载波偏移估计。训练序列 1 的 N 个子载波的频域特性表现为，在偶数子载波上放置一个长度为 N/ 2 的1PN 序列，在奇数子载波上全部置零，然后进行 N 点的 IFFT 变换，就能够创造出前后 N/2 个点值一样的训练序列 1。具体实现的时候，可以使用 N/2 个点的 PN 序列，进行 IFFT 之后，得到序列 A，把 A 重复放置一次就能得到训练序列 1。训练序列 2 通常是和训练序列 1一起来完成整数倍载波偏移估计的。训练序列 2 的 N 个子载波的频域特性表现为，在奇数子载波上放置一个长度为 N/ 2 的其他序列，在偶数子载波上放置一个长度为 N/ 2 的2PN 序列，然后进行 N 点的 IFFT 变换，就可以得到训练序列 2，其中，2PN 序列与1PN 序列的有一个差分关系，如下式所示，</p>
-<p>$v(k)=\frac{P N_{2}(k)}{P N_{1}(k)} \qquad k=1,2, \cdots N / 2$</p>
-<p>从训练序列 1 的第一个采样值开始，将前后对应的数据共轭相乘相加，可以得到相关函数，如下式所示：</p>
-<p>$P(d)=\sum_{n=0}^{N / 2-1} r^{*}(d+n) r(d+N / 2+n)$</p>
-<p>式中 d 表示估计到的滑动窗的起始位置，理想位置就是第一个采样点。峰值会受到 CP 的干扰，进而出现一个平台，我们一般把它称为<strong>平台效应</strong>。下式表示滑动窗内的信号能量：</p>
-<p>$R(d)=\sum_{n=0}^{N / 2-1}|r(d+n+N / 2)|^{2}$</p>
-<p>归一化后的定时测度函数可定义为</p>
-<p>$M(d)=\frac{|P(d)|^{2}}{R^{2}(d)}$</p>
-<p>使得 $M(d)$ 取得最大值的 d 就是估计出的符号起始位置，一般把这个位置记为 $\hat{d}$ ，如下式所示：</p>
-<p>$\hat{d}=\arg \max (M(d))$</p>
-<h2 id="Minn-算法"><a href="#Minn-算法" class="headerlink" title="Minn 算法"></a>Minn 算法</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/10/classictiming/minn.png" alt="Minn算法训练序列结构图" title>
-                </div>
-                <div class="image-caption">Minn算法训练序列结构图</div>
-            </figure>
-<p>从图 3-4 中可以看到，Minn 算法由 4 个训练符号构成，第一个和第二个训练符号都是 A，第三个和第四个训练符号都是 -A，其中，A 和 -A 互为相反数，A 是由伪随机 PN 序列进行 IFFT 之后得到的。 Minn 算法的运算过程和 S&amp;C 算法的运算过程基本一致，只是由于训练序列结构的改变，导致了相关函数和能量函数也一起发生了变化，具体变化如下式所示：</p>
-<p>$P(d)=\sum_{k=0}^{1} \sum_{m=0}^{N / 4-1} r^{*}\left(d+\frac{N \cdot k}{2}+m\right) \cdot r\left(d+\frac{N \cdot k}{2}+m+\frac{N}{4}\right)$</p>
-<p>$R(d)=\sum_{k=0}^{1} \sum_{m=0}^{N / 4-1}\left|r\left(d+\frac{N \cdot k}{2}+m+\frac{N}{4}\right)\right|^{2}$</p>
-<p>$M(d)=\frac{|P(d)|^{2}}{R^{2}(d)}$</p>
-<h2 id="Park-算法"><a href="#Park-算法" class="headerlink" title="Park 算法"></a>Park 算法</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/10/classictiming/park.png" alt="Park算法训练序列结构图" title>
-                </div>
-                <div class="image-caption">Park算法训练序列结构图</div>
-            </figure>
-<p>从图 3-5 中可以看出一个 Park 算法的训练序列由四个训练符号构成的。其中 A 是由长度为 N/4 的伪随机 PN 序列经过 IFFT 得到的，B 是 A 的逆向排列，A*是A 的共轭，B*是 B 的共轭。 Park 算法的相关函数，能量函数和定时测度函数定义为：</p>
-<p>$P(d)=\sum_{k=0}^{N / 2-1} r(d+k) \cdot r(d-k-1)$</p>
-<p>$R(d)=\sum_{k=0}^{N / 2-1}|r(d+k)|^{2}$</p>
-<p>$M(d)=\frac{|P(d)|^{2}}{R^{2}(d)}$</p>
-<p>Park 算法的训练序列虽然前后也是对称的，但是并没有利用前后对称这一特性，而是利用了训练序列中心共轭对称这个更难得的性质。从中间两个值向两边依次进行相关运算，才能够达到唯一的相关峰值，排除 CP 的干扰。而且使得归一化后的符号定时测度函数 $M(\hat{d})$ 达到最大的 $\hat{d}$ 对应的并不是 FFT 窗开始的位置，而是训练序列的中点。Park 算法的相关函数的运算过程如图 3-6 所示，</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2019/06/10/classictiming/process.png" alt="Park相关函数运算过程" title>
-                </div>
-                <div class="image-caption">Park相关函数运算过程</div>
-            </figure>
-<h2 id="三种算法效果"><a href="#三种算法效果" class="headerlink" title="三种算法效果"></a>三种算法效果</h2><p>以上这三种方法在AWGN信道下表现良好<br>对于 S&amp;C 算法，S&amp;C 算法在各种信道下，在找出理想的 FFT 窗附近都存在着一个“平台”。<br>对于 Minn 算法和 Park 算法，在 ETU 信道（一种多径干扰模型）下，随着多径衰落、时延和频偏的增加，定时测度函数峰值被削弱，且幅度变化较大，也有可能出现“双峰”的情况，造成定时同步判断的错误。</p>
+        S&amp;C算法S&amp;C 算法是 Schimidl&amp;Cox 同步算法的简称，是一种基于训练序列的同步估计算法，它是由 Schimidl 和 Cox 提出的。它是最经典的一种基于训练序列的同步估计算法，后续的 Minn 算法和 Park 算法都在它基础上做改进的。 S&amp;C 算法的训练序列的结构图如图 3-2 所示。
 
+                
+         ...
     
 
         <a href="/2019/06/10/classictiming/" class="post-more waves-effect waves-button">
