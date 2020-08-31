@@ -157,6 +157,55 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-viterbi"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-11-10 09:56:14" datetime="2019-11-10T01:56:14.000Z"  itemprop="datePublished">2019-11-10</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/通信/">通信</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/11/10/viterbi/">维特比算法</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        好久没有更新通信相关的博客了，最近在做关于维特比译码的相关工作，这两周也是把维特比算法摸了个门清，下面来简单说一下维特比译码的关键思想，重要步骤。
+维特比译码首先，我们要对维特比译码有个大概的认识。
+维特比算法是基于状态转移的一种算法。在我的程序中，涉及到的是相位状态，对于CPM（连续相位调制）信号，相位是随着时间连续变化的，这边是一种状态转移，由于这种状态是具有记忆性的，我们在译码的时候，...
+    
+
+        <a href="/2019/11/10/viterbi/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/译码/">译码</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-smartbutler1"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -588,51 +637,6 @@ ListView的布局是自己实现的，
     
 
         <a href="/2019/08/22/listview-vs-recyclerview/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-fragmentdata"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-08-16 16:19:52" datetime="2019-08-16T08:19:52.000Z"  itemprop="datePublished">2019-08-16</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/08/16/fragmentdata/">Fragment间数据传递</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        项目中的逻辑结构图
-主要思想：
-
-要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。
-要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityRe...
-    
-
-        <a href="/2019/08/16/fragmentdata/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
