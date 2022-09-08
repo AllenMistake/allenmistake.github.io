@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：4.两个有序数组的中位数 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="递归">
+    <meta name="description" content="题目There are two sorted arrays nums1 and nums2 of size m and n respectively.Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).You may assume nums1 and num">
+<meta name="keywords" content="递归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：4.两个有序数组的中位数">
+<meta property="og:url" content="http://www.allenmistake.top/2018/11/10/leetcode4/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="题目There are two sorted arrays nums1 and nums2 of size m and n respectively.Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).You may assume nums1 and num">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-15T14:41:20.904Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：4.两个有序数组的中位数">
+<meta name="twitter:description" content="题目There are two sorted arrays nums1 and nums2 of size m and n respectively.Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).You may assume nums1 and num">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：4.两个有序数组的中位数</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：4.两个有序数组的中位数</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-11-09T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2018-11-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/hard/">hard</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#题目"><span class="post-toc-number">1.</span> <span class="post-toc-text">题目</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码"><span class="post-toc-number">3.</span> <span class="post-toc-text">代码</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码运行过程"><span class="post-toc-number">4.</span> <span class="post-toc-text">代码运行过程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考内容"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考内容</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcode4"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：4.两个有序数组的中位数</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-11-10 00:00:00" datetime="2018-11-09T16:00:00.000Z"  itemprop="datePublished">2018-11-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/hard/">hard</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>There are two sorted arrays nums1 and nums2 of size m and n respectively.<br>Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).<br>You may assume nums1 and nums2 cannot be both empty.<br>Example 1:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nums1 = [1, 3]</span><br><span class="line">nums2 = [2]</span><br></pre></td></tr></table></figure>
+<p>The median is 2.0<br>Example 2:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nums1 = [1, 2]</span><br><span class="line">nums2 = [3, 4]</span><br></pre></td></tr></table></figure>
+<p>The median is (2 + 3)/2 = 2.5</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>要求很简单，给定两个不全为空的数组，求他们两个数组合在一起后的中位数，首先，我们要直到</p>
+<ol>
+<li>中位数是什么？ 回顾一下中位数的定义，如果某个有序数组长度是奇数，那么其中位数就是最中间那个，如果是偶数，那么就是最中间两个数字的平均值。</li>
+<li>我们要明确，这道题是给定了时间复杂度了的，即O(log (m+n))，是一个log复杂度，所以肯定不是遍历。<br>其实看到log很容易想到二分法，但是如何在两个数组中利用二分法求中位数呢？<br>假设两个有序数组的长度分别为m和n，由于两个数组长度之和 m+n 的奇偶不确定，因此需要分情况来讨论，对于奇数的情况，直接找到最中间的数即可，偶数的话需要求最中间两个数的平均值。为了简化代码，不分情况讨论，我们使用一个小trick，<strong>我们分别找第 (m+n+1) / 2 个，和 (m+n+2) / 2 个，然后求其平均值</strong>即可，这对奇偶数均适用。加入 m+n 为奇数的话，那么其实 (m+n+1) / 2 和 (m+n+2) / 2 的值相等，相当于两个相同的数字相加再除以2，还是其本身。</li>
+</ol>
+<p>详细讲解可以仔细研读官方给出的解决方案，这里只说几个重点<br>好，这里我们需要定义一个函数来在两个有序数组中找到第K个元素，下面重点来看如何实现找到第K个元素。</p>
+<ol>
+<li>降低复杂度的特殊情况<br>首先，为了避免产生新的数组从而增加时间复杂度，<strong>我们使用两个变量i和j分别来标记数组nums1和nums2的起始位置</strong>。然后来处理一些corner cases（边缘情况），比如当某一个数组的起始位置大于等于其数组长度时，说明其所有数字均已经被淘汰了，相当于一个空数组了，那么实际上就变成了在另一个数组中找数字，直接就可以找出来了。还有就是如果K=1的话，那么我们只要比较nums1和nums2的起始位置i和j上的数字就可以了。</li>
+<li>对谁进行二分？<br>难点就在于一般的情况怎么处理？因为我们需要在两个有序数组中找到第K个元素，为了加快搜索的速度，我们要使用二分法，那么对谁二分呢，数组么？其实要对K二分，意思是我们需要分别在nums1和nums2中查找第K/2个元素，注意这里由于两个数组的长度不定，所以有可能某个数组没有第K/2个数字，所以我们需要先check一下，数组中到底存不存在第K/2个数字，如果存在就取出来，否则就赋值上一个整型最大值。如果某个数组没有第K/2个数字，那么我们就淘汰另一个数字的前K/2个数字即可。有没有可能两个数组都不存在第K/2个数字呢，这道题里是不可能的，因为我们的K不是任意给的，而是给的m+n的中间值，所以必定至少会有一个数组是存在第K/2个数字的。</li>
+<li>二分法<br>最后就是二分法的核心啦，比较这两个数组的第K/2小的数字midVal1和midVal2的大小，<strong>如果第一个数组的第K/2个数字小的话，那么说明我们要找的数字肯定不在nums1中的前K/2个数字，所以我们可以将其淘汰</strong>，将nums1的起始位置向后移动K/2个，并且此时的K也自减去K/2，调用递归。反之，我们淘汰nums2中的前K/2个数字，并将nums2的起始位置向后移动K/2个，并且此时的K也自减去K/2，调用递归即可，参见代码如下：</li>
+</ol>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">findMedianSortedArrays</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m = nums1.size(), n = nums2.size(), left = (m + n + <span class="number">1</span>) / <span class="number">2</span>, right = (m + n + <span class="number">2</span>) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">return</span> (findKth(nums1, <span class="number">0</span>, nums2, <span class="number">0</span>, left) + findKth(nums1, <span class="number">0</span>, nums2, <span class="number">0</span>, right)) / <span class="number">2.0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findKth</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums1, <span class="keyword">int</span> i, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums2, <span class="keyword">int</span> j, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (i &gt;= nums1.size()) <span class="keyword">return</span> nums2[j + k - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (j &gt;= nums2.size()) <span class="keyword">return</span> nums1[i + k - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (k == <span class="number">1</span>) <span class="keyword">return</span> min(nums1[i], nums2[j]);</span><br><span class="line">        <span class="keyword">int</span> midVal1 = (i + k / <span class="number">2</span> - <span class="number">1</span> &lt; nums1.size()) ? nums1[i + k / <span class="number">2</span> - <span class="number">1</span>] : INT_MAX;</span><br><span class="line">        <span class="keyword">int</span> midVal2 = (j + k / <span class="number">2</span> - <span class="number">1</span> &lt; nums2.size()) ? nums2[j + k / <span class="number">2</span> - <span class="number">1</span>] : INT_MAX;</span><br><span class="line">        <span class="keyword">if</span> (midVal1 &lt; midVal2) &#123;</span><br><span class="line">            <span class="keyword">return</span> findKth(nums1, i + k / <span class="number">2</span>, nums2, j, k - k / <span class="number">2</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> findKth(nums1, i, nums2, j + k / <span class="number">2</span>, k - k / <span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="代码运行过程"><a href="#代码运行过程" class="headerlink" title="代码运行过程"></a>代码运行过程</h2><p>我们假设两个有序数组分别是<br>num1：[1，5，6，9]<br>num2：[3，7，8]<br>那么我们带入到上述代码中运行，观察运行情况</p>
+<ol>
+<li>首先，我们根据两个数组总长度确定left=4和right=4。</li>
+<li>计算(num1，i=0，num2，j=0，k=4)<br>我们先不管前三个特殊判断，直接看接下来的赋值，</li>
+<li>第一次迭代<br>midVal1=5，midVal2=7（位置i+k/2-1）<br>然后比较大小midVal1与midVal2的大小，小的元素所在的数组(i=i+k/2)继续带入（num1，i=2，num2，j=0，k=k-k/2=2）</li>
+<li>第二次迭代<br>midVal1=6，midVal2=3（大的元素随着k的减小而往前收缩），（num1，i=2，num2，j=1，k=k-k/2=1）</li>
+<li>第三次迭代，此时k等于1，执行特殊判断(3)，num1[i=2]=6，num2[j=1]=7，取最小值6，找到。</li>
+</ol>
+<p>我们再来看一个例子：<br>num1：[6]<br>num2：[1，5，7，8，10]</p>
+<ol>
+<li>初始化：left=3，right=4</li>
+</ol>
+<p>首先计算left分支（k=3）：</p>
+<ol>
+<li>i=0，j=0，k=3；均取头元素，num1[0]&gt;num2[0]，j=k/2，k=k-k/2</li>
+<li>i=0，j=1，k=2，num1[0]&gt;num2[1]，j=k/2，k=k-k/2</li>
+<li>k=1，return min(6,7)=6；</li>
+</ol>
+<p>下面计算right分支（k=4）:</p>
+<ol>
+<li>i=0，j=0，k=4；此时并无i+k/2-1，所以设置midVal1=无穷，这样midVal2一定是比较小的，j=k/2，k=k-k/2</li>
+<li>i=0，j=2，k=2；此时midVal1收缩到num1[0]，与num2[2]比较</li>
+<li>i=1，j=2，k=1，此时i=num1.size()，执行第一判断，return num2[2]=7</li>
+</ol>
+<p>所以最后结果是（6+7）/2</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>可以看出，有些限制复杂度的题，更是给了我们足够的提示，log（m+n）代表不能遍历数组，而且需要二分，如何将二分和中位数的判断紧密的结合起来，是个难题。也是这道题在Leetcode处于Hard的原因，</p>
+<ol>
+<li>首先，我们要掌握二分法在两个数组中的处理方式</li>
+<li>判断好边界情况</li>
+</ol>
+<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><ol>
+<li><a href="http://www.cnblogs.com/grandyang/p/4465932.html" target="_blank" rel="noopener">[LeetCode] Median of Two Sorted Arrays 两个有序数组的中位数</a></li>
+<li><a href="https://leetcode-cn.com/articles/median-of-two-sorted-arrays/" target="_blank" rel="noopener">Leetcode官方解法</a></li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-05-15T14:41:20.904Z" itemprop="dateUpdated">2019-05-15 22:41:20</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2018/11/10/leetcode4/" target="_blank" rel="external">http://www.allenmistake.top/2018/11/10/leetcode4/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/递归/">递归</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2018/11/10/leetcode4/&title=《Leetcode日记：4.两个有序数组的中位数》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2018/11/10/leetcode4/&title=《Leetcode日记：4.两个有序数组的中位数》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2018/11/10/leetcode4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：4.两个有序数组的中位数》 — AllenMistake的小屋&url=http://www.allenmistake.top/2018/11/10/leetcode4/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2018/11/10/leetcode4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/11/13/leetcode6/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Leetcode日记：6.Z字形变换</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/11/09/leetcode3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Leetcode日记：3.最长不重复子串</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2018/11/10/leetcode4/&title=《Leetcode日记：4.两个有序数组的中位数》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2018/11/10/leetcode4/&title=《Leetcode日记：4.两个有序数组的中位数》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2018/11/10/leetcode4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：4.两个有序数组的中位数》 — AllenMistake的小屋&url=http://www.allenmistake.top/2018/11/10/leetcode4/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2018/11/10/leetcode4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2018/11/10/leetcode4/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

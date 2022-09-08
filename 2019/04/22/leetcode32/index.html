@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：32：最长有效括号 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="动态规划,栈">
+    <meta name="description" content="题目给定一个只包含 &amp;#39;(&amp;#39; 和 &amp;#39;)&amp;#39; 的字符串，找出最长的包含有效括号的子串的长度。 示例 1: 123输入: &amp;quot;(()&amp;quot;输出: 2解释: 最长有效括号子串为 &amp;quot;()&amp;quot; 示例 2: 123输入: &amp;quot;)()())&amp;quot;输出: 4解释: 最长有效括号子串为 &amp;quot;()()&amp;quot; 题目分析暴力法在这种方">
+<meta name="keywords" content="动态规划,栈">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：32：最长有效括号">
+<meta property="og:url" content="http://www.allenmistake.top/2019/04/22/leetcode32/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="题目给定一个只包含 &amp;#39;(&amp;#39; 和 &amp;#39;)&amp;#39; 的字符串，找出最长的包含有效括号的子串的长度。 示例 1: 123输入: &amp;quot;(()&amp;quot;输出: 2解释: 最长有效括号子串为 &amp;quot;()&amp;quot; 示例 2: 123输入: &amp;quot;)()())&amp;quot;输出: 4解释: 最长有效括号子串为 &amp;quot;()()&amp;quot; 题目分析暴力法在这种方">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-24T01:27:26.704Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：32：最长有效括号">
+<meta name="twitter:description" content="题目给定一个只包含 &amp;#39;(&amp;#39; 和 &amp;#39;)&amp;#39; 的字符串，找出最长的包含有效括号的子串的长度。 示例 1: 123输入: &amp;quot;(()&amp;quot;输出: 2解释: 最长有效括号子串为 &amp;quot;()&amp;quot; 示例 2: 123输入: &amp;quot;)()())&amp;quot;输出: 4解释: 最长有效括号子串为 &amp;quot;()()&amp;quot; 题目分析暴力法在这种方">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：32：最长有效括号</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：32：最长有效括号</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-22T02:23:15.000Z" itemprop="datePublished" class="page-time">
+  2019-04-22
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/hard/">hard</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#题目"><span class="post-toc-number">1.</span> <span class="post-toc-text">题目</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#题目分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">题目分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#暴力法"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">暴力法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#动态规划"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">动态规划</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#利用栈"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">利用栈</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#不需要额外空间"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">不需要额外空间</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#更多动态规划问题"><span class="post-toc-number">3.</span> <span class="post-toc-text">更多动态规划问题</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcode32"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：32：最长有效括号</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-22 10:23:15" datetime="2019-04-22T02:23:15.000Z"  itemprop="datePublished">2019-04-22</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/hard/">hard</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>给定一个只包含 <code>&#39;(&#39;</code> 和 <code>&#39;)&#39;</code> 的字符串，找出最长的包含有效括号的子串的长度。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: &quot;(()&quot;</span><br><span class="line">输出: 2</span><br><span class="line">解释: 最长有效括号子串为 &quot;()&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: &quot;)()())&quot;</span><br><span class="line">输出: 4</span><br><span class="line">解释: 最长有效括号子串为 &quot;()()&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><h3 id="暴力法"><a href="#暴力法" class="headerlink" title="暴力法"></a>暴力法</h3><p>在这种方法中，我们考虑给定字符串中每个可能的<strong>非空偶数长度子字符串</strong>，并检查它是否是有效的括号字符串。为了检查有效性，我们使用堆栈方法。</p>
+<p>每当我们遇到一个$\text{‘(‘} $，我们就把它推到堆栈上。对于遇到的每个$\text{‘)’} $，我们都会从堆栈中弹出一个$\text{‘(‘} $。如果$\text{‘(‘} $在堆栈上不可随时弹出，或者如果堆栈在处理完完整的子字符串后包含一些元素，括号中的子字符串无效。这样，我们对每一个可能的子串重复这个过程，并继续存储迄今为止找到的最长有效字符串的长度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isValid</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        Stack&lt;Character&gt; stack = <span class="keyword">new</span> Stack&lt;Character&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">                stack.push(<span class="string">'('</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!stack.empty() &amp;&amp; stack.peek() == <span class="string">'('</span>) &#123;</span><br><span class="line">                stack.pop();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stack.empty();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxlen = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">2</span>; j &lt;= s.length(); j+=<span class="number">2</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (isValid(s.substring(i, j))) &#123;</span><br><span class="line">                    maxlen = Math.max(maxlen, j - i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxlen;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>复杂度分析：</p>
+<ul>
+<li>时间复杂度：$O(n^3)$ , 从长度为 $n$ 的字符串产生可能的子串需要$O(n^2)$ , 检查长度有效性需要 $O(n)$</li>
+<li>空间复杂度：$O(n)$ , 栈的长度为 $n$</li>
+</ul>
+<h3 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h3><p>这个问题可以通过使用动态规划来解决。我们使用 $\text{dp}$ 数组，其中 $\text{dp}$ 的第 $i$ 元素表示以 $i$ 索引结尾的最长有效子字符串的长度。我们用0初始化完整的 $\text{dp}$ 数组。现在，很明显，有效的子字符串必须以 $\text{‘)’} $ 结尾。这进一步导致以 $\text{‘(‘} $ 结尾的子字符串在其对应的 $\text{dp}$ 索引处总是包含’ 0 ‘。因此，我们仅在遇到 $\text{‘)’} $ 时更新 $\text{dp}$ 数组。</p>
+<p>要填充 $\text{dp}$ 数组，我们将每两个连续字符检查一次字符串，如果</p>
+<ol>
+<li><p>$\text{s}[i]=’)’ $ 、 $\text{s}[i - 1] = \text{‘(’}$, 例如这种字符串 “……()” $\Rightarrow$</p>
+<p>​                    $\text{dp}[i]=\text{dp}[i-2]+2$</p>
+</li>
+</ol>
+<p>   我们这样做是因为结尾 “()” 部分无论如何都是有效的子串，并导致前一个有效子串的长度增加2。</p>
+<ol start="2">
+<li><p>$\text{s}[i] = \text{‘)’}$、 $\text{s}[i - 1] = \text{‘)’}$ 例如这种字符串<code></code>…….))” $\Rightarrow$</p>
+<p>如果 $\text{s}[i - \text{dp}[i - 1] - 1] = \text{‘(’}$ 那么</p>
+<p>​    $\text{dp}[i]=\text{dp}[i-1]+\text{dp}[i-\text{dp}[i-1]-2]+2$</p>
+</li>
+</ol>
+<p>$\text{dp}[i]$ 表示以当前位置为终点的最长长度，则只能在 ）处更新，</p>
+<p>如果 $\text{s}[i - \text{dp}[i - 1] - 1] = \text{‘(’}$，则说明当前位置可以和 $i-1-\text{dp}[i-1]$ 位置匹配，$\text{dp}[i]=\text{dp}[i-1]+2$</p>
+<p>然后还要加上匹配位置之前的最长长度 $\text{dp}[i]+=\text{dp}[i-\text{dp}[i]]$</p>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> dp[] = <span class="keyword">new</span> <span class="keyword">int</span>[s.length()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">')'</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.charAt(i - <span class="number">1</span>) == <span class="string">'('</span>) &#123;</span><br><span class="line">                    dp[i] = (i &gt;= <span class="number">2</span> ? dp[i - <span class="number">2</span>] : <span class="number">0</span>) + <span class="number">2</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (i - dp[i - <span class="number">1</span>] &gt; <span class="number">0</span> &amp;&amp; s.charAt(i - dp[i - <span class="number">1</span>] - <span class="number">1</span>) == <span class="string">'('</span>) &#123;</span><br><span class="line">                    dp[i] = dp[i - <span class="number">1</span>] + ((i - dp[i - <span class="number">1</span>]) &gt;= <span class="number">2</span> ? dp[i - dp[i - <span class="number">1</span>] - <span class="number">2</span>] : <span class="number">0</span>) + <span class="number">2</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                maxans = Math.max(maxans, dp[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="利用栈"><a href="#利用栈" class="headerlink" title="利用栈"></a>利用栈</h3><p>我们可以在扫描给定字符串时使用堆栈来检查到目前为止扫描的字符串是否有效，以及最长有效字符串的长度，而不是查找每个可能的字符串并检查其有效性。为了做到这一点，我们首先将-1 -1推到堆栈上。</p>
+<p>对于遇到的每一个 $\text{‘(‘}$ ，我们将其索引推送到堆栈上。</p>
+<p>对于遇到的每一个$\text{‘)’} $，我们弹出最顶端的元素，并从堆栈的顶端元素中减去当前元素的索引，这将给出当前遇到的有效括号字符串的长度。如果弹出元素时，堆栈变空，我们将当前元素的索引推到堆栈上。这样，我们继续计算有效子字符串的长度，并在末尾返回最长有效字符串的长度。</p>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxans = <span class="number">0</span>;</span><br><span class="line">        Stack&lt;Integer&gt; stack = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        stack.push(-<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">                stack.push(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                stack.pop();</span><br><span class="line">                <span class="keyword">if</span> (stack.empty()) &#123;</span><br><span class="line">                    stack.push(i);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    maxans = Math.max(maxans, i - stack.peek());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="不需要额外空间"><a href="#不需要额外空间" class="headerlink" title="不需要额外空间"></a>不需要额外空间</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>, maxlength = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">                left++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">                maxlength = Math.max(maxlength, <span class="number">2</span> * right);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (right &gt;= left) &#123;</span><br><span class="line">                left = right = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        left = right = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">                left++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">                maxlength = Math.max(maxlength, <span class="number">2</span> * left);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (left &gt;= right) &#123;</span><br><span class="line">                left = right = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxlength;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="更多动态规划问题"><a href="#更多动态规划问题" class="headerlink" title="更多动态规划问题"></a>更多动态规划问题</h2><p>更多动态规划问题关注标签：<a href="https://allenmistake.github.io/tags/动态规划/" target="_blank" rel="noopener">动态规划</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-04-24T01:27:26.704Z" itemprop="dateUpdated">2019-04-24 09:27:26</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/04/22/leetcode32/" target="_blank" rel="external">http://www.allenmistake.top/2019/04/22/leetcode32/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/动态规划/">动态规划</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/栈/">栈</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/04/22/leetcode32/&title=《Leetcode日记：32：最长有效括号》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/04/22/leetcode32/&title=《Leetcode日记：32：最长有效括号》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/04/22/leetcode32/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：32：最长有效括号》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/04/22/leetcode32/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/04/22/leetcode32/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/05/07/monthlysummary/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">4月总结 and 5月计划</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/20/leetcode55dp/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Leetcode日记：55.跳跃游戏 &amp; 动态规划</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/04/22/leetcode32/&title=《Leetcode日记：32：最长有效括号》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/04/22/leetcode32/&title=《Leetcode日记：32：最长有效括号》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/04/22/leetcode32/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：32：最长有效括号》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/04/22/leetcode32/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/04/22/leetcode32/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/04/22/leetcode32/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

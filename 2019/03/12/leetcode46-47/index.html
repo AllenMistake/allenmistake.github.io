@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：46&amp;47.排列组合与回溯（backtrack） | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="回溯">
+    <meta name="description" content="回溯与迷宫              46排列组合1题目Given a collection of distinct integers, return all possible permutations. Exam">
+<meta name="keywords" content="回溯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：46&amp;47.排列组合与回溯（backtrack）">
+<meta property="og:url" content="http://www.allenmistake.top/2019/03/12/leetcode46-47/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="回溯与迷宫              46排列组合1题目Given a collection of distinct integers, return all possible permutations. Exam">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/03/12/leetcode46-47/maze.jpg">
+<meta property="og:image" content="http://www.allenmistake.top/2019/03/12/leetcode46-47/回溯算法.png">
+<meta property="og:updated_time" content="2019-04-09T07:13:55.649Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：46&amp;47.排列组合与回溯（backtrack）">
+<meta name="twitter:description" content="回溯与迷宫              46排列组合1题目Given a collection of distinct integers, return all possible permutations. Exam">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/03/12/leetcode46-47/maze.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：46&amp;47.排列组合与回溯（backtrack）</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：46&amp;47.排列组合与回溯（backtrack）</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-12T07:38:45.000Z" itemprop="datePublished" class="page-time">
+  2019-03-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/medium/">medium</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#46排列组合1"><span class="post-toc-number">1.</span> <span class="post-toc-text">46排列组合1</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#题目"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">题目</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码1"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">代码1</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#47排列组合2"><span class="post-toc-number">2.</span> <span class="post-toc-text">47排列组合2</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#问题"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码2"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">代码2</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#回溯算法"><span class="post-toc-number">3.</span> <span class="post-toc-text">回溯算法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#步骤"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">步骤</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#基本思想"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">基本思想</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#回溯与动态规划"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">回溯与动态规划</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#适用情况"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">适用情况</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#用回溯思想解决问题"><span class="post-toc-number">4.</span> <span class="post-toc-text">用回溯思想解决问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#回到问题"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">回到问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#排列组合1"><span class="post-toc-number">4.1.1.</span> <span class="post-toc-text">排列组合1</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#排列组合2"><span class="post-toc-number">4.1.2.</span> <span class="post-toc-text">排列组合2</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#注意的问题"><span class="post-toc-number">4.1.3.</span> <span class="post-toc-text">注意的问题</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#更多关于回溯的问题"><span class="post-toc-number">5.</span> <span class="post-toc-text">更多关于回溯的问题</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcode46-47"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：46&47.排列组合与回溯（backtrack）</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-12 15:38:45" datetime="2019-03-12T07:38:45.000Z"  itemprop="datePublished">2019-03-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/medium/">medium</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/03/12/leetcode46-47/maze.jpg" alt="回溯与迷宫" title>
+                </div>
+                <div class="image-caption">回溯与迷宫</div>
+            </figure>
+<h2 id="46排列组合1"><a href="#46排列组合1" class="headerlink" title="46排列组合1"></a>46排列组合1</h2><h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>Given a collection of distinct integers, return all possible permutations.</p>
+<p><strong>Example:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Input: [1,2,3]</span><br><span class="line">Output:</span><br><span class="line">[</span><br><span class="line">  [1,2,3],</span><br><span class="line">  [1,3,2],</span><br><span class="line">  [2,1,3],</span><br><span class="line">  [2,3,1],</span><br><span class="line">  [3,1,2],</span><br><span class="line">  [3,2,1]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>这道题目的很明确，就是要求出数组所有排列组合情况，重点是不重复的数字，也就是说我们并不用考虑重复排列的情况</p>
+<h3 id="代码1"><a href="#代码1" class="headerlink" title="代码1"></a>代码1</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; permute(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">   List&lt;List&lt;Integer&gt;&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">   <span class="comment">// Arrays.sort(nums); // not necessary</span></span><br><span class="line">   backtrack(list, <span class="keyword">new</span> ArrayList&lt;&gt;(), nums);</span><br><span class="line">   <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">backtrack</span><span class="params">(List&lt;List&lt;Integer&gt;&gt; list, List&lt;Integer&gt; tempList, <span class="keyword">int</span> [] nums)</span></span>&#123;</span><br><span class="line">   <span class="keyword">if</span>(tempList.size() == nums.length)&#123;</span><br><span class="line">      list.add(<span class="keyword">new</span> ArrayList&lt;&gt;(tempList));</span><br><span class="line">   &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++)&#123;</span><br><span class="line">         <span class="keyword">if</span>(tempList.contains(nums[i])) <span class="keyword">continue</span>; <span class="comment">// element already exists, skip</span></span><br><span class="line">         tempList.add(nums[i]);</span><br><span class="line">         backtrack(list, tempList, nums);</span><br><span class="line">         tempList.remove(tempList.size() - <span class="number">1</span>);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="47排列组合2"><a href="#47排列组合2" class="headerlink" title="47排列组合2"></a>47排列组合2</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>Given a collection of numbers that <strong>might contain duplicates</strong>, return all possible unique permutations.</p>
+<p>Example:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Input: [1,1,2]</span><br><span class="line">Output:</span><br><span class="line">[</span><br><span class="line">  [1,1,2],</span><br><span class="line">  [1,2,1],</span><br><span class="line">  [2,1,1]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="代码2"><a href="#代码2" class="headerlink" title="代码2"></a>代码2</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; permuteUnique(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">    List&lt;List&lt;Integer&gt;&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    Arrays.sort(nums);</span><br><span class="line">    backtrack(list, <span class="keyword">new</span> ArrayList&lt;&gt;(), nums, <span class="keyword">new</span> <span class="keyword">boolean</span>[nums.length]);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">backtrack</span><span class="params">(List&lt;List&lt;Integer&gt;&gt; list, List&lt;Integer&gt; tempList, <span class="keyword">int</span> [] nums, <span class="keyword">boolean</span> [] used)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(tempList.size() == nums.length)&#123;</span><br><span class="line">        list.add(<span class="keyword">new</span> ArrayList&lt;&gt;(tempList));</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(used[i] || i &gt; <span class="number">0</span> &amp;&amp; nums[i] == nums[i-<span class="number">1</span>] &amp;&amp; !used[i - <span class="number">1</span>]) <span class="keyword">continue</span>;</span><br><span class="line">            used[i] = <span class="keyword">true</span>;</span><br><span class="line">            tempList.add(nums[i]);</span><br><span class="line">            backtrack(list, tempList, nums, used);</span><br><span class="line">            used[i] = <span class="keyword">false</span>;</span><br><span class="line">            tempList.remove(tempList.size() - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="回溯算法"><a href="#回溯算法" class="headerlink" title="回溯算法"></a>回溯算法</h2><h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><p>用回溯算法解决问题的一般步骤：</p>
+<ol>
+<li>针对所给问题，定义问题的解空间，它至少包含问题的一个（最优）解。</li>
+<li>确定易于搜索的解空间结构,使得能用回溯法方便地搜索整个解空间 。</li>
+<li>以深度优先的方式搜索解空间，并且在搜索过程中用剪枝函数避免无效搜索。</li>
+</ol>
+<h3 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h3><p>回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。比如走迷宫问题，就是这条路走不通，然后返回前一个路口，继续下一条路。回溯算法说白了就是穷举法。不过回溯算法使用剪枝函数，剪去一些不可能到达 最终状态（即答案状态）的节点，从而减少状态空间树节点的生成。</p>
+<h3 id="回溯与动态规划"><a href="#回溯与动态规划" class="headerlink" title="回溯与动态规划"></a>回溯与动态规划</h3><p>这道题让我想起之前的爬楼问题，都是一个问题由一个或者几个子问题构成，不断划分<br>他们之间的区别在于：动态规划往往是寻找<strong>一个</strong>最优解，而回溯问题则是<strong>穷举</strong>，深度遍历所有情况，当然也存在不符合要求的情况，但是仍然要遍历到相应的节点上。</p>
+<h3 id="适用情况"><a href="#适用情况" class="headerlink" title="适用情况"></a>适用情况</h3><ul>
+<li>穷举问题，例如在某个范围内求所有可能情况</li>
+<li>搜索空间均可以表示成树的样子</li>
+</ul>
+<h2 id="用回溯思想解决问题"><a href="#用回溯思想解决问题" class="headerlink" title="用回溯思想解决问题"></a>用回溯思想解决问题</h2><h3 id="回到问题"><a href="#回到问题" class="headerlink" title="回到问题"></a>回到问题</h3><h4 id="排列组合1"><a href="#排列组合1" class="headerlink" title="排列组合1"></a>排列组合1</h4><p>首先，我们来看，这是一种不需要剪枝的问题，得到的所有解一定唯一，那我们看一看程序是怎么实现回溯的：</p>
+<p>图示:<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/03/12/leetcode46-47/回溯算法.png" alt="回溯算法" title>
+                </div>
+                <div class="image-caption">回溯算法</div>
+            </figure></p>
+<ol>
+<li>首先明确回溯是一个递归性质的问题，这道题模型是传一个待排列数组和原数组。</li>
+<li>从0位置依次加入待排列数组，由于每次递归都要从0位置开始判断，所以传入之后要先判断这个数组是否已经出现过这个位置上的数，如果不曾出现，把这个数加入到数组中，再次递归。</li>
+<li>直到依照这个方法将数组填满(<code>tempList.size() == nums.length</code>)，把这样计算出来的数组加入到结果中。这样其中的一个分枝就完成了。</li>
+<li>完成之后自然进行回溯(跳出该层递归)，寻找下个排列组合。</li>
+</ol>
+<h4 id="排列组合2"><a href="#排列组合2" class="headerlink" title="排列组合2"></a>排列组合2</h4><p>这个问题和上面区别不是很大，首先关键点是先用<code>sort</code>函数将数组排序，使重复的元素都放在一起，下面主要说一下剪枝判断的设计<br>首先，用<code>used[i]</code>布尔型数组来判断是否该元素是否已经被排列组合过。<br>判断语句<code>if(used[i] || i &gt; 0 &amp;&amp; nums[i] == nums[i-1] &amp;&amp; !used[i - 1])</code></p>
+<ol>
+<li>前一个<code>used[i]</code>相当与问题1中的判断，即当前待排列数组中是否包含了其本身（这种情况并不是重复，而是其本身）；</li>
+<li>后面<code>i &gt; 0 &amp;&amp; nums[i] == nums[i-1] &amp;&amp; !used[i - 1])</code>其实想表明的意思是该元素与前面的元素重复，并且等于这个值的元素已被排列好；</li>
+</ol>
+<p>这两种情况便可跳过排列组合，也就是剪枝</p>
+<h4 id="注意的问题"><a href="#注意的问题" class="headerlink" title="注意的问题"></a>注意的问题</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tempList.remove(tempList.size() - <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>注意这个语句，由于我们待排列数组只有一个，我们不断更新，加入的标志是已满，如果得到第一种满足条件的情况直接返回，那么这个排列数组一直保持满的状态，不在会被更新，所以回溯的时候要注意，把带排列数组元素-1，才能有新排列组合情况进来。<br>其他问题也同样，<strong>如果维持的是同一个数据结构，注意回溯的时候回退数据结构中的内容。</strong></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>讲了那么多，我们需要注意回溯的几个关键要素</p>
+<ol>
+<li>迭代<br> 回溯问题体现在程序设计上大多数是递归，而每一层递归又会有一个循环来遍历这层递归的所有情况</li>
+<li>条件<br> 对于每个特定的解的某一步，他必然要符合某个解要求符合的条件，如果不符合条件，就要回溯，其实回溯也就是递归调用的返回。</li>
+<li>结束<br> 当到达一个特定结束条件时候，就认为这个一步步构建的解是符合要求的解了。把解存下来或者打印出来。对于这一步来说，有时候也可以另外写一个issolution函数来进行判断。注意，当到达第三步后，有时候还需要构建一个数据结构，把符合要求的解存起来，便于当得到所有解后，把解空间输出来。这个数据结构必须是全局的，作为参数之一传递给递归函数。而且要注意：<strong>如果维持的是同一个数据结构，注意回溯的时候回退数据结构中的内容。</strong></li>
+</ol>
+<p>后面几天我会多找一些关于回溯算法的题来品尝。</p>
+<h2 id="更多关于回溯的问题"><a href="#更多关于回溯的问题" class="headerlink" title="更多关于回溯的问题"></a>更多关于回溯的问题</h2><p>更多关于回溯算法的问题请转到<a href="https://allenmistake.github.io/tags/%E5%9B%9E%E6%BA%AF/" target="_blank" rel="noopener">回溯算法标签</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-04-09T07:13:55.649Z" itemprop="dateUpdated">2019-04-09 15:13:55</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/03/12/leetcode46-47/" target="_blank" rel="external">http://www.allenmistake.top/2019/03/12/leetcode46-47/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/回溯/">回溯</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/12/leetcode46-47/&title=《Leetcode日记：46&47.排列组合与回溯（backtrack）》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/12/leetcode46-47/&title=《Leetcode日记：46&47.排列组合与回溯（backtrack）》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/12/leetcode46-47/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：46&47.排列组合与回溯（backtrack）》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/12/leetcode46-47/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/12/leetcode46-47/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/13/leetcode78-90/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Leetcode日记：78&amp;90.子集</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/12/javadailyplus2/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Java日常学习总结并发进阶之线程池</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/12/leetcode46-47/&title=《Leetcode日记：46&47.排列组合与回溯（backtrack）》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/12/leetcode46-47/&title=《Leetcode日记：46&47.排列组合与回溯（backtrack）》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/12/leetcode46-47/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：46&47.排列组合与回溯（backtrack）》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/12/leetcode46-47/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/12/leetcode46-47/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/03/12/leetcode46-47/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

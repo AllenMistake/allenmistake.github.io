@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Java日常学习总结之继承、抽象与接口 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="基础">
+    <meta name="description" content="类，超类，子类super super与this有些人认为 super 与 this 引用是类似的概念， 实际上， 这样比较并不太恰当。这是因为super 不是一个对象的引用， 不能将 super 赋给另一个对象变量， 它只是一个指示编译器调用超类方法的特殊关键字。  super与构造当子类构造的时候，由于不能对其超类的私有成员进行访问，只能调用超类的构造器。如果子类的构造器没有显式地调用超类的构造">
+<meta name="keywords" content="基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java日常学习总结之继承、抽象与接口">
+<meta property="og:url" content="http://www.allenmistake.top/2019/03/04/javadaily3/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="类，超类，子类super super与this有些人认为 super 与 this 引用是类似的概念， 实际上， 这样比较并不太恰当。这是因为super 不是一个对象的引用， 不能将 super 赋给另一个对象变量， 它只是一个指示编译器调用超类方法的特殊关键字。  super与构造当子类构造的时候，由于不能对其超类的私有成员进行访问，只能调用超类的构造器。如果子类的构造器没有显式地调用超类的构造">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-17T07:28:32.999Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java日常学习总结之继承、抽象与接口">
+<meta name="twitter:description" content="类，超类，子类super super与this有些人认为 super 与 this 引用是类似的概念， 实际上， 这样比较并不太恰当。这是因为super 不是一个对象的引用， 不能将 super 赋给另一个对象变量， 它只是一个指示编译器调用超类方法的特殊关键字。  super与构造当子类构造的时候，由于不能对其超类的私有成员进行访问，只能调用超类的构造器。如果子类的构造器没有显式地调用超类的构造">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Java日常学习总结之继承、抽象与接口</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Java日常学习总结之继承、抽象与接口</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-03T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2019-03-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#类，超类，子类"><span class="post-toc-number">1.</span> <span class="post-toc-text">类，超类，子类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#super"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">super</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#超类与子类引用关系"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">超类与子类引用关系</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#类型转换"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">类型转换</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#抽象类abstract"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">抽象类abstract</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#抽象与接口"><span class="post-toc-number">2.</span> <span class="post-toc-text">抽象与接口</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Object所有类的超类"><span class="post-toc-number">3.</span> <span class="post-toc-text">Object所有类的超类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#equals"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">equals</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#泛型数组列表"><span class="post-toc-number">4.</span> <span class="post-toc-text">泛型数组列表</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ArrayList"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">ArrayList</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#对象包装器与自动装箱"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">对象包装器与自动装箱</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#枚举类"><span class="post-toc-number">5.</span> <span class="post-toc-text">枚举类</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#内部类-2019-7-12更新"><span class="post-toc-number">6.</span> <span class="post-toc-text">内部类(2019-7-12更新)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#内部类中变量的使用"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">内部类中变量的使用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#匿名内部类"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">匿名内部类</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#谈谈反射-2019-7-17更新"><span class="post-toc-number">7.</span> <span class="post-toc-text">谈谈反射(2019-7-17更新)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#反射的优点"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">反射的优点</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#反射的缺点"><span class="post-toc-number">7.2.</span> <span class="post-toc-text">反射的缺点</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-javadaily3"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Java日常学习总结之继承、抽象与接口</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-04 00:00:00" datetime="2019-03-03T16:00:00.000Z"  itemprop="datePublished">2019-03-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="类，超类，子类"><a href="#类，超类，子类" class="headerlink" title="类，超类，子类"></a>类，超类，子类</h2><h3 id="super"><a href="#super" class="headerlink" title="super"></a>super</h3><ol>
+<li><p>super与this<br>有些人认为 super 与 this 引用是类似的概念， 实际上， 这样比较并不太恰当。这是因为super 不是一个对象的引用， 不能将 super 赋给另一个对象变量， 它只是一个指示编译器调用超类方法的特殊关键字。</p>
+</li>
+<li><p>super与构造<br>当子类构造的时候，由于不能对其超类的私有成员进行访问，只能调用超类的构造器。如果子类的构造器没有显式地调用超类的构造器， 则将自动地调用超类默认（没有参数)的构造器。</p>
+</li>
+</ol>
+<h3 id="超类与子类引用关系"><a href="#超类与子类引用关系" class="headerlink" title="超类与子类引用关系"></a>超类与子类引用关系</h3><p>超类可以引用子类，但是，不能将一个超类的引用赋给子类变量。在下面的例子中，超类虽然引用了子类，变量staff[0]与boss引用同一个对象。但编译器将staff[0]看成Employee对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Manager boss = <span class="keyword">new</span> Manager(. . .);</span><br><span class="line">Employee[] staff = <span class="keyword">new</span> Employee[<span class="number">3</span>];</span><br><span class="line">staff[<span class="number">0</span>] = boss;<span class="comment">//Correct Employee超类可以引用其子类Manger</span></span><br><span class="line">boss = staff[<span class="number">0</span>];<span class="comment">//Error</span></span><br><span class="line">staff[<span class="number">0</span>].setBonus(<span class="number">5000</span>);<span class="comment">//Error</span></span><br></pre></td></tr></table></figure>
+<p>在Java 中，子类数组的引用可以转换成超类数组的引用， 而不需要采用强制类型转换。例如，下面是一个经理数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Manager[] managers = <span class="keyword">new</span> Manager[<span class="number">10</span>];</span><br></pre></td></tr></table></figure>
+<p>将它转换成Employee[]数组完全是合法的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Employee[] staff = managers; <span class="comment">// OK</span></span><br></pre></td></tr></table></figure>
+<p>这样做肯定不会有问题，请思考一下其中的缘由。毕竟，如果manager[i] 是一个Manager, 也一定是一个Employee。然而， 实际上，将会发生一些令人惊讶的事情。要切记<strong>managers和staff引用的是同一个数组</strong>。现在看一下这条语句：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">staff[<span class="number">0</span>] = <span class="keyword">new</span> Employee(<span class="string">"Harry Hacker"</span>, . . .) ;</span><br></pre></td></tr></table></figure>
+<p>编译器竟然接纳了这个赋值操作。但在这里， staff[0]与manager[0]引用的是同一个对象，似乎我们把一个普通雇员擅自归入经理行列中了。这是一种很忌讳发生的情形，当调用managers[0].setBonus(1000) 的时候，将会导致调用一个不存在的实例域， 进而搅乱相邻存储空间的内容。<br>为了确保不发生这类错误， 所有数组都要牢记<strong>创建它们的元素类型</strong>，并负责监督仅将<strong>类型兼容的引用存储到数组中</strong>。例如，使用new managers[10]创建的数组是一个经理数组。<strong>如果试图存储一个Employee 类型的引用就会引发ArrayStoreException异常</strong>。</p>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
+<li>只能在继承层次内进行类型转换。</li>
+<li>在将超类转换成子类之前，应该使用instanceof 进行检查。</li>
+</ul>
+<p>在一般情况下，应该尽量少用类型转换和instanceof 运算符。</p>
+<h3 id="抽象类abstract"><a href="#抽象类abstract" class="headerlink" title="抽象类abstract"></a>抽象类abstract</h3><p>提示：许多程序员认为，在抽象类中不能包含具体方法。建议尽量将通用的域和方法（不管是否是抽象的）放在超类（不管是否是抽象类）中。</p>
+<p>继承抽象类可以有两种选择。<br>一种是在抽象类中定义部分抽象类方法或不定义抽象类方法，这样就必须将子类也标记为抽<br>象类；另一种是定义全部的抽象方法，这样一来，子类就不是抽象的了。<br>抽象类不能被实例化。可以定义一个抽象类的对象变量，但是它只能引用非抽象子类的对象，这个时候，利用这个对象变量调用抽象类的抽象方法，会自动向下寻找，也就是实际调用的是其子类的方法。</p>
+<h2 id="抽象与接口"><a href="#抽象与接口" class="headerlink" title="抽象与接口"></a>抽象与接口</h2><p>抽象类和接口的区别：</p>
+<ol>
+<li>接口里只能包含抽象方法，静态方法和默认方法，不能为普通方法提供具体的实现。抽象类可以为普通方法提供具体的实现。所以，当一个子类继承抽象类的时候，并不一定要覆盖抽象类的方法（抽象方法除外），而一个类继承一个接口时，<strong>必须要重写接口的所有方法</strong>（毕竟接口中的方法只是个声明）</li>
+<li><p>接口里只能定义静态常量，不能定义普通成员变量。抽象类可以定义普通成员变量和静态变量。在接口中定义成员变量会被自动转化成静态 final 变量，也就是在接口中，下面两个语句等价</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> i = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接口里不包含构造器。抽象类可以包含构造器（抽象类里的构造器不是用于创建对象的，而是让其子类调用这些构造器来完成类的初始化）。</p>
+</li>
+<li>接口里不能包含初始化块，而抽象类里可以包含初始化块。</li>
+<li>一个类最多只能有一个直接父类，包括抽象类，而一个类可以实现多个接口，通过实现多个接口来弥补Java单继承的不足。<br>抽象类中的成员可以是 <code>private</code>、默认、<code>protected</code>、<code>public</code> 的，而接口中的成员全都是 <code>public</code> 的。</li>
+</ol>
+<h2 id="Object所有类的超类"><a href="#Object所有类的超类" class="headerlink" title="Object所有类的超类"></a>Object所有类的超类</h2><h3 id="equals"><a href="#equals" class="headerlink" title="equals"></a>equals</h3><p>在Object 类中，这个方法将判断两个对象是否具有相同的引用。</p>
+<h2 id="泛型数组列表"><a href="#泛型数组列表" class="headerlink" title="泛型数组列表"></a>泛型数组列表</h2><h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><ol>
+<li><p>构造形式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> ArrayList&lt;Employee&gt;();</span><br></pre></td></tr></table></figure>
+<p> Java SE 7 中， 可以省去右边的类型参数：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> ArrayList&lt;&gt;()；</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加元素<br><strong>add方法</strong><br>如果调用add且内部数组已经满了， 数组列表就将自动地创建一个更大的数组，并将所有的对象从较小的数组中拷贝到较大的数组中。<br>警告：分配数组列表， 如下所示：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> ArrayList&lt;&gt;(lOO) <span class="comment">// capacity is 100</span></span><br></pre></td></tr></table></figure>
+<p> 它与为新数组分配空间有所不同：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Employee[<span class="number">100</span>] <span class="comment">// size is 100</span></span><br></pre></td></tr></table></figure>
+<p> 数组列表的容量与数组的大小有一个非常重要的区别。如果为数组分配100 个元素的存储空间，数组就有100 个空位置可以使用。而容量为100 个元素的数组列表只是拥有保存100 个元素的潜力（ 实际上，重新分配空间的话，将会超过100), 但是在最初，甚至完成初始化构造之后，数组列表根本就不含有任何元素。</p>
+<p> C++ 注释： ArrayList类似于C++ 的vector 模板。ArrayList 与vector 都是泛型类型。但是C++ 的vector 模板为了便于访问元素重栽了[ ] 运算符。由于Java 没有运算符重栽，所以必须调用显式的方法。此外，C++ 向量是值拷贝。如果a 和b 是两个向量，赋值操作a = b 将会构造一个与b 长度相同的新向量a，并将所有的元素由b 拷贝到a, 而在Java 中，这条赋值语句的操作结果是让a和b引用同一个数组列表。</p>
+</li>
+<li><p>总结</p>
+<ul>
+<li>不必指出数组的大小。</li>
+<li>使用add 将任意多的元素添加到数组中。</li>
+<li>使用size() 替代length 计算元素的数目。</li>
+<li>使用a.get(i) 替代a[i] 访问元素。</li>
+</ul>
+</li>
+</ol>
+<p>这就是Java 中不尽如人意的参数化类型的限制所带来的结果。鉴于兼容性的考虑， 编译<br>器在对类型转换进行检査之后， 如果没有发现违反规则的现象， 就将所有的类型化数组列表<br>转换成原始ArrayList 对象。在程序运行时， 所有的数组列表都是一样的， 即没有虚拟机中<br>的类型参数。因此，类型转换<code>ArrayList</code> 和<code>ArrayList&lt;Employee&gt;</code> 将执行相同的运行时检查。</p>
+<h3 id="对象包装器与自动装箱"><a href="#对象包装器与自动装箱" class="headerlink" title="对象包装器与自动装箱"></a>对象包装器与自动装箱</h3><ol>
+<li><p>对象包装器<br>有时， 需要将int这样的基本类型转换为对象。所有的基本类型都冇一个与之对应的类。通常，这些类称为包装器(wrapper) 。<br>这些对象包装器类拥有很明显的名字：Integer、Long、Float、Double、Short、Byte、Character 、Void 和Boolean<br> 下面是声明一个ArrayList里面存放int型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;()；</span><br></pre></td></tr></table></figure>
+<p> 这种方式适用于小型集合，因为其效率比整型数组int[]要低得多，但是添加成员的方便程度要比整型数组要高。</p>
+</li>
+<li><p>自动装箱<br> 幸运的是， 有一个很有用的特性， 从而更加便于添加int 类型的元素到<code>ArrayList&lt;lnteger&gt;</code>中。下面这个调用</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.add(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+<p> 将自动地变换成</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.add(Integer.value0f(<span class="number">3</span>)) ;</span><br></pre></td></tr></table></figure>
+<p> 这种变换被称为<strong>自动装箱</strong>（autoboxing)。</p>
+</li>
+</ol>
+<h2 id="枚举类"><a href="#枚举类" class="headerlink" title="枚举类"></a>枚举类</h2><h2 id="内部类-2019-7-12更新"><a href="#内部类-2019-7-12更新" class="headerlink" title="内部类(2019-7-12更新)"></a>内部类(2019-7-12更新)</h2><h3 id="内部类中变量的使用"><a href="#内部类中变量的使用" class="headerlink" title="内部类中变量的使用"></a>内部类中变量的使用</h3><p>如果希望访问所在方法的局部变量，那么这个局部变量必须是<strong>有效 final</strong> 的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyOuter</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> methodOuter&#123;</span><br><span class="line">        <span class="keyword">int</span> num = <span class="number">10</span>;<span class="comment">//所在方法中的局部变量</span></span><br><span class="line"></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">MyInner</span></span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodfInner</span><span class="params">()</span></span>&#123;</span><br><span class="line">                System.out.println(num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>new 出来的对象在堆内存中</li>
+<li>局部变量是跟着方法走的，在栈内存当中.</li>
+<li>方法运行结束之后，立即出栈，局部变量就会立即消失.</li>
+<li>但是 new 出来的对象会在堆持续存在，直到垃圾回收消失。</li>
+<li>最终当内部类需要使用局部变量时吗，会复制一份到自己的堆内存中，如果这个变量是不确定的，与你形式会带来不确定的后果。</li>
+</ol>
+<h3 id="匿名内部类"><a href="#匿名内部类" class="headerlink" title="匿名内部类"></a>匿名内部类</h3><p>如果接口的实现类（或者是父类的子类）只需要使用唯一的一次，那么这种情况下就可以省略掉该类的定义，而改为使用匿名内部类。</p>
+<h2 id="谈谈反射-2019-7-17更新"><a href="#谈谈反射-2019-7-17更新" class="headerlink" title="谈谈反射(2019-7-17更新)"></a>谈谈反射(2019-7-17更新)</h2><p>每个类都有一个 Class 对象，包含了与类有关的信息。当编译一个新类时，会产生一个同名的 .class 文件，该文件内容保存着 Class 对象。</p>
+<p>类加载相当于 Class 对象的加载，类在第一次使用时才动态加载到 JVM 中。也可以使用 Class.forName(“com.mysql.jdbc.Driver”) 这种方式来控制类的加载，该方法会返回一个 Class 对象。</p>
+<p><strong>反射可以提供运行时的类信息，并且这个类可以在运行时才加载进来，甚至在编译时期该类的 .class 不存在也可以加载进来。</strong></p>
+<p>Class 和 java.lang.reflect 一起对反射提供了支持，java.lang.reflect 类库主要包含了以下三个类：</p>
+<p>Field ：可以使用 get() 和 set() 方法读取和修改 Field 对象关联的字段；<br>Method ：可以使用 invoke() 方法调用与 Method 对象关联的方法；<br>Constructor ：可以用 Constructor 的 newInstance() 创建新的对象。</p>
+<h3 id="反射的优点"><a href="#反射的优点" class="headerlink" title="反射的优点"></a>反射的优点</h3><p>可扩展性 ：应用程序可以利用全限定名创建可扩展对象的实例，来使用来自外部的用户自定义类。<br>类浏览器和可视化开发环境 ：一个类浏览器需要可以枚举类的成员。可视化开发环境（如 IDE）可以从利用反射中可用的类型信息中受益，以帮助程序员编写正确的代码。<br>调试器和测试工具 ： 调试器需要能够检查一个类里的私有成员。测试工具可以利用反射来自动地调用类里定义的可被发现的 API 定义，以确保一组测试中有较高的代码覆盖率。</p>
+<h3 id="反射的缺点"><a href="#反射的缺点" class="headerlink" title="反射的缺点"></a>反射的缺点</h3><p>尽管反射非常强大，但也不能滥用。如果一个功能可以不用反射完成，那么最好就不用。在我们使用反射技术时，下面几条内容应该牢记于心。</p>
+<p>性能开销 ：反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。</p>
+<p>安全限制 ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。</p>
+<p>内部暴露 ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如<strong>访问私有的属性和方法</strong>），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-07-17T07:28:32.999Z" itemprop="dateUpdated">2019-07-17 15:28:32</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/03/04/javadaily3/" target="_blank" rel="external">http://www.allenmistake.top/2019/03/04/javadaily3/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/基础/">基础</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/04/javadaily3/&title=《Java日常学习总结之继承、抽象与接口》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/04/javadaily3/&title=《Java日常学习总结之继承、抽象与接口》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/04/javadaily3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java日常学习总结之继承、抽象与接口》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/04/javadaily3/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/04/javadaily3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/04/leetcode53/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Leetcode日记：53.最大子串</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/03/weeklysummary/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">新学期总结与3月计划</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/04/javadaily3/&title=《Java日常学习总结之继承、抽象与接口》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/04/javadaily3/&title=《Java日常学习总结之继承、抽象与接口》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/04/javadaily3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java日常学习总结之继承、抽象与接口》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/04/javadaily3/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/04/javadaily3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/03/04/javadaily3/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

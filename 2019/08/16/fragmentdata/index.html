@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Fragment间数据传递 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content>
+    <meta name="description" content="项目中的逻辑结构图 主要思想：  要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。 要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityResul">
+<meta name="keywords" content="Android Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fragment间数据传递">
+<meta property="og:url" content="http://www.allenmistake.top/2019/08/16/fragmentdata/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="项目中的逻辑结构图 主要思想：  要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。 要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityResul">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/08/16/fragmentdata/对话.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/08/16/fragmentdata/事件流.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/08/16/fragmentdata/args.png">
+<meta property="og:updated_time" content="2019-08-16T13:13:44.905Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Fragment间数据传递">
+<meta name="twitter:description" content="项目中的逻辑结构图 主要思想：  要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。 要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityResul">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/08/16/fragmentdata/对话.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Fragment间数据传递</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Fragment间数据传递</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-08-16T08:19:52.000Z" itemprop="datePublished" class="page-time">
+  2019-08-16
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#项目中的逻辑结构图"><span class="post-toc-number">1.</span> <span class="post-toc-text">项目中的逻辑结构图</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#argument回顾"><span class="post-toc-number">2.</span> <span class="post-toc-text">argument回顾</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#传值"><span class="post-toc-number">3.</span> <span class="post-toc-text">传值</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#返回更新数据"><span class="post-toc-number">4.</span> <span class="post-toc-text">返回更新数据</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#设置目标fragment-关联"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">设置目标fragment(关联)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#传递数据给目标fragment-传值"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">传递数据给目标fragment(传值)</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fragmentdata"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Fragment间数据传递</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-08-16 16:19:52" datetime="2019-08-16T08:19:52.000Z"  itemprop="datePublished">2019-08-16</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="项目中的逻辑结构图"><a href="#项目中的逻辑结构图" class="headerlink" title="项目中的逻辑结构图"></a>项目中的逻辑结构图</h2><p><img src="/2019/08/16/fragmentdata/对话.png" alt="CrimeFragment 和 DatePickerFragment间的对话"></p>
+<p>主要思想：</p>
+<ul>
+<li>要传递crime 的日期给DatePickerFragment，需新建一个newInstance(Date)方法，然后将Date作为 argument 附加给 fragment。</li>
+<li>要将新日期返回给CrimeFragment， 并更新模型层以及对应的视图，需将日期打包为extra并附加到Intent，然后调用CrimeFragment.onActivityResult(…)方法，并传入准备好的Intent参数</li>
+</ul>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/08/16/fragmentdata/事件流.png" alt="CrimeFragment 和 DatePickerFragment间的事件流" title>
+                </div>
+                <div class="image-caption">CrimeFragment 和 DatePickerFragment间的事件流</div>
+            </figure>
+<h2 id="argument回顾"><a href="#argument回顾" class="headerlink" title="argument回顾"></a>argument回顾</h2><p>在之前Activity 和 Fragment 传值的过程中，我们使用了 Argument，下面我们回顾一下我们是如何使用它的。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/08/16/fragmentdata/args.png" alt="Argument使用" title>
+                </div>
+                <div class="image-caption">Argument使用</div>
+            </figure>
+<p>为满足以上要求，通常添加名为 newInstance() 的静态方法给 Fragment类。使用该方法，完成fragment实例及Bundle对象的创建，然后将argument 放入bundle中，最后附加给fragment。</p>
+<p>托管activity需要fragment实例时，转而调用newInstance() 方法，而非直接调用其构造函数。并且，为满足fragment创建argument的要求，activity可给newInstance()传入任何需要的参数</p>
+<h2 id="传值"><a href="#传值" class="headerlink" title="传值"></a>传值</h2><p>那么，fragment之间传值同样也需要借助argument</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//DatePickerFragment 中的 newInstance 方法，返回一个DPF实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DatePickerFragment <span class="title">newInstance</span><span class="params">(Date date)</span></span>&#123;</span><br><span class="line">    Bundle args = <span class="keyword">new</span> Bundle();</span><br><span class="line">    args.putSerializable(ARG_DATE, date);</span><br><span class="line">    DatePickerFragment fragment = <span class="keyword">new</span> DatePickerFragment();</span><br><span class="line">    fragment.setArguments(args);</span><br><span class="line">    <span class="keyword">return</span> fragment;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，与之对应，在 CrimeFragment 中创建 dialog 语句也要改成调用 newInstance 的形式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//CrimeFragment 中点击事件开启DatePickerFragment</span></span><br><span class="line">DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());</span><br></pre></td></tr></table></figure>
+<p>另外，这里的Date不能直接被 DatePickerFragment 所识别，我们需要对 DatePickerFragment 所接收到的 Date 进行处理，当然这不是重点，这里不展开。</p>
+<h2 id="返回更新数据"><a href="#返回更新数据" class="headerlink" title="返回更新数据"></a>返回更新数据</h2><p>首先，我们要弄清这两个fragment之间的关系。如果是activity的数据回传，我们调用startActivityForResult(…)方法，ActivityManager负责跟踪管理activity父子关系。回传数据后，子activity被销毁，但ActivityManager知道接收数据是哪个activity。</p>
+<h3 id="设置目标fragment-关联"><a href="#设置目标fragment-关联" class="headerlink" title="设置目标fragment(关联)"></a>设置目标fragment(关联)</h3><p>可将CrimeFragment设置成DatePickerFragment的Target fragment。<br>这样，在CrimeFragment 和 DatePickerFragment 被销毁并重建后，操作系统会重新关联他们。调用以下方法可建立这种关联</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTargetFragment</span><span class="params">(Fragment fragment, <span class="keyword">int</span> requestCode)</span></span></span><br></pre></td></tr></table></figure>
+<p>在CrimeFragment 中，创建请求代码常量，然后将CrimeFragment设为DatePickerFragment 实例的目标fragment<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> REQUEST_DATE = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//在onCreatView中设置按钮监听器</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        FragmentManager manager = getFragmentManager();</span><br><span class="line">        DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());</span><br><span class="line">        dialog.setTargetFragment(CrimeFragment.<span class="keyword">this</span>, REQUEST_DATE);</span><br><span class="line">        dialog.show(manager, DIALOG_DATE);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="传递数据给目标fragment-传值"><a href="#传递数据给目标fragment-传值" class="headerlink" title="传递数据给目标fragment(传值)"></a>传递数据给目标fragment(传值)</h3><p>处理有同一个activity托管的两个fragment之间的数据返回时，可借用Fragment.onActivityResult(…)方法。因此，直接调用目标fragment的Fragment.onActivityResult(…)方法，就能实现数据回传。需要以下信息：</p>
+<ul>
+<li>请求代码：与传入 setTargetFragment(…) 方法的代码相匹配，告诉目标 fragment 返回结果来自哪里</li>
+<li>结果代码：决定下一步该采取什么行动</li>
+<li>Intent：包含extra数据</li>
+</ul>
+<p>我们来看一下具体怎么做的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXTRA_DATE = <span class="string">"com.example.criminalintent.date"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sendResult</span><span class="params">(<span class="keyword">int</span> resultCode, Date date)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(getTargetFragment() == <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">    intent.putExtra(EXTRA_DATE, date);</span><br><span class="line"></span><br><span class="line">    getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>随后，我们将 DatePickerFragment 的确定按钮点击事件修改为调用sendResult(…)方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> AlertDialog.Builder(getActivity())</span><br><span class="line">    .setView(v)</span><br><span class="line">    .setTitle(R.string.date_picker_title)</span><br><span class="line">    .setPositiveButton(android.R.string.ok, <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialogInterface, <span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> year = mDatePicker.getYear();</span><br><span class="line">            <span class="keyword">int</span> month = mDatePicker.getMonth();</span><br><span class="line">            <span class="keyword">int</span> day = mDatePicker.getDayOfMonth();</span><br><span class="line">            Date date = <span class="keyword">new</span> GregorianCalendar(year, month, day).getTime();</span><br><span class="line">            sendResult(Activity.RESULT_OK, date);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+<p>最后，在CrimeFragment接收数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="keyword">int</span> resultCode, Intent data)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(resultCode != Activity.RESULT_OK)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(requestCode == REQUEST_DATE)&#123;</span><br><span class="line">        Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);</span><br><span class="line">        mCrime.setDate(date);</span><br><span class="line">        updateDate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateDate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mDateButton.setText(mCrime.getDateStr());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-08-16T13:13:44.905Z" itemprop="dateUpdated">2019-08-16 21:13:44</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/08/16/fragmentdata/" target="_blank" rel="external">http://www.allenmistake.top/2019/08/16/fragmentdata/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/08/16/fragmentdata/&title=《Fragment间数据传递》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/08/16/fragmentdata/&title=《Fragment间数据传递》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/08/16/fragmentdata/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Fragment间数据传递》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/08/16/fragmentdata/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/08/16/fragmentdata/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/08/22/listview-vs-recyclerview/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">ListView的优化、与RecyclerView简单对比</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/08/15/viewpager/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">浅谈 ViewPager 使用方法与原理</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/08/16/fragmentdata/&title=《Fragment间数据传递》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/08/16/fragmentdata/&title=《Fragment间数据传递》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/08/16/fragmentdata/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Fragment间数据传递》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/08/16/fragmentdata/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/08/16/fragmentdata/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/08/16/fragmentdata/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

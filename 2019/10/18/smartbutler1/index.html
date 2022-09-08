@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>智能管家项目总结1————运行时权限 + FileProvider | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="权限">
+    <meta name="description" content="智能管家SmartButler从PT站发现的 Android 练手小项目，慕课网上面的课程，看过视频之后感觉优点还是挺多的  上手简单 老师总结一些代码常用模板，有利于之后编程代码结构 这个框架虽说是 MVC ，但是对于小项目 MVC 也未尝不可，并且框架分类层次分明 采用许多开源框架  缺点  最重要的，年代稍微有些老，对于新版本（Android6.0 之后不太友好） 虽然采用了许多开源框架，但">
+<meta name="keywords" content="权限">
+<meta property="og:type" content="article">
+<meta property="og:title" content="智能管家项目总结1————运行时权限 + FileProvider">
+<meta property="og:url" content="http://www.allenmistake.top/2019/10/18/smartbutler1/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="智能管家SmartButler从PT站发现的 Android 练手小项目，慕课网上面的课程，看过视频之后感觉优点还是挺多的  上手简单 老师总结一些代码常用模板，有利于之后编程代码结构 这个框架虽说是 MVC ，但是对于小项目 MVC 也未尝不可，并且框架分类层次分明 采用许多开源框架  缺点  最重要的，年代稍微有些老，对于新版本（Android6.0 之后不太友好） 虽然采用了许多开源框架，但">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-18T13:56:08.350Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="智能管家项目总结1————运行时权限 + FileProvider">
+<meta name="twitter:description" content="智能管家SmartButler从PT站发现的 Android 练手小项目，慕课网上面的课程，看过视频之后感觉优点还是挺多的  上手简单 老师总结一些代码常用模板，有利于之后编程代码结构 这个框架虽说是 MVC ，但是对于小项目 MVC 也未尝不可，并且框架分类层次分明 采用许多开源框架  缺点  最重要的，年代稍微有些老，对于新版本（Android6.0 之后不太友好） 虽然采用了许多开源框架，但">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">智能管家项目总结1————运行时权限 + FileProvider</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">智能管家项目总结1————运行时权限 + FileProvider</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-10-18T12:45:25.000Z" itemprop="datePublished" class="page-time">
+  2019-10-18
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android项目/">Android项目</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#智能管家SmartButler"><span class="post-toc-number">1.</span> <span class="post-toc-text">智能管家SmartButler</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#做了一些微小的工作"><span class="post-toc-number">2.</span> <span class="post-toc-text">做了一些微小的工作</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#运行时权限"><span class="post-toc-number">3.</span> <span class="post-toc-text">运行时权限</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#拍照与写入内存"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">拍照与写入内存</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-smartbutler1"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">智能管家项目总结1————运行时权限 + FileProvider</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-10-18 20:45:25" datetime="2019-10-18T12:45:25.000Z"  itemprop="datePublished">2019-10-18</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android项目/">Android项目</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="智能管家SmartButler"><a href="#智能管家SmartButler" class="headerlink" title="智能管家SmartButler"></a>智能管家SmartButler</h2><p>从PT站发现的 Android 练手小项目，慕课网上面的课程，看过视频之后感觉优点还是挺多的</p>
+<ol>
+<li>上手简单</li>
+<li>老师总结一些代码常用模板，有利于之后编程代码结构</li>
+<li>这个框架虽说是 MVC ，但是对于小项目 MVC 也未尝不可，并且框架分类层次分明</li>
+<li>采用许多开源框架</li>
+</ol>
+<p>缺点</p>
+<ol>
+<li>最重要的，年代稍微有些老，对于新版本（Android6.0 之后不太友好）</li>
+<li>虽然采用了许多开源框架，但是对于框架本身并没有做太多的说明，只是轮子的拼接</li>
+<li>部分后台接口发生改变，用不了</li>
+</ol>
+<h2 id="做了一些微小的工作"><a href="#做了一些微小的工作" class="headerlink" title="做了一些微小的工作"></a>做了一些微小的工作</h2><p>对于这个练手项目，肯定是要抱着学习的态度，但同时，还要结合现在新版本来看旧版代码的一些局限性，<br>自己只能做一些微小的工作</p>
+<p>那么接下来，先从很尴尬的运行时权限说起</p>
+<h2 id="运行时权限"><a href="#运行时权限" class="headerlink" title="运行时权限"></a>运行时权限</h2><p>在 Android6.0 之前，安装软件时，会告诉你该软件都需要什么什么权限，但是就算软件告诉你我要你各种隐私，你装个微信还是要装对吧，所以Android6.0很机智的引入了运行时权限这个概念，有些关键性的权限，你在AndroidManifest文件里面声明了，没有用，等到用的时候你还要申请一遍，而且会直接弹出询问UI。</p>
+<p>这个申请的操作，是留给开发者去做的。</p>
+<p>下面来讨论运行时权限在智能管家的应用</p>
+<h3 id="拍照与写入内存"><a href="#拍照与写入内存" class="headerlink" title="拍照与写入内存"></a>拍照与写入内存</h3><p>调用拍照代码中，我们加入版本检测，并在高版本中引入权限请求</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</span><br><span class="line">    <span class="comment">//如果在Android7.0以上,使用FileProvider获取Uri</span></span><br><span class="line">    intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);</span><br><span class="line">    Uri contentUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName()+<span class="string">".fileprovider"</span>, tempFile);</span><br><span class="line">    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);</span><br><span class="line">    Log.e(<span class="string">"getPicFromCamera"</span>, contentUri.toString());</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;    <span class="comment">//否则使用Uri.fromFile(file)方法获取Uri</span></span><br><span class="line">    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里引入了FileProvider，我们已经在配置文件中声明了</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">provider</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">"androidx.core.content.FileProvider"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:authorities</span>=<span class="string">"com.example.smartbutler.fileprovider"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:grantUriPermissions</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:name</span>=<span class="string">"android.support.FILE_PROVIDER_PATHS"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:resource</span>=<span class="string">"@xml/provider_paths"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">provider</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>首先，FileProvider 是什么？这个我将在后面博客详细说明，<br>那么为什要引入呢？<br>如果我知道一个文件的uri，是不是就可以随意访问了呢？如果没有FileProvider拦着你，确实是这样，但现在更严格了，Android 7.0后新增了对文件跨进程访问的限制，这个限制会造成，如果使用file://uri的方式访问，则会出现android.os.FileUriExposedException的异常。</p>
+<p>注意，配置文件中的 <code>&quot;@xml/provider_paths&quot;</code>,</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">paths</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">external-path</span></span></span><br><span class="line"><span class="tag">        <span class="attr">path</span>=<span class="string">"com.example.smartbutler"</span>  <span class="attr">name</span>=<span class="string">"images"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">root-path</span></span></span><br><span class="line"><span class="tag">        <span class="attr">name</span>=<span class="string">"root_path"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">path</span>=<span class="string">"."</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">paths</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-10-18T13:56:08.350Z" itemprop="dateUpdated">2019-10-18 21:56:08</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/10/18/smartbutler1/" target="_blank" rel="external">http://www.allenmistake.top/2019/10/18/smartbutler1/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限/">权限</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/10/18/smartbutler1/&title=《智能管家项目总结1————运行时权限 + FileProvider》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/10/18/smartbutler1/&title=《智能管家项目总结1————运行时权限 + FileProvider》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/10/18/smartbutler1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《智能管家项目总结1————运行时权限 + FileProvider》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/10/18/smartbutler1/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/10/18/smartbutler1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/11/10/viterbi/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">维特比算法</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/10/09/chongqing/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">次火锅儿噻</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/10/18/smartbutler1/&title=《智能管家项目总结1————运行时权限 + FileProvider》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/10/18/smartbutler1/&title=《智能管家项目总结1————运行时权限 + FileProvider》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/10/18/smartbutler1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《智能管家项目总结1————运行时权限 + FileProvider》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/10/18/smartbutler1/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/10/18/smartbutler1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/10/18/smartbutler1/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

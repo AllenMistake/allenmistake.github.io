@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>谈谈Java中的反射机制 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="基础">
+    <meta name="description" content="反射的定义何为反射？ 反射机制就是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。 用一句话总结就是反射可以实现在运行时可以知道任意一个类的属性和方法。 问题来了———— 那这样一来，我的私有变量不就暴露在外面了么？ 呃。。。是的，实际上，我们确实能通过反射">
+<meta name="keywords" content="基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谈谈Java中的反射机制">
+<meta property="og:url" content="http://www.allenmistake.top/2019/11/17/Reflect/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="反射的定义何为反射？ 反射机制就是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。 用一句话总结就是反射可以实现在运行时可以知道任意一个类的属性和方法。 问题来了———— 那这样一来，我的私有变量不就暴露在外面了么？ 呃。。。是的，实际上，我们确实能通过反射">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-17T12:12:33.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="谈谈Java中的反射机制">
+<meta name="twitter:description" content="反射的定义何为反射？ 反射机制就是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。 用一句话总结就是反射可以实现在运行时可以知道任意一个类的属性和方法。 问题来了———— 那这样一来，我的私有变量不就暴露在外面了么？ 呃。。。是的，实际上，我们确实能通过反射">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">谈谈Java中的反射机制</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">谈谈Java中的反射机制</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-11-17T02:39:35.000Z" itemprop="datePublished" class="page-time">
+  2019-11-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#反射的定义"><span class="post-toc-number">1.</span> <span class="post-toc-text">反射的定义</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#反射用途"><span class="post-toc-number">2.</span> <span class="post-toc-text">反射用途</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#获取"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">获取</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#通过反射机制得到类的包名和类名"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">通过反射机制得到类的包名和类名</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#核心：通过反射创建类对象"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">核心：通过反射创建类对象</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#通过反射调用类方法"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">通过反射调用类方法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#反射原理"><span class="post-toc-number">3.</span> <span class="post-toc-text">反射原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#说一说用途"><span class="post-toc-number">4.</span> <span class="post-toc-text">说一说用途</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Android与反射"><span class="post-toc-number">5.</span> <span class="post-toc-text">Android与反射</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#调用资源"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">调用资源</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Activity启动创建"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">Activity启动创建</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">6.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Reflect"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">谈谈Java中的反射机制</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-11-17 10:39:35" datetime="2019-11-17T02:39:35.000Z"  itemprop="datePublished">2019-11-17</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="反射的定义"><a href="#反射的定义" class="headerlink" title="反射的定义"></a>反射的定义</h2><p>何为反射？</p>
+<p>反射机制就是在运行状态中，对于<strong>任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性</strong>；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。</p>
+<p>用一句话总结就是反射可以实现在运行时可以知道任意一个类的属性和方法。</p>
+<p>问题来了————</p>
+<p>那这样一来，我的私有变量不就暴露在外面了么？</p>
+<p>呃。。。是的，实际上，我们确实能通过反射机制对一个类的私有变量做修改，所以从某种程度上来讲，反射破坏了java的封装性，那么为什么还会作为一种高级特性存在于java中呢？</p>
+<p>别急，我们首先看一下反射能为我们做哪些工作。</p>
+<h2 id="反射用途"><a href="#反射用途" class="headerlink" title="反射用途"></a>反射用途</h2><h3 id="获取"><a href="#获取" class="headerlink" title="获取"></a>获取</h3><p>有三种方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方式一</span></span><br><span class="line">Person person = <span class="keyword">new</span> Person();</span><br><span class="line">Class&lt;? extends Person&gt; personClazz01 = person.getClass();</span><br><span class="line"></span><br><span class="line"><span class="comment">//方式二</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">   Class&lt;?&gt; personClazz02 = Class.forName(<span class="string">"Person"</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">   e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//方式三</span></span><br><span class="line">Class&lt;? extends Person&gt; personClazz03 = Person.class;</span><br></pre></td></tr></table></figure>
+<h3 id="通过反射机制得到类的包名和类名"><a href="#通过反射机制得到类的包名和类名" class="headerlink" title="通过反射机制得到类的包名和类名"></a>通过反射机制得到类的包名和类名</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">   Person person = <span class="keyword">new</span> Person();</span><br><span class="line">   System.out.println(<span class="string">"Test1: 包名: "</span> + person.getClass().getPackage().getName() +</span><br><span class="line">               <span class="string">"，"</span> + <span class="string">"完整类名: "</span> + person.getClass().getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="核心：通过反射创建类对象"><a href="#核心：通过反射创建类对象" class="headerlink" title="核心：通过反射创建类对象"></a>核心：通过反射创建类对象</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; class1 = <span class="keyword">null</span>;</span><br><span class="line">class1 = Class.forName(<span class="string">"反射.Person"</span>);</span><br><span class="line"><span class="comment">//由于这里不能带参数，所以你要实例化的这个类Person，一定要有无参构造函数</span></span><br><span class="line">Person person = (Person) class1.newInstance();</span><br><span class="line">person.setAge(<span class="number">27</span>);</span><br><span class="line">person.setName(<span class="string">"yyc"</span>);</span><br><span class="line">System.out.println(<span class="string">"Test3: "</span> + person.getName() + <span class="string">" : "</span> + person.getAge());</span><br></pre></td></tr></table></figure>
+<p>上述是通过反射创建一个无参对象，如果我的构造函数带参的话，需要利用<code>Constructor</code>，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; class1 = <span class="keyword">null</span>;</span><br><span class="line">Person person1 = <span class="keyword">null</span>;</span><br><span class="line">Person person2 = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">class1 = Class.forName(<span class="string">"反射.Person"</span>);</span><br><span class="line"><span class="comment">//得到一系列构造函数集合</span></span><br><span class="line">Constructor&lt;?&gt;[] constructors = class1.getConstructors();</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">   person1 = (Person) constructors[<span class="number">0</span>].newInstance();</span><br><span class="line">&#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">   e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line">person1.setAge(<span class="number">28</span>);</span><br><span class="line">person1.setName(<span class="string">"yyc"</span>);</span><br><span class="line"></span><br><span class="line">person2 = (Person) constructors[<span class="number">1</span>].newInstance(<span class="number">29</span>, <span class="string">"yyc"</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"Test4: "</span> + person1.getName() + <span class="string">" : "</span> + person1.getAge() + <span class="string">"  ,   "</span> + person2.getName() + <span class="string">" : "</span> + person2.getAge());</span><br></pre></td></tr></table></figure>
+<h3 id="通过反射调用类方法"><a href="#通过反射调用类方法" class="headerlink" title="通过反射调用类方法"></a>通过反射调用类方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; class1 = <span class="keyword">null</span>;</span><br><span class="line">class1 = Class.forName(<span class="string">"反射.SuperPerson"</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"Test7: \n调用无参方法fly()："</span>);</span><br><span class="line">Method method = class1.getMethod(<span class="string">"fly"</span>);</span><br><span class="line">method.invoke(class1.newInstance());</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"调用有参方法smoke(int m)："</span>);</span><br><span class="line">method = class1.getMethod(<span class="string">"smoke"</span>, <span class="keyword">int</span>.class);</span><br><span class="line">method.invoke(class1.newInstance(), <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="反射原理"><a href="#反射原理" class="headerlink" title="反射原理"></a>反射原理</h2><p>说了那么多使用上的例子，我们还是更进一步，看一看系统底层是怎么去做的吧</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Person person = <span class="keyword">new</span> Person();</span><br></pre></td></tr></table></figure>
+<p>这是我们正常创建一个类的实例，我们从类加载的角度去讲一下它的创建过程，具体过程可以说的很多，可以参考这篇文章<a href="https://allenmistake.top/2019/05/19/JVM3/" target="_blank" rel="noopener">JVM类加载</a></p>
+<ol>
+<li>遇到<code>new</code>，在磁盘中找 Person.class 文件</li>
+<li>如果没有被加载，就<strong>在内存中生成一个代表这个类的java.lang.Class对象</strong>，所以，class对象只会有一个（在被加载的情况下）。补充：这一部分是通过类加载器实现的 ClassLoader</li>
+</ol>
+<p>实际上，这个类加载是在编译时期就完成的，我们称之为“静态加载”，而反射引起的类加载是在运行时期进行的，也就是“动态加载”。</p>
+<p>那我们看一看反射：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class1 = Class.forName(<span class="string">"反射.Person"</span>);</span><br><span class="line">Person person = (Person) class1.newInstance();</span><br></pre></td></tr></table></figure>
+<p>系统根据类的名称直接找到class对象（当然，如果没有的话肯定会触发动态加载），然后通过class对象来对Person对象进行一系列操作（在上述代码，是通过<code>newInstance</code>执行构造函数，创建对象）。此时，Person对象已经完全暴露，可以调用构造函数，或者其他类函数。</p>
+<p>如果你没读懂的话，我们来看一下源码是如何做的:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; forName(String className)</span><br><span class="line">            <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">   Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">   <span class="keyword">return</span> forName0(className, <span class="keyword">true</span>, ClassLoader.getClassLoader(caller), caller);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体的内容我们可以不用掌握，但我们需要知道，forName这个会触发类加载器ClassLoader来对输入 String 对应类进行类加载，而这个时机是在运行时进行的。</p>
+<h2 id="说一说用途"><a href="#说一说用途" class="headerlink" title="说一说用途"></a>说一说用途</h2><p>说了那么多，回到一开始的问题，反射究竟能起到什么作用呢？我们再来回顾一下：我们能通过类名直接访问类中的具体属性和方法。反过来，如果我们不知道类中的具体属性和方法，我们就只能用反射去得到，这种情况在什么时候会出现呢？</p>
+<p>那就是当我们使用第三方资源或者框架的时候，我们不知道具体的实现细节，便可以通过反射来了解里面内容，在我们的编译器中，输入一个类名或者一个实例在后面输入一个点“.”，系统会自动弹出其中的所有属性与方法，其实这就是反射。</p>
+<h2 id="Android与反射"><a href="#Android与反射" class="headerlink" title="Android与反射"></a>Android与反射</h2><h3 id="调用资源"><a href="#调用资源" class="headerlink" title="调用资源"></a>调用资源</h3><p>当我们项目需要调用第三方的布局时，我们不能使用<code>setContentView(R.layout.activity_main)</code>方法，我们需要借助反射<code>setContentView(IDHelper.getLayout(getApplicationContext(), &quot;activity_main&quot;))</code>，将布局交给工具类，以便在运行时查找。</p>
+<h3 id="Activity启动创建"><a href="#Activity启动创建" class="headerlink" title="Activity启动创建"></a>Activity启动创建</h3><p>在Manifest文件中四大组件的注册都是用反射来完成的，还有布局文件中的widget等等。 足以见得反射应用之广</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>现在来看，反射是不是一个很神奇的功能，再回到一开始的问题，其实反射在破坏封装性的同时确实给我们带来了诸多便利。<br>希望本文对你有所帮助。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-11-17T12:12:33.695Z" itemprop="dateUpdated">2019-11-17 20:12:33</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/11/17/Reflect/" target="_blank" rel="external">http://www.allenmistake.top/2019/11/17/Reflect/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/基础/">基础</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/11/17/Reflect/&title=《谈谈Java中的反射机制》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/11/17/Reflect/&title=《谈谈Java中的反射机制》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/11/17/Reflect/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《谈谈Java中的反射机制》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/11/17/Reflect/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/11/17/Reflect/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/11/20/dp/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">这可能是我见过最全的动态规划讲解</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/11/10/viterbi/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">维特比算法</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/11/17/Reflect/&title=《谈谈Java中的反射机制》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/11/17/Reflect/&title=《谈谈Java中的反射机制》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/11/17/Reflect/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《谈谈Java中的反射机制》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/11/17/Reflect/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/11/17/Reflect/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/11/17/Reflect/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

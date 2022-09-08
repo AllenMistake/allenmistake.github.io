@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Java日常学习总结之类与对象篇 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="基础">
+    <meta name="description" content="类构造器 一个对象变量并没有实际包含一个对象，而仅仅引用一个对象。在Java 中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。new 操作符的返回值也是一个引用。  构造器产生机制很多人错误地认为Java 对象变量与C++ 的引用类似。然而，在C++中没有空引用， 并且引用不能被赋值。可以将Java 的对象变量看作C++ 的对象指针。例如，  1Date birthday; // J">
+<meta name="keywords" content="基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java日常学习总结之类与对象篇">
+<meta property="og:url" content="http://www.allenmistake.top/2019/02/28/javadaily2/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="类构造器 一个对象变量并没有实际包含一个对象，而仅仅引用一个对象。在Java 中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。new 操作符的返回值也是一个引用。  构造器产生机制很多人错误地认为Java 对象变量与C++ 的引用类似。然而，在C++中没有空引用， 并且引用不能被赋值。可以将Java 的对象变量看作C++ 的对象指针。例如，  1Date birthday; // J">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-15T14:10:42.240Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java日常学习总结之类与对象篇">
+<meta name="twitter:description" content="类构造器 一个对象变量并没有实际包含一个对象，而仅仅引用一个对象。在Java 中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。new 操作符的返回值也是一个引用。  构造器产生机制很多人错误地认为Java 对象变量与C++ 的引用类似。然而，在C++中没有空引用， 并且引用不能被赋值。可以将Java 的对象变量看作C++ 的对象指针。例如，  1Date birthday; // J">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Java日常学习总结之类与对象篇</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Java日常学习总结之类与对象篇</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-02-27T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2019-02-28
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#类"><span class="post-toc-number">1.</span> <span class="post-toc-text">类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#构造器"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">构造器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#自定义的类"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">自定义的类</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#静态域与静态方法"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">静态域与静态方法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法参数"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">方法参数</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#对象与其他"><span class="post-toc-number">2.</span> <span class="post-toc-text">对象与其他</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#对象构造"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">对象构造</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#包"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">包</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#类的设计技巧"><span class="post-toc-number">3.</span> <span class="post-toc-text">类的设计技巧</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-javadaily2"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Java日常学习总结之类与对象篇</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-02-28 00:00:00" datetime="2019-02-27T16:00:00.000Z"  itemprop="datePublished">2019-02-28</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><h3 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h3><ol>
+<li><p>一个对象变量并没有实际包含一个对象，而仅仅引用一个对象。在Java 中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。new 操作符的返回值也是一个引用。</p>
+</li>
+<li><p><strong>构造器产生机制</strong><br>很多人错误地认为Java 对象变量与C++ 的引用类似。然而，在C++中没有空引用， 并且引用不能被赋值。可以将Java 的对象变量看作C++ 的对象指针。例如，</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Date birthday; <span class="comment">// Java</span></span><br></pre></td></tr></table></figure>
+<p> 实际上， 等同于</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Date* birthday; <span class="comment">// C++</span></span><br></pre></td></tr></table></figure>
+<p> 一旦理解了这一点， 一切问题就迎刃而解了。当然， 一个Date* 指针只能通过调用new进行初始化。就这一点而言，c++与Java 的语法几乎是一样的。</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Date* birthday = <span class="keyword">new</span> Date() ; <span class="comment">// C++</span></span><br></pre></td></tr></table></figure>
+<p> 如果把一个变量的值賦给另一个变量， 两个变量就指向同一个日期， 即它们是同一个对象的指针。在 Java 中的null 引用对应 C++ 中的 NULL 指针。所有的 Java 对象都存储在堆中。当一个对象包含另一个对象变量时， 这个变量依然包含着指向另一个堆对象的指针。<br> 在 C++ 中，指针十分令人头疼，并常常导致程序错误。稍不小心就会创建一个错误的指针，或者造成内存溢出。在 Java 语言中， 这些问题都不复存在。如果使用一个没有初始化的指针，运行系统将会产生一个运行时错误，而不是生成一个随机的结果，同时，不必担心内存管理问题，垃圾收集器将会处理相关的事宜。<br> C++ 确实做了很大的努力，它通过拷贝型构造器和复制操作符来实现对象的自动拷贝。例如，一个链表（ linked list ) 拷贝的结果将会得到一个新链表，其内容与原始链表相同， 但却是一组独立的链接。这使得将同样的拷贝行为内置在类中成为可能。在 Java 中， 必须使用 clone 方法获得对象的完整拷贝。</p>
+</li>
+<li><p><strong>使用静态工厂方法来代替构造器</strong><br>这个技巧或者说注意事项在effective java中的第一章第一节就强调过，他有很多便捷之处，其中一个重要的就是可以根据产生的具体对象的特征来对方法命名，而构造器只能有一种名字（即类的名字）</p>
+</li>
+<li><p><strong>访问器和更改器</strong><br> 访问器：只访问对象元素，不会对对象本身进行修改<br> 修改器：会对对象本身进行修改<br> 在C++ 中，带有 const 后缀的方法是访问器方法；默认为更改器方法。但是，在Java 语言中，访问器方法与更改器方法在语法上没有明显的区别，</p>
+</li>
+</ol>
+<h3 id="自定义的类"><a href="#自定义的类" class="headerlink" title="自定义的类"></a>自定义的类</h3><ol>
+<li><p><strong>构造器使用注意事项</strong><br>Java 构造器的工作方式与 C++ 一样。但是，要记住所有Java 对象都是在堆中构造的，构造器总是伴随着 new 操作符一起使用。<br>请注意，不要在构造器中定义与<strong>实例域</strong>重名的局部变量。例如，下面的构造器将无法设置 salary 。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">(St ring n, <span class="keyword">double</span> s, . .</span></span></span><br><span class="line"><span class="function"><span class="params">&#123;</span></span></span><br><span class="line"><span class="function"><span class="params">    String name = n; // Error</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">double</span> salary = s; // Error</span></span></span><br><span class="line"><span class="function"><span class="params">...</span></span></span><br><span class="line"><span class="function"><span class="params">&#125;</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>this与隐式参数<br>在每一个方法中， 关键字 this 表示隐式参数。<br><strong>C++ 注释</strong>： 在 C++ 中， 通常在类的外面定义方法：</p>
+ <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Employee::raiseSalary(<span class="keyword">double</span> byPercent) <span class="comment">// C++, not Java</span></span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 如果在类的内部定义方法，这个方法将自动地成为内联（inline)方法</p>
+ <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Employee</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">int</span> getNameQ&#123;</span><br><span class="line">    <span class="keyword">return</span> name; </span><br><span class="line">&#125; <span class="comment">// inline in C++</span></span><br></pre></td></tr></table></figure>
+<p> 在 Java 中，<strong>所有的方法都必须在类的内部定义，但并不表示它们是内联方法。是否将某个方法设置为内联方法是Java 虚拟机的任务。即时编译器会监视调用那些简洁、经常被调用、没有被重载以及可优化的方法。</strong></p>
+</li>
+</ol>
+<h3 id="静态域与静态方法"><a href="#静态域与静态方法" class="headerlink" title="静态域与静态方法"></a>静态域与静态方法</h3><ol>
+<li><p>静态域<br>如果将域定义为 static , 每个类中<strong>只有一个</strong>这样的域。而每一个对象对于所有的实例域却都有自己的一份拷贝。</p>
+</li>
+<li><p>静态方法<br>静态方法是一种不能向对象实施操作的方法。<br>静态方法不能有实例域， 因为它不能操作对象。但是，静态方法可以访问自身类中的静态域。<br>在下面两种情况下使用静态方法：</p>
+<ul>
+<li>一方法不需要访问对象状态，其所需参数都是通过显式参数提供（例如：Math.pow)</li>
+<li>一个方法只需要访问类的静态域（例如：Employee.getNextld)</li>
+</ul>
+<p><strong>静态工厂方法</strong><br>静态工厂的功能和构造器基本一致，都是产生一个对象实例。<br>为什么这些类不利用构造器完成这些操作呢？这主要有两个原因：</p>
+<ul>
+<li>无法命名构造器。构造器的名字必须与类名相同。但是，这里希望将得到的不同特征的实例采用不用的名字</li>
+<li>当使用构造器时，无法改变所构造的对象类型。只能是自己类型，不能是其子类</li>
+</ul>
+</li>
+<li><p>父类的静态方法能不能被重写？（2019-5-14 更新）<br>答案是不能。因为静态方法从程序开始运行后就已经分配了内存，也就是说已经写死了。所有引用到该方法的对象（父类的对象也好子类的对象也好）所指向的都是同一块内存中的数据，也就是该静态方法。子类中如果定义了相同名称的静态方法，<strong>并不会重写，而应该是在内存中又分配了一块给子类的静态方法</strong>，没有重写这一说。</p>
+</li>
+</ol>
+<h3 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h3><ol>
+<li><p><strong>Java 程序设计语言总是采用按值调用</strong><br> <strong>也就是说，方法得到的是所有参数值的一个拷贝特别是，方法不能修改传递给它的任何参数变量的内容。</strong> 在这里对象是个特殊情况，可以改变传入对象中成员变量的值，但是<strong>基本类型</strong>例如int、boolean并不能改变（不会报错，但跳出方法外值不变，因为变得是拷贝，而不是其本身）</p>
+</li>
+<li><p>然而，虽然对象是特殊情况，但对象仍然是按值调用，不是引用调用；</p>
+<ul>
+<li>一个方法不能修改一个基本数据类型的参数（即<strong>数值型或布尔型</strong>）。</li>
+<li>一个方法可以改变一个对象参数的状态。</li>
+<li>一个方法不能让对象参数引用一个新的对象。</li>
+</ul>
+</li>
+</ol>
+<h2 id="对象与其他"><a href="#对象与其他" class="headerlink" title="对象与其他"></a>对象与其他</h2><h3 id="对象构造"><a href="#对象构造" class="headerlink" title="对象构造"></a>对象构造</h3><ol>
+<li><p>调用另一个构造器<br> 如果构造器的第一个语句形如this(…) ，这个构造器将调用同一个类的另一个构造器。下面是一个典型的例子：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">(<span class="keyword">double</span> s)</span></span>&#123;</span><br><span class="line">    <span class="comment">// calls Employee(String, double)</span></span><br><span class="line">    <span class="keyword">this</span>(<span class="string">"Employee #"</span> + nextld, s);</span><br><span class="line">    nextld++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 当调用 new Employee(60000) 时，Employee(double) 构造器将调用 Employee(String ，double) 构造器。采用这种方式使用 this 关键字非常有用，这样对公共的构造器代码部分只编写一次即可。</p>
+</li>
+<li><p>对象析构与 finalize 方法<br> 在析构器中，最常见的操作是回收分配给对象的存储空间。由于 Java 有自动的垃圾回收器，不需要人工回收内存，所以 Java 不支持析构器。</p>
+</li>
+</ol>
+<h3 id="包"><a href="#包" class="headerlink" title="包"></a>包</h3><ol>
+<li>包的导入<br>在C++中，与包机制类似的是命名空间（namespace) 。在Java 中，package 与 import 语句类似于 C++ 中的 namespace 和 using 指令。</li>
+</ol>
+<h2 id="类的设计技巧"><a href="#类的设计技巧" class="headerlink" title="类的设计技巧"></a>类的设计技巧</h2><ol>
+<li>一定要保证数据私有</li>
+<li>一定要对数据初始化</li>
+<li>不要在类中使用过多的基本类型</li>
+<li>不是所有的域都需要独立的域访问器和域更改器</li>
+<li>将职责过多的类进行分解</li>
+<li>类名和方法名要能够体现它们的职责</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-05-15T14:10:42.240Z" itemprop="dateUpdated">2019-05-15 22:10:42</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/02/28/javadaily2/" target="_blank" rel="external">http://www.allenmistake.top/2019/02/28/javadaily2/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/基础/">基础</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/02/28/javadaily2/&title=《Java日常学习总结之类与对象篇》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/02/28/javadaily2/&title=《Java日常学习总结之类与对象篇》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/02/28/javadaily2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java日常学习总结之类与对象篇》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/02/28/javadaily2/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/02/28/javadaily2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/03/weeklysummary/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">新学期总结与3月计划</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/02/24/javadairy1/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Java日常学习总结之基础程序设计篇</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/02/28/javadaily2/&title=《Java日常学习总结之类与对象篇》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/02/28/javadaily2/&title=《Java日常学习总结之类与对象篇》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/02/28/javadaily2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java日常学习总结之类与对象篇》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/02/28/javadaily2/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/02/28/javadaily2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/02/28/javadaily2/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

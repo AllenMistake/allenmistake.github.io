@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>自己动手Flutter——动画初步 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Flutter,开源项目">
+    <meta name="description" content="动画基本原理我们首先在 State 类里声明 Animation 类型和 AnimationControler 类型，Animation 是负责产生变化值的控件，而 Controler 是 负责动画的生成的。注意，如果需要用的动画控件，类声明必须要跟着 with SingleTickerProviderStateMixin如果在不同时刻有着不同的动画效果，就涉及多个 controler 此时就要声">
+<meta name="keywords" content="Flutter,开源项目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自己动手Flutter——动画初步">
+<meta property="og:url" content="http://www.allenmistake.top/2019/06/23/flutterapp3/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="动画基本原理我们首先在 State 类里声明 Animation 类型和 AnimationControler 类型，Animation 是负责产生变化值的控件，而 Controler 是 负责动画的生成的。注意，如果需要用的动画控件，类声明必须要跟着 with SingleTickerProviderStateMixin如果在不同时刻有着不同的动画效果，就涉及多个 controler 此时就要声">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/06/23/flutterapp3/transform.gif">
+<meta property="og:updated_time" content="2019-06-23T09:25:29.604Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自己动手Flutter——动画初步">
+<meta name="twitter:description" content="动画基本原理我们首先在 State 类里声明 Animation 类型和 AnimationControler 类型，Animation 是负责产生变化值的控件，而 Controler 是 负责动画的生成的。注意，如果需要用的动画控件，类声明必须要跟着 with SingleTickerProviderStateMixin如果在不同时刻有着不同的动画效果，就涉及多个 controler 此时就要声">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/06/23/flutterapp3/transform.gif">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">自己动手Flutter——动画初步</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">自己动手Flutter——动画初步</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-06-23T07:54:44.000Z" itemprop="datePublished" class="page-time">
+  2019-06-23
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/跨平台/">跨平台</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#动画基本原理"><span class="post-toc-number">1.</span> <span class="post-toc-text">动画基本原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#方法重写"><span class="post-toc-number">2.</span> <span class="post-toc-text">方法重写</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#在控件中应用动画"><span class="post-toc-number">3.</span> <span class="post-toc-text">在控件中应用动画</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#重置、开启动画"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">重置、开启动画</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#setState-和-addStatusListener"><span class="post-toc-number">4.</span> <span class="post-toc-text">setState 和 addStatusListener</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-flutterapp3"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">自己动手Flutter——动画初步</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-06-23 15:54:44" datetime="2019-06-23T07:54:44.000Z"  itemprop="datePublished">2019-06-23</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/跨平台/">跨平台</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="动画基本原理"><a href="#动画基本原理" class="headerlink" title="动画基本原理"></a>动画基本原理</h2><p>我们首先在 State 类里声明 Animation 类型和 AnimationControler 类型，<br>Animation 是负责产生变化值的控件，而 Controler 是 负责动画的生成的。<br>注意，如果需要用的动画控件，类声明必须要跟着 <code>with SingleTickerProviderStateMixin</code>如果在不同时刻有着不同的动画效果，就涉及多个 controler 此时就要声明 <code>with TickerProviderStateMixin</code></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Animation&lt;<span class="built_in">double</span>&gt; animation;</span><br><span class="line">AnimationController controller;</span><br><span class="line">Animation&lt;<span class="built_in">double</span>&gt; animationAI;</span><br></pre></td></tr></table></figure>
+<h2 id="方法重写"><a href="#方法重写" class="headerlink" title="方法重写"></a>方法重写</h2><p>如果想要具体定义动画是怎样进行的，一定要重写 <code>initState()</code> 和 <code>dispose()</code>。如下方代码所示</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> initState() &#123;</span><br><span class="line">  <span class="keyword">super</span>.initState();</span><br><span class="line">  <span class="comment">//设置 control 的持续时间</span></span><br><span class="line">  controller = <span class="keyword">new</span> AnimationController(</span><br><span class="line">      duration: <span class="keyword">const</span> <span class="built_in">Duration</span>(seconds: <span class="number">2</span>), vsync: <span class="keyword">this</span>);</span><br><span class="line">  <span class="comment">//以下是产生动画的核心代码，设置了开始状态和结束状态</span></span><br><span class="line">  <span class="comment">//这个值和animation应用的控件属性有关，下面会细说</span></span><br><span class="line">  animation = <span class="keyword">new</span> Tween(begin: <span class="number">-1.0</span>, end: <span class="number">-0.25</span>).animate(</span><br><span class="line">      CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn))</span><br><span class="line">    ..addStatusListener((status) &#123;</span><br><span class="line">        <span class="comment">//..addStateListener 可以监听动画是否完成</span></span><br><span class="line">      <span class="keyword">if</span> (status == AnimationStatus.completed) &#123;</span><br><span class="line">        _pressCard(myCard);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (status == AnimationStatus.dismissed) &#123;</span><br><span class="line">        controller.forward();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  animationAI = <span class="keyword">new</span> Tween(begin: <span class="number">1.0</span>, end: <span class="number">0.25</span>).animate(</span><br><span class="line">      CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> dispose() &#123;</span><br><span class="line">  controller.dispose();</span><br><span class="line">  <span class="keyword">super</span>.dispose();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们在 build 函数外面定义了动画之后，我们就可以在控件中应用他们了</p>
+<h2 id="在控件中应用动画"><a href="#在控件中应用动画" class="headerlink" title="在控件中应用动画"></a>在控件中应用动画</h2><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">AnimatedBuilder(</span><br><span class="line">    animation: controller,</span><br><span class="line">    builder: (BuildContext context, Widget child) &#123;</span><br><span class="line">        <span class="keyword">return</span> Transform(</span><br><span class="line">            transform: Matrix4.translationValues(</span><br><span class="line">                animationAI.value * width, <span class="number">0.0</span>, <span class="number">0.0</span>),</span><br><span class="line">            child: <span class="keyword">new</span> Center(</span><br><span class="line">                child: Container(</span><br><span class="line">                    padding: <span class="keyword">const</span> EdgeInsets.only(top: <span class="number">16.0</span>),</span><br><span class="line">                    width: <span class="number">100.0</span>,</span><br><span class="line">                    height: <span class="number">100.0</span>,</span><br><span class="line">                    child: Image(</span><br><span class="line">                        image: ExactAssetImage(<span class="string">"<span class="subst">$aiPicPath</span>"</span>),</span><br><span class="line">                        width: <span class="number">40</span>,</span><br><span class="line">                        height: <span class="number">40</span>,</span><br><span class="line">                    ),</span><br><span class="line">                ),</span><br><span class="line">            ),</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+<p>在要使用动画的控件位置，首先要声明一个 AnimationBuilder ，并且首先定义它的 animation属性，将这个控件的动画发生与 control 绑定在一起，最后再builder 返回一个动画类型，我的 App 里返回的是一个 Transform 类似于平移的一个动画，核心代码是 <code>transform: Matrix4.translationValues(animationAI.value * width, 0.0, 0.0),</code> 此段代码效果则是产生平移效果。效果如下</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/06/23/flutterapp3/transform.gif" alt="平移动画效果" title>
+                </div>
+                <div class="image-caption">平移动画效果</div>
+            </figure>
+<h3 id="重置、开启动画"><a href="#重置、开启动画" class="headerlink" title="重置、开启动画"></a>重置、开启动画</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">controller.reset();</span><br><span class="line">controller.forward();</span><br></pre></td></tr></table></figure>
+<p>我们将以上两行代码添加到 onPressed 属性中，这样每次点击按钮的时候都会重置并且播放动画。</p>
+<h2 id="setState-和-addStatusListener"><a href="#setState-和-addStatusListener" class="headerlink" title="setState 和 addStatusListener"></a>setState 和 addStatusListener</h2><p>在 Flutter 中，带有 State 字样的基本都会更新UI，onPressed 中的 setState 函数可以让其中改变的参数马上更新到 UI ，其中的函数一经修改，setState 会立即寻找页面中会调用到该参数的位置，迅速刷新。</p>
+<p>addStateListener 同样也是这个含义，他监听动画的状态，以便在动画停止时（或其他状态）用户可以定义参数变化，来改变UI，在这里的应用就是，当动画播放完之后，再调用结果通知 dialog，如果不这样做的话，动画和 dialog 同时触发，没有效果。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-06-23T09:25:29.604Z" itemprop="dateUpdated">2019-06-23 17:25:29</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/06/23/flutterapp3/" target="_blank" rel="external">http://www.allenmistake.top/2019/06/23/flutterapp3/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/开源项目/">开源项目</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/06/23/flutterapp3/&title=《自己动手Flutter——动画初步》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/06/23/flutterapp3/&title=《自己动手Flutter——动画初步》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/06/23/flutterapp3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《自己动手Flutter——动画初步》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/06/23/flutterapp3/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/06/23/flutterapp3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/06/27/flutterapp4/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">dart中的异步初级+获取firebase数据</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/06/21/FlutterStudy/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Awesome Flutter</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/06/23/flutterapp3/&title=《自己动手Flutter——动画初步》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/06/23/flutterapp3/&title=《自己动手Flutter——动画初步》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/06/23/flutterapp3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《自己动手Flutter——动画初步》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/06/23/flutterapp3/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/06/23/flutterapp3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/06/23/flutterapp3/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

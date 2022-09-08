@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Android 线程下载 handle 使用分析 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="线程">
+    <meta name="description" content="从 AsyncTask 说起在Android网络库之HttpURLConnection与数据解析我们提到了利用 AsyncTask 在后台运行耗时操作。 AsyncTask是执行后台线程的最简单方式，但它不适用于那些重复且长时间运行的任务。虽然耗时操作在后台运行，不会使系统崩溃，但是我们如果加载图片不能等它全都下载之后一起显示（内存占用也是一个问题）。 考虑到上面的问题，很多应用通常会选择仅在需要">
+<meta name="keywords" content="线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 线程下载 handle 使用分析">
+<meta property="og:url" content="http://www.allenmistake.top/2019/09/21/handler/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="从 AsyncTask 说起在Android网络库之HttpURLConnection与数据解析我们提到了利用 AsyncTask 在后台运行耗时操作。 AsyncTask是执行后台线程的最简单方式，但它不适用于那些重复且长时间运行的任务。虽然耗时操作在后台运行，不会使系统崩溃，但是我们如果加载图片不能等它全都下载之后一起显示（内存占用也是一个问题）。 考虑到上面的问题，很多应用通常会选择仅在需要">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/09/21/handler/handler1.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/09/21/handler/handler2.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/09/21/handler/handler3">
+<meta property="og:image" content="http://www.allenmistake.top/2019/09/21/handler/handler5.png">
+<meta property="og:updated_time" content="2019-09-22T05:41:44.551Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 线程下载 handle 使用分析">
+<meta name="twitter:description" content="从 AsyncTask 说起在Android网络库之HttpURLConnection与数据解析我们提到了利用 AsyncTask 在后台运行耗时操作。 AsyncTask是执行后台线程的最简单方式，但它不适用于那些重复且长时间运行的任务。虽然耗时操作在后台运行，不会使系统崩溃，但是我们如果加载图片不能等它全都下载之后一起显示（内存占用也是一个问题）。 考虑到上面的问题，很多应用通常会选择仅在需要">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/09/21/handler/handler1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Android 线程下载 handle 使用分析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Android 线程下载 handle 使用分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-09-21T06:40:46.000Z" itemprop="datePublished" class="page-time">
+  2019-09-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从-AsyncTask-说起"><span class="post-toc-number">1.</span> <span class="post-toc-text">从 AsyncTask 说起</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#主线程"><span class="post-toc-number">2.</span> <span class="post-toc-text">主线程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Handler、Looper、Message-结构分析"><span class="post-toc-number">3.</span> <span class="post-toc-text">Handler、Looper、Message 结构分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#剖析Message"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">剖析Message</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#剖析-Handler"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">剖析 Handler</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#传递-Handler"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">传递 Handler</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-handler"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Android 线程下载 handle 使用分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-09-21 14:40:46" datetime="2019-09-21T06:40:46.000Z"  itemprop="datePublished">2019-09-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="从-AsyncTask-说起"><a href="#从-AsyncTask-说起" class="headerlink" title="从 AsyncTask 说起"></a>从 AsyncTask 说起</h2><p>在<a href="https://allenmistake.top/2019/09/17/httpurlconnection/" target="_blank" rel="noopener">Android网络库之HttpURLConnection与数据解析</a>我们提到了利用 AsyncTask 在后台运行耗时操作。</p>
+<p>AsyncTask是执行后台线程的最简单方式，但它不适用于那些重复且长时间运行的任务。虽然耗时操作在后台运行，不会使系统崩溃，但是我们如果加载图片不能等它全都下载之后一起显示（内存占用也是一个问题）。</p>
+<p>考虑到上面的问题，很多应用通常会选择仅在需要显示图片时才需要下载。</p>
+<h2 id="主线程"><a href="#主线程" class="headerlink" title="主线程"></a>主线程</h2><p>Android系统中，线程使用的收件箱叫作消息队列（message queue）。使用消息队列的线程叫作消息循环（message loop）。消息循环会循环检查队列上是否有新消息。消息循环由线程和looper组成。Looper对象管理着线程的消息队列。主线程就是个消息循环，因此也拥有looper。主线程的所有工作都是由其looper完成的。looper不断从消息队列中抓取消息，然后完成消息指定的任务。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ThumbnailDownloader&lt;PhotoHolder&gt; mThumbnailDownloader;</span><br><span class="line">...</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setRetainInstance(<span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">new</span> FetchItemsTask().execute();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 HandlerThread</span></span><br><span class="line">    mThumbnailDownloader = <span class="keyword">new</span> ThumbnailDownloader&lt;&gt;();</span><br><span class="line">    <span class="comment">// 初始化Looper</span></span><br><span class="line">    mThumbnailDownloader.start();</span><br><span class="line">    mThumbnailDownloader.getLooper();</span><br><span class="line">    Log.i(TAG, <span class="string">"Background thread started"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroyView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDestroyView();</span><br><span class="line">    mThumbnailDownloader.clearQueue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ThumbnailDownloader的 <code>getLooper()</code> 方法是在 <code>start()</code> 方法之后调用的。（稍后会学习更多有关Looper的知识）这能保证线程就绪，避免潜在竞争（尽管极少发生）。因为 <code>getLooper()</code> 方法能执行成功，说明 <code>onLooperPrepared()</code> 方法肯定早已完成。这样，queueThumbnail（）方法因Handler为空而调用失败的情况就能避免了。</li>
+<li>在 <code>onDestroy()</code> 方法内调用 <code>quit()</code> 方法结束线程。这非常关键。如不终止 HandlerThread ，它会一直运行下去，成为僵尸。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(@NonNull PhotoHolder photoHolder, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    GalleryItem galleryItem = mGalleryItems.get(position);</span><br><span class="line">    Drawable placeholder = getResources().getDrawable(R.drawable.bill_up_close);</span><br><span class="line">    photoHolder.bindDrawable(placeholder);</span><br><span class="line">    <span class="comment">// 获取图片 url 传入，添加下载任务</span></span><br><span class="line">    mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Handler、Looper、Message-结构分析"><a href="#Handler、Looper、Message-结构分析" class="headerlink" title="Handler、Looper、Message 结构分析"></a>Handler、Looper、Message 结构分析</h2><h3 id="剖析Message"><a href="#剖析Message" class="headerlink" title="剖析Message"></a>剖析Message</h3><p>Message需要自己定义三个变量，分别是</p>
+<ul>
+<li>What：用户定义的int型消息代码，用来描述消息</li>
+<li>obj：用户指定，随消息发送的对象</li>
+<li>target：处理消息的 Handler</li>
+</ul>
+<h3 id="剖析-Handler"><a href="#剖析-Handler" class="headerlink" title="剖析 Handler"></a>剖析 Handler</h3><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/09/21/handler/handler1.png" alt="结构图" title>
+                </div>
+                <div class="image-caption">结构图</div>
+            </figure>
+<p>作用：创建、发布、处理 Message</p>
+<p>我们来说一下 Handler 使用时的流程，结合一下代码分析。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">queueThumbnail</span><span class="params">(T target, String url)</span></span>&#123;</span><br><span class="line">    Log.i(TAG, <span class="string">"Got a URL: "</span>+url);</span><br><span class="line">    <span class="keyword">if</span>(url == <span class="keyword">null</span>)&#123;</span><br><span class="line">        mRequestMap.remove(target);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 使用一个标记下载请求的T类型作为key，</span></span><br><span class="line">        <span class="comment">// 我们可以存取和请求关联的URL下载链接</span></span><br><span class="line">        <span class="comment">// 这个标记对象是PhotoHolder， 下载结果就能很方便的发送给显示图片的UI元素</span></span><br><span class="line">        mRequestMap.put(target, url);</span><br><span class="line">        <span class="comment">// 将下载消息添加到后台线程的消息队列中</span></span><br><span class="line">        mRequestHandler.obtainMessage(MESSAGE_DOWNLOAD, target)</span><br><span class="line">            .sendToTarget();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>我们在obtainMessage(…)  方法获取消息，紧接着用让这个Message调用 sendToTarget() 方法将其发送给它的Handler，Handler 会将这个Message放置在 Looper 消息队列的尾部。</li>
+<li>Looper 取得消息队列中的Message后，会将他发送给消息的目标Handler去处理。消息一般实在目标 Handler 的 Handler.handleMessage(…) 实现方法中进行处理的。</li>
+</ol>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/09/21/handler/handler2.png" alt="Handler创建、发送Message" title>
+                </div>
+                <div class="image-caption">Handler创建、发送Message</div>
+            </figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onLooperPrepared</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mRequestHandler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(@NonNull Message msg)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(msg.what == MESSAGE_DOWNLOAD)&#123;</span><br><span class="line">                T target = (T)msg.obj;</span><br><span class="line">                Log.i(TAG, <span class="string">"Got a request for URL: "</span> + mRequestMap.get(target));</span><br><span class="line">                <span class="comment">// 获取图片的耗时操作</span></span><br><span class="line">                handleRequest(target);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码中，我们是在 <code>onLooperPrepared()</code> 方法里实现 <code>Handler.handleMessage(...)</code> 方法的。HandlerThread.onLooperPrepared() 是在Looper首次检查消息队列之前调用，所以该方法是创建Handler实现的好地方。</p>
+<p>在Handler.handleMessage(…)方法中，首先检查<strong>消息类型</strong>(what)，再获取<strong>obj</strong>值（T类型下载请求），然后将其传递给handleRequest(…)方法处理。（前面说过，队列中的下载消息取出并可以处理时，就会触发调用Handler.handleMessage(…)方法。handleRequest() 方法是下载执行的地方。在这里，确认URL有效后，就将它传递给FlickrFetchr新实例。确切地说，此处使用的是<a href="https://allenmistake.top/2019/09/17/httpurlconnection/" target="_blank" rel="noopener">Android网络库之HttpURLConnection与数据解析</a>中创建的FlickrFetchr.getUrlBytes(…)方法。</p>
+<h3 id="传递-Handler"><a href="#传递-Handler" class="headerlink" title="传递 Handler"></a>传递 Handler</h3><p>我们使用 mRequestHandler，已经可以从主线程安排后台任务。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/09/21/handler/handler3" alt="从主线程安排 ThumbnailDownloader 上的任务" title>
+                </div>
+                <div class="image-caption">从主线程安排 ThumbnailDownloader 上的任务</div>
+            </figure>
+<p>反过来，也可以从后台线程使用与主线程关联的Handler，安排主线任务</p>
+<p>![从ThumbnailDownloader线程上规划主线程任务]</p>
+<p>主线程是一个拥有 handler 和 Looper 的消息循环。主线程上创建的 Handler 会自动与它的 Looper 相关联。主线程上创建的这个  Handler 也可以传递给另一线程。传递出去的 Handler 与创建它的线程 Looper 始终保持着联系。因此，已传出 Handler 负责处理的所有消息都将在主线程的消息队列中处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HandlerThread 文件</span></span><br><span class="line"><span class="comment">// 来自主线程的 Handler</span></span><br><span class="line"><span class="keyword">private</span> Handler mResponseHandler;</span><br><span class="line"><span class="keyword">private</span> ThumbnailDownloadListener&lt;T&gt; mThumbnailDownloadListener;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新增监听器接口 响应下载请求</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ThumbnailDownloadListener</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onThumbnailDownloaded</span><span class="params">(T target, Bitmap bitmap)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setThumbnailDownloadListener</span><span class="params">(ThumbnailDownloadListener&lt;T&gt; listener)</span></span>&#123;</span><br><span class="line">    mThumbnailDownloadListener = listener;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThumbnailDownloader</span><span class="params">(Handler responseHandler)</span></span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(TAG);</span><br><span class="line">    mResponseHandler = responseHandler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主线程创建的Handler</span></span><br><span class="line">Handler responseHandler = <span class="keyword">new</span> Handler();</span><br><span class="line"></span><br><span class="line">mThumbnailDownloader = <span class="keyword">new</span> ThumbnailDownloader&lt;&gt;(responseHandler);</span><br><span class="line">mThumbnailDownloader.setThumbnailDownloadListener(</span><br><span class="line">    <span class="keyword">new</span> ThumbnailDownloader.ThumbnailDownloadListener&lt;PhotoHolder&gt;() &#123;</span><br><span class="line">        <span class="comment">// 实现接口中的抽象方法，来更新UI</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onThumbnailDownloaded</span><span class="params">(PhotoHolder photoHolder, Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">            Drawable drawable = <span class="keyword">new</span> BitmapDrawable(getResources(), bitmap);</span><br><span class="line">            photoHolder.bindDrawable(drawable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>那么就有一个疑问了，如果在这里面更新UI，那么在PhotoAdapter中的 <code>onBindViewHolder()</code> 中的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());</span><br></pre></td></tr></table></figure>
+<p>是什么用途呢？</p>
+<p>其实显而易见 <code>queueThumbnail()</code> 方法的作用是向消息队列中添加下载请求，而下载之后负责更新UI是利用在主线程创建的 mResponseHandler 处理的。</p>
+<p>说回正题，现在，通过mResponseHandler，ThumbnailDownloader能够使用与主线程 Looper 绑定的 Handler。同时，还有ThumbnailDownloadListener 使用返回的 Bitmap 执行UI更新操作。具体来说，就是通过 onThumbnailDownloaded 实现，使用新下载的 Bitmap 来设置 PhotoHolder 的 Drawable。</p>
+<p>我们在 handleRequest 方法中添加下面代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mResponseHandler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(mRequestMap.get(target) != url || mHasQuit)&#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mRequestMap.remove(target);</span><br><span class="line">        mThumbnailDownloadListener.onThumbnailDownloaded(target, bitmap);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>Message设有回调方法属性后，取出队列的消息是不会发给target Handler的。相反，存储在回调方法中的 Runnable 的 <code>run()</code> 方法会直接执行。</p>
+<p>那么上述代码有什么作用呢？</p>
+<ul>
+<li>首先，它再次检查 requestMap。这很有必要，因为 RecyclerView 会循环使用其视图。在ThumbnailDownloader下载完成 Bitmap 之后，RecyclerView可能循环使用了 PhotoHolder 并相应请求了一个不同的URL。该检查可保证每个PhotoHolder都能获取到正确的图片，即使中间发生了其他请求也无妨。</li>
+<li>接下来，检查mHasQuit值。如果ThumbnailDownloader已经退出，运行任何回调方法可能都不太安全。</li>
+<li>最后，从requestMap中删除配对的PhotoHolder-URL，然后将位图设置到目标PhotoHolder上。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后，我们做一个流程总结，当然，很多细节我没有写在里面，例如mResponse的监听器接口、清理队列、处理完一个Handler之后在Map中删除相应的target，仅供参考。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/09/21/handler/handler5.png" alt="流程总结" title>
+                </div>
+                <div class="image-caption">流程总结</div>
+            </figure>
+<p>之后会从源码的角度继续分析Android的Handler机制。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-09-22T05:41:44.551Z" itemprop="dateUpdated">2019-09-22 13:41:44</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/09/21/handler/" target="_blank" rel="external">http://www.allenmistake.top/2019/09/21/handler/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/09/21/handler/&title=《Android 线程下载 handle 使用分析》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/09/21/handler/&title=《Android 线程下载 handle 使用分析》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/09/21/handler/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android 线程下载 handle 使用分析》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/09/21/handler/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/09/21/handler/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/09/28/sharepreference/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">浅谈Android中的轻量级存储————SharePreference</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/09/18/net/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">这应该是我的博客里面讲网络最详细的一篇</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/09/21/handler/&title=《Android 线程下载 handle 使用分析》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/09/21/handler/&title=《Android 线程下载 handle 使用分析》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/09/21/handler/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android 线程下载 handle 使用分析》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/09/21/handler/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/09/21/handler/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/09/21/handler/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

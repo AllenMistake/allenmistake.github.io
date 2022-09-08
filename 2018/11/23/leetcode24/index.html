@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：24.括号的生成 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="DFS,回溯">
+    <meta name="description" content="题目给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。 例如，给出 n = 3，生成结果为：1234567[  &amp;quot;((()))&amp;quot;,  &amp;quot;(()())&amp;quot;,  &amp;quot;(())()&amp;quot;,  &amp;quot;()(())&amp;quot;,  &amp;quot;()()()&amp;quot;] 分析方法一：暴力法（递归）思路 我们可以">
+<meta name="keywords" content="DFS,回溯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：24.括号的生成">
+<meta property="og:url" content="http://www.allenmistake.top/2018/11/23/leetcode24/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="题目给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。 例如，给出 n = 3，生成结果为：1234567[  &amp;quot;((()))&amp;quot;,  &amp;quot;(()())&amp;quot;,  &amp;quot;(())()&amp;quot;,  &amp;quot;()(())&amp;quot;,  &amp;quot;()()()&amp;quot;] 分析方法一：暴力法（递归）思路 我们可以">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-05T13:56:00.721Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：24.括号的生成">
+<meta name="twitter:description" content="题目给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。 例如，给出 n = 3，生成结果为：1234567[  &amp;quot;((()))&amp;quot;,  &amp;quot;(()())&amp;quot;,  &amp;quot;(())()&amp;quot;,  &amp;quot;()(())&amp;quot;,  &amp;quot;()()()&amp;quot;] 分析方法一：暴力法（递归）思路 我们可以">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：24.括号的生成</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：24.括号的生成</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-11-22T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2018-11-23
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/medium/">medium</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#题目"><span class="post-toc-number">1.</span> <span class="post-toc-text">题目</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法一：暴力法（递归）"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">方法一：暴力法（递归）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法一改进版：递归法"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">方法一改进版：递归法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法二：回溯法（重点掌握）"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">方法二：回溯法（重点掌握）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法三：闭合法"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">方法三：闭合法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码"><span class="post-toc-number">3.</span> <span class="post-toc-text">代码</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#法一：暴力法（java）"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">法一：暴力法（java）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#法一改进版：递归法"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">法一改进版：递归法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#法二：回溯法（java）"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">法二：回溯法（java）</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#法三：闭合法"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">法三：闭合法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#个人总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">个人总结</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#递归与回溯的区别"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">递归与回溯的区别</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#DFS与BFS"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">DFS与BFS</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#关于此题"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">关于此题</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcode24"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：24.括号的生成</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-11-23 00:00:00" datetime="2018-11-22T16:00:00.000Z"  itemprop="datePublished">2018-11-23</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/medium/">medium</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。</p>
+<p>例如，给出 n = 3，生成结果为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &quot;((()))&quot;,</span><br><span class="line">  &quot;(()())&quot;,</span><br><span class="line">  &quot;(())()&quot;,</span><br><span class="line">  &quot;()(())&quot;,</span><br><span class="line">  &quot;()()()&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><h3 id="方法一：暴力法（递归）"><a href="#方法一：暴力法（递归）" class="headerlink" title="方法一：暴力法（递归）"></a>方法一：暴力法（递归）</h3><p>思路</p>
+<p>我们可以生成所有 $2^{2n}$ 个 <code>&#39;(&#39;</code> 和<code>&#39;)&#39;</code> 字符构成的序列。然后，我们将检查每一个是否有效。</p>
+<p>算法</p>
+<p>为了生成所有序列，我们使用递归。长度为 n 的序列就是<code>&#39;(&#39;</code>加上所有长度为 n-1 的序列，以及<code>&#39;)&#39;</code>加上所有长度为 n-1 的序列。</p>
+<p>为了检查序列是否为有效的，我们会跟踪平衡，也就是左括号的数量减去右括号的数量的净值。如果这个值始终小于零或者不以零结束，该序列就是无效的，否则它是有效的。</p>
+<h3 id="方法一改进版：递归法"><a href="#方法一改进版：递归法" class="headerlink" title="方法一改进版：递归法"></a>方法一改进版：递归法</h3><p>这道题给定一个数字n，让生成共有n个括号的所有正确的形式，对于这种列出所有结果的题首先还是考虑用递归Recursion来解，由于字符串只有左括号和右括号两种字符，而且最终结果必定是左括号3个，右括号3个，所以我们定义两个变量left和right分别表示剩余左右括号的个数，如果在某次递归时，左括号的个数大于右括号的个数，说明此时生成的字符串中右括号的个数大于左括号的个数，即会出现’)(‘这样的非法串，所以这种情况直接返回，不继续处理。如果left和right都为0，则说明此时生成的字符串已有3个左括号和3个右括号，且字符串合法，则存入结果中后返回。如果以上两种情况都不满足，若此时left大于0，则调用递归函数，注意参数的更新，若right大于0，则调用递归函数，同样要更新参数。</p>
+<p>这种递归的方法和第一种暴力法很像，核心思想都是先产生字符串，一旦不符合规则立刻舍弃，但是这样会增加时间复杂度，我们可以直接产生符合要求的字符串，然后添加到vector中，这就需要我们有一个比较严谨的逻辑条件。请看方法二</p>
+<h3 id="方法二：回溯法（重点掌握）"><a href="#方法二：回溯法（重点掌握）" class="headerlink" title="方法二：回溯法（重点掌握）"></a>方法二：回溯法（重点掌握）</h3><p>思路和算法<br>类似于此题，要求解出所有的排列组合，我们优先考虑递归法或者回溯法<br>只有在我们知道序列仍然保持有效时才添加<code>&#39;(&#39;</code>or<code>&#39;)&#39;</code>，而不是像方法一那样每次添加。我们可以通过跟踪到目前为止放置的左括号和右括号的数目来做到这一点，</p>
+<p>如果我们还剩一个位置，我们可以开始放一个左括号。 如果它不超过左括号的数量，我们可以放一个右括号。</p>
+<h3 id="方法三：闭合法"><a href="#方法三：闭合法" class="headerlink" title="方法三：闭合法"></a>方法三：闭合法</h3><p>思路</p>
+<p>为了枚举某些内容，我们通常希望将其表示为更容易计算的不相交子集的总和。</p>
+<p>考虑有效括号序列 S 的闭包数：至少存在<code>index&gt; = 0</code>，使得<code>S[0], S[1], ..., S[2*index+1]</code>是有效的。 显然，每个括号序列都有一个唯一的闭包号。 我们可以尝试单独列举它们。</p>
+<p>算法</p>
+<p>对于每个闭合数<code>c</code>，我们知道起始和结束括号必定位于索引<code>0</code>和<code>2*c + 1</code>。然后两者间的<code>2*c</code>个元素一定是有效序列，其余元素一定是有效序列。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="法一：暴力法（java）"><a href="#法一：暴力法（java）" class="headerlink" title="法一：暴力法（java）"></a>法一：暴力法（java）</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    public List&lt;<span class="built_in">String</span>&gt; generateParenthesis(int n) &#123;</span><br><span class="line">        List&lt;<span class="built_in">String</span>&gt; combinations = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        generateAll(<span class="keyword">new</span> char[<span class="number">2</span> * n], <span class="number">0</span>, combinations);</span><br><span class="line">        <span class="keyword">return</span> combinations;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public <span class="keyword">void</span> generateAll(char[] current, int pos, List&lt;<span class="built_in">String</span>&gt; result) &#123;</span><br><span class="line">        <span class="keyword">if</span> (pos == current.length) &#123;</span><br><span class="line">            <span class="keyword">if</span> (valid(current))</span><br><span class="line">                result.add(<span class="keyword">new</span> <span class="built_in">String</span>(current));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            current[pos] = <span class="string">'('</span>;</span><br><span class="line">            generateAll(current, pos+<span class="number">1</span>, result);</span><br><span class="line">            current[pos] = <span class="string">')'</span>;</span><br><span class="line">            generateAll(current, pos+<span class="number">1</span>, result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean valid(char[] current) &#123;</span><br><span class="line">        int balance = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (char c: current) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">'('</span>) balance++;</span><br><span class="line">            <span class="keyword">else</span> balance--;</span><br><span class="line">            <span class="keyword">if</span> (balance &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (balance == <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def generateParenthesis(self, N):</span><br><span class="line">    <span class="keyword">if</span> N == <span class="number">0</span>: <span class="keyword">return</span> [<span class="string">''</span>]</span><br><span class="line">    ans = []</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> xrange(N):</span><br><span class="line">        <span class="keyword">for</span> left <span class="keyword">in</span> self.generateParenthesis(c):</span><br><span class="line">            <span class="keyword">for</span> right <span class="keyword">in</span> self.generateParenthesis(N<span class="number">-1</span>-c):</span><br><span class="line">                ans.append(<span class="string">'(&#123;&#125;)&#123;&#125;'</span>.format(left, right))</span><br><span class="line">    <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
+<h3 id="法一改进版：递归法"><a href="#法一改进版：递归法" class="headerlink" title="法一改进版：递归法"></a>法一改进版：递归法</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">public:</span><br><span class="line">    vector&lt;string&gt; generateParenthesis(int n) &#123;</span><br><span class="line">        vector&lt;string&gt; res;</span><br><span class="line">        generateParenthesisDFS(n, n, <span class="string">""</span>, res);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">void</span> generateParenthesisDFS(int left, int right, string out, vector&lt;string&gt; &amp;res) &#123;</span><br><span class="line">        <span class="keyword">if</span> (left &gt; right) <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">if</span> (left == <span class="number">0</span> &amp;&amp; right == <span class="number">0</span>) res.push_back(out);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (left &gt; <span class="number">0</span>) generateParenthesisDFS(left - <span class="number">1</span>, right, out + <span class="string">'('</span>, res);</span><br><span class="line">            <span class="keyword">if</span> (right &gt; <span class="number">0</span>) generateParenthesisDFS(left, right - <span class="number">1</span>, out + <span class="string">')'</span>, res);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="法二：回溯法（java）"><a href="#法二：回溯法（java）" class="headerlink" title="法二：回溯法（java）"></a>法二：回溯法（java）</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    public List&lt;<span class="built_in">String</span>&gt; generateParenthesis(int n) &#123;</span><br><span class="line">        List&lt;<span class="built_in">String</span>&gt; ans = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        backtrack(ans, <span class="string">""</span>, <span class="number">0</span>, <span class="number">0</span>, n);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public <span class="keyword">void</span> backtrack(List&lt;<span class="built_in">String</span>&gt; ans, <span class="built_in">String</span> cur, int open, int close, int max)&#123;</span><br><span class="line">        <span class="keyword">if</span> (cur.length() == max * <span class="number">2</span>) &#123;</span><br><span class="line">            ans.add(cur);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (open &lt; max)</span><br><span class="line">            backtrack(ans, cur+<span class="string">"("</span>, open+<span class="number">1</span>, close, max);</span><br><span class="line">        <span class="keyword">if</span> (close &lt; open)</span><br><span class="line">            backtrack(ans, cur+<span class="string">")"</span>, open, close+<span class="number">1</span>, max);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="法三：闭合法"><a href="#法三：闭合法" class="headerlink" title="法三：闭合法"></a>法三：闭合法</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    public List&lt;<span class="built_in">String</span>&gt; generateParenthesis(int n) &#123;</span><br><span class="line">        List&lt;<span class="built_in">String</span>&gt; ans = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">            ans.add(<span class="string">""</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (int c = <span class="number">0</span>; c &lt; n; ++c)</span><br><span class="line">                <span class="keyword">for</span> (<span class="built_in">String</span> left: generateParenthesis(c))</span><br><span class="line">                    <span class="keyword">for</span> (<span class="built_in">String</span> right: generateParenthesis(n<span class="number">-1</span>-c))</span><br><span class="line">                        ans.add(<span class="string">"("</span> + left + <span class="string">")"</span> + right);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="个人总结"><a href="#个人总结" class="headerlink" title="个人总结"></a>个人总结</h2><h3 id="递归与回溯的区别"><a href="#递归与回溯的区别" class="headerlink" title="递归与回溯的区别"></a>递归与回溯的区别</h3><p>递归：为了描述问题的某一状态，必须用到该状态的上一状态，而描述上一状态，又必须用到上一状态的上一状态……这种用自已来定义自己的方法，称为递归定义。形式如 f(n) = n*f(n-1), if n=0,f(n)=1.</p>
+<p>解答树角度：在dfs遍历一棵解答树      </p>
+<p>优点：结构简洁</p>
+<p>缺点：效率低，可能栈溢出<br>递归一般结构：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> f()  </span><br><span class="line">&#123;  </span><br><span class="line">     <span class="keyword">if</span>(符合边界条件)  </span><br><span class="line">    &#123;  </span><br><span class="line">       <span class="comment">///////  </span></span><br><span class="line">        <span class="keyword">return</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">     <span class="comment">//某种形式的调用  </span></span><br><span class="line">     f();  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>回溯：从问题的某一种可能出发, 搜索从这种情况出发所能达到的所有可能, 当这一条路走到” 尽头 “的时候, 再倒回出发点, 从另一个可能出发, 继续搜索. 这种不断” 回溯 “寻找解的方法, 称作” 回溯法 “。递归的一种，或者说是通过递归这种代码结构来实现回溯这个目的。回溯法可以被认为是一个有过剪枝的DFS过程。</p>
+<p>解答树角度：带回溯的dfs遍历一棵解答树</p>
+<p>回溯的一般结构：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> dfs(int 当前状态)  </span><br><span class="line">    &#123;  </span><br><span class="line">          <span class="keyword">if</span>(当前状态为边界状态)  </span><br><span class="line">          &#123;  </span><br><span class="line">            记录或输出  </span><br><span class="line">            <span class="keyword">return</span>;  </span><br><span class="line">          &#125;  </span><br><span class="line">          <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)       <span class="comment">//横向遍历解答树所有子节点  </span></span><br><span class="line">         &#123;  </span><br><span class="line">               <span class="comment">//扩展出一个子状态。  </span></span><br><span class="line">               修改了全局变量  </span><br><span class="line">               <span class="keyword">if</span>(子状态满足约束条件)  </span><br><span class="line">                &#123;  </span><br><span class="line">                  dfs(子状态)  </span><br><span class="line">               &#125;  </span><br><span class="line">                恢复全局变量<span class="comment">//回溯部分  </span></span><br><span class="line">            &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="DFS与BFS"><a href="#DFS与BFS" class="headerlink" title="DFS与BFS"></a>DFS与BFS</h3><p>BFS：Breadth-First-Search，宽度优先搜索；<br>BFS是从root开始扩展，每一层都是精密的搜索完整了才下一个</p>
+<p>DFS：Depth-first search，深度优先搜索。<br>DFS主要的特性是深度优先，总是不停的往下找，走到没路才罢休。</p>
+<h3 id="关于此题"><a href="#关于此题" class="headerlink" title="关于此题"></a>关于此题</h3><p>这道题就是灵活运用递归和回溯，可以看出来我们有两次判断，一个判断就是如果括号有n组，那么左括号一定不能大于n，而且，当左括号数量大于右括号时，我们开始有了分类，可以继续插入左括号（如果满足条件一的话），也可以插入右括号。核心的思想还是要想到递归。关于列出所有排列组合的情况，优先考虑递归回溯。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-03-05T13:56:00.721Z" itemprop="dateUpdated">2019-03-05 21:56:00</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2018/11/23/leetcode24/" target="_blank" rel="external">http://www.allenmistake.top/2018/11/23/leetcode24/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DFS/">DFS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/回溯/">回溯</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2018/11/23/leetcode24/&title=《Leetcode日记：24.括号的生成》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2018/11/23/leetcode24/&title=《Leetcode日记：24.括号的生成》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2018/11/23/leetcode24/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：24.括号的生成》 — AllenMistake的小屋&url=http://www.allenmistake.top/2018/11/23/leetcode24/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2018/11/23/leetcode24/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/12/01/leetcode29/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Leetcode日记：29.两数相除</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/11/18/jekyllskill/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Jekyll&amp;latex使用技巧</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2018/11/23/leetcode24/&title=《Leetcode日记：24.括号的生成》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2018/11/23/leetcode24/&title=《Leetcode日记：24.括号的生成》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2018/11/23/leetcode24/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：24.括号的生成》 — AllenMistake的小屋&url=http://www.allenmistake.top/2018/11/23/leetcode24/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2018/11/23/leetcode24/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2018/11/23/leetcode24/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

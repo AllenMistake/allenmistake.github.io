@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：67.二进制数相加&amp;字符串相关操作总结 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="字符串">
+    <meta name="description" content="问题Given two binary strings, return their sum (also a binary string). The input strings are both non-empty and contains only characters 1 or 0. Example 1: 12Input: a = &amp;quot;11&amp;quot;, b = &amp;quot;1&amp;quot;">
+<meta name="keywords" content="字符串">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：67.二进制数相加&amp;字符串相关操作总结">
+<meta property="og:url" content="http://www.allenmistake.top/2019/03/07/leetcode67/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="问题Given two binary strings, return their sum (also a binary string). The input strings are both non-empty and contains only characters 1 or 0. Example 1: 12Input: a = &amp;quot;11&amp;quot;, b = &amp;quot;1&amp;quot;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/03/07/leetcode67/pool.jpg">
+<meta property="og:updated_time" content="2019-07-16T13:56:31.192Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：67.二进制数相加&amp;字符串相关操作总结">
+<meta name="twitter:description" content="问题Given two binary strings, return their sum (also a binary string). The input strings are both non-empty and contains only characters 1 or 0. Example 1: 12Input: a = &amp;quot;11&amp;quot;, b = &amp;quot;1&amp;quot;">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/03/07/leetcode67/pool.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：67.二进制数相加&amp;字符串相关操作总结</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：67.二进制数相加&amp;字符串相关操作总结</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-07T12:15:20.000Z" itemprop="datePublished" class="page-time">
+  2019-03-07
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/easy/">easy</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#StringBuffer、StringBuilder与String"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">StringBuffer、StringBuilder与String</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#String-为什么要设计成不可变的？-2019-5-14-更新"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">String 为什么要设计成不可变的？(2019-5-14 更新)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#回到这道题"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">回到这道题</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码"><span class="post-toc-number">3.</span> <span class="post-toc-text">代码</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcode67"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：67.二进制数相加&字符串相关操作总结</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-07 20:15:20" datetime="2019-03-07T12:15:20.000Z"  itemprop="datePublished">2019-03-07</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/easy/">easy</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>Given two binary strings, return their sum (also a binary string).</p>
+<p>The input strings are both non-empty and contains only characters 1 or 0.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: a = &quot;11&quot;, b = &quot;1&quot;</span><br><span class="line">Output: &quot;100&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: a = &quot;1010&quot;, b = &quot;1011&quot;</span><br><span class="line">Output: &quot;10101&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这道题本来不想放上来的，不涉及多少算法上的问题，但是记录一些必要的字符串方法是很有必要的</p>
+<h3 id="StringBuffer、StringBuilder与String"><a href="#StringBuffer、StringBuilder与String" class="headerlink" title="StringBuffer、StringBuilder与String"></a>StringBuffer、StringBuilder与String</h3><p>这三兄弟看似一样，实则区别很小，但是终归还是有区别的</p>
+<ol>
+<li><p>运行速度方面：StringBuilder &gt; StringBuffer &gt; String<br>前两个我们抛开不谈，说说为什么  String 最慢，因为 String 为字符串<strong>常量</strong>，而 StringBuilder 和 StringBuffer 均为字符串<strong>变量</strong>，即 String 对象一旦创建之后该对象是不可更改的，但后两者的对象是变量，是可以更改的。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str=<span class="string">"abc"</span>;</span><br><span class="line">System.out.println(str);</span><br><span class="line">str=str+<span class="string">"de"</span>;</span><br><span class="line">System.out.println(str);</span><br></pre></td></tr></table></figure>
+<p> 如果运行这段代码会发现先输出 “abc”，然后又输出 “abcde” ，好像是 str 这个对象被更改了，其实，这只是一种假象罢了，JVM 对于这几行代码是这样处理的，首先创建一个 String 对象 str ，并把 “abc” 赋值给 str ，然后在第三行中，其实 JVM 又创建了一个新的对象也名为 str ，然后再把原来的 str 的值和 “de” 加起来再赋值给新的 str ，而原来的 str 就会被 JVM 的垃圾回收机制（GC）给回收掉了，所以， str 实际上并没有被更改，也就是前面说的<strong> String 对象一旦创建之后就不可更改了</strong>。所以， Java 中对 String 对象进行的操作实际上是一个不断创建新的对象并且将旧的对象回收的一个过程，所以执行速度很慢。</p>
+</li>
+<li><p>线程安全方面<br> StringBuffer 线程安全，而 StringBuilder 非线程安全，主要由于 Builder 中不带锁方法。这里我们不详细讨论。</p>
+</li>
+<li><p>方法<br>String的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="string">"Hello World"</span></span><br><span class="line">a.charAt(<span class="number">1</span>);<span class="comment">//寻找第1个元素</span></span><br><span class="line"><span class="keyword">byte</span> b[] = a.getBytes();<span class="comment">//转换成比特数组</span></span><br><span class="line"><span class="keyword">char</span>[]b = a.toCharArray();<span class="comment">//转换成字符数组</span></span><br><span class="line">b.concat(a);<span class="comment">//连接两个字符串</span></span><br><span class="line">a.indexOf(<span class="string">"o"</span>));<span class="comment">//“o”第一次出现的位置</span></span><br><span class="line">a.lastIndexOf(<span class="string">"o"</span>);<span class="comment">//“o”最后一次出现的位置</span></span><br></pre></td></tr></table></figure>
+<p>StringBuffer的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sb1.append(<span class="string">" World"</span>);<span class="comment">//在尾部添加字符串</span></span><br><span class="line">sb1.insert(<span class="number">1</span>, <span class="string">"ME"</span>);<span class="comment">//在指定位置后面添加字符串</span></span><br><span class="line">sb1.deleteCharAt(<span class="number">0</span>)；<span class="comment">//删除指定位置元素</span></span><br><span class="line">sb1.reverse();<span class="comment">//反转字符串</span></span><br><span class="line">sb1.toString();<span class="comment">//转换成String类型</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将字符串中的字符型数字转换成int</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> number = b.charAt(i) - <span class="string">'0'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="String-为什么要设计成不可变的？-2019-5-14-更新"><a href="#String-为什么要设计成不可变的？-2019-5-14-更新" class="headerlink" title="String 为什么要设计成不可变的？(2019-5-14 更新)"></a>String 为什么要设计成不可变的？(2019-5-14 更新)</h3><ol>
+<li><p>字符串常量池的需要<br> 字符串常量池(String pool, String intern pool, String保留池) 是Java堆内存中一个特殊的存储区域, 当创建一个String对象时,假如此字符串值已经存在于常量池中,则不会创建一个新的对象,而是引用已经存在的对象。还可以使用 String 的 intern() 方法在运行过程中将字符串添加到 String Pool 中。</p>
+<p> 如下面的代码所示,将会在堆内存中只创建一个实际String对象.</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">"abcd"</span>;</span><br><span class="line">String s2 = <span class="string">"abcd"</span>;</span><br></pre></td></tr></table></figure>
+<p> 示意图如下所示:<br> <img src="/2019/03/07/leetcode67/pool.jpg" alt="string 常量池"><br> 假若字符串对象允许改变,那么将会导致各种逻辑错误,比如改变一个对象会影响到另一个独立对象. 严格来说，这种常量池的思想,是一种优化手段.</p>
+<p> String 不可变性天生具备线程安全，可以在多个线程中安全地使用。</p>
+</li>
+<li><p>允许String对象缓存HashCode<br> Java中String对象的哈希码被频繁地使用, 比如在hashMap 等容器中。<br> 字符串不变性保证了hash码的唯一性,因此可以放心地进行缓存.这也是一种性能优化手段,意味着不必每次都去计算新的哈希码. 在String类的定义中有如下代码:</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> hash;<span class="comment">//用来缓存HashCode</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="回到这道题"><a href="#回到这道题" class="headerlink" title="回到这道题"></a>回到这道题</h3><p>这道题说两个二进制数相加，得到一个二进制数，首先顺序肯定是从后向前，按位计算，其次要选择一个变量来判断是否应该进位（carry）。我们将每位算出的结果取余保存在一个StringBuffer中，然后将得到的数除以2来判断下一个是否进位。最后返回StringBuffer的反转。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">addBinary</span><span class="params">(String a, String b)</span> </span>&#123;</span><br><span class="line">        StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">int</span> i = a.length() - <span class="number">1</span>, j = b.length() -<span class="number">1</span>, carry = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &gt;= <span class="number">0</span> || j &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> sum = carry;</span><br><span class="line">            <span class="keyword">if</span> (j &gt;= <span class="number">0</span>) sum += b.charAt(j--) - <span class="string">'0'</span>;</span><br><span class="line">            <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) sum += a.charAt(i--) - <span class="string">'0'</span>;</span><br><span class="line">            sb.append(sum % <span class="number">2</span>);</span><br><span class="line">            carry = sum / <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (carry != <span class="number">0</span>) sb.append(carry);</span><br><span class="line">        <span class="keyword">return</span> sb.reverse().toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/AllenMistake/Leetcode/blob/master/67.add-binary2.java" target="_blank" rel="noopener">源代码</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-07-16T13:56:31.192Z" itemprop="dateUpdated">2019-07-16 21:56:31</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/03/07/leetcode67/" target="_blank" rel="external">http://www.allenmistake.top/2019/03/07/leetcode67/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/字符串/">字符串</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/07/leetcode67/&title=《Leetcode日记：67.二进制数相加&字符串相关操作总结》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/07/leetcode67/&title=《Leetcode日记：67.二进制数相加&字符串相关操作总结》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/07/leetcode67/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：67.二进制数相加&字符串相关操作总结》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/07/leetcode67/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/07/leetcode67/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/09/javadailyplus1/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Java日常学习总结并发进阶之线程初步、锁与同步篇</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/06/ClimbingStairs/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Leetcode日记：70.爬楼梯&amp;动态规划小结</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/07/leetcode67/&title=《Leetcode日记：67.二进制数相加&字符串相关操作总结》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/07/leetcode67/&title=《Leetcode日记：67.二进制数相加&字符串相关操作总结》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/07/leetcode67/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：67.二进制数相加&字符串相关操作总结》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/07/leetcode67/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/07/leetcode67/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/03/07/leetcode67/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

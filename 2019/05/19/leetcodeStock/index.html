@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：买卖股票的最佳时期系列 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="动态规划">
+    <meta name="description" content="牛刀小试——买卖一次买卖股票是 Leetcode 上一系列问题，基本都是用动态规划和贪心算法思想计算出来的。我们看第一个入门级的： 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。设计一个算法来计算你所能获取的最大利润。 示例 1: 1234输入: [7,1,5,3,6,4]输出: 5解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最">
+<meta name="keywords" content="动态规划">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：买卖股票的最佳时期系列">
+<meta property="og:url" content="http://www.allenmistake.top/2019/05/19/leetcodeStock/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="牛刀小试——买卖一次买卖股票是 Leetcode 上一系列问题，基本都是用动态规划和贪心算法思想计算出来的。我们看第一个入门级的： 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。设计一个算法来计算你所能获取的最大利润。 示例 1: 1234输入: [7,1,5,3,6,4]输出: 5解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/05/19/leetcodeStock/买卖两次股票.png">
+<meta property="og:updated_time" content="2019-05-20T14:27:40.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：买卖股票的最佳时期系列">
+<meta name="twitter:description" content="牛刀小试——买卖一次买卖股票是 Leetcode 上一系列问题，基本都是用动态规划和贪心算法思想计算出来的。我们看第一个入门级的： 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。设计一个算法来计算你所能获取的最大利润。 示例 1: 1234输入: [7,1,5,3,6,4]输出: 5解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/05/19/leetcodeStock/买卖两次股票.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：买卖股票的最佳时期系列</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：买卖股票的最佳时期系列</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-05-19T11:27:20.000Z" itemprop="datePublished" class="page-time">
+  2019-05-19
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#牛刀小试——买卖一次"><span class="post-toc-number">1.</span> <span class="post-toc-text">牛刀小试——买卖一次</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#山雨欲来——多次买卖"><span class="post-toc-number">2.</span> <span class="post-toc-text">山雨欲来——多次买卖</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析-1"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码-1"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#风起云涌——只能买两次"><span class="post-toc-number">3.</span> <span class="post-toc-text">风起云涌——只能买两次</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析-2"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方法一——四变量"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">方法一——四变量</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#方法二——分界线"><span class="post-toc-number">3.1.2.</span> <span class="post-toc-text">方法二——分界线</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法一代码"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">方法一代码</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法二代码"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">方法二代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#惊涛骇浪——k次交易"><span class="post-toc-number">4.</span> <span class="post-toc-text">惊涛骇浪——k次交易</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析-3"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码-2"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcodeStock"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：买卖股票的最佳时期系列</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-05-19 19:27:20" datetime="2019-05-19T11:27:20.000Z"  itemprop="datePublished">2019-05-19</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="牛刀小试——买卖一次"><a href="#牛刀小试——买卖一次" class="headerlink" title="牛刀小试——买卖一次"></a>牛刀小试——买卖一次</h2><p>买卖股票是 Leetcode 上一系列问题，基本都是用动态规划和贪心算法思想计算出来的。我们看第一个入门级的：</p>
+<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。设计一个算法来计算你所能获取的最大利润。</p>
+<p>示例 1:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: [<span class="number">7</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">4</span>]</span><br><span class="line">输出: <span class="number">5</span></span><br><span class="line">解释: 在第 <span class="number">2</span> 天（股票价格 = <span class="number">1</span>）的时候买入，在第 <span class="number">5</span> 天（股票价格 = <span class="number">6</span>）的时候卖出，最大利润 = <span class="number">6</span>-<span class="number">1</span> = <span class="number">5</span> 。</span><br><span class="line">     注意利润不能是 <span class="number">7</span>-<span class="number">1</span> = <span class="number">6</span>, 因为卖出价格需要大于买入价格。</span><br></pre></td></tr></table></figure>
+<p>示例 2:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: [<span class="number">7</span>,<span class="number">6</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">1</span>]</span><br><span class="line">输出: <span class="number">0</span></span><br><span class="line">解释: 在这种情况下, 没有交易完成, 所以最大利润为 <span class="number">0</span>。</span><br></pre></td></tr></table></figure>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>我们完全可以用暴力法解决问题，但是有没有一种更好的方法呢？答案是肯定的，我们完全可以一次遍历，只需要两个变量，一个变量存储目前遇到的最小值，一个变量储存目前遇到的最大利润。</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> min = Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">int</span> max = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; prices.length; ++i)&#123;</span><br><span class="line">            <span class="keyword">if</span>(prices[i] &lt; min)</span><br><span class="line">                min = prices[i];</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(prices[i] - min &gt; max)</span><br><span class="line">                max = prices[i] - min;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="山雨欲来——多次买卖"><a href="#山雨欲来——多次买卖" class="headerlink" title="山雨欲来——多次买卖"></a>山雨欲来——多次买卖</h2><p>这次再上一个问题的基础上，改动为了可以多次买卖。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: [7,1,5,3,6,4]</span><br><span class="line">输出: 7</span><br><span class="line">解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。</span><br><span class="line">     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,2,3,4,5]</span><br><span class="line">输出: 4</span><br><span class="line">解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。</span><br><span class="line">     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。</span><br><span class="line">     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。</span><br></pre></td></tr></table></figure>
+<h3 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h3><p>我们可以把利润 <code>profit</code> 设为一个累积量，只要下一次的比上一次的大，就把差值累计给 <code>profit</code> ，如果下一次的比上一次的小，更新 <code>min</code>（可以理解为：当n &lt; n-1时，在 n-1 时刻将股票抛售， 在 n 时刻买）<br>、</p>
+<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(prices.length == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> min = prices[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">int</span> profit = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;prices.length; ++i)&#123;</span><br><span class="line">            <span class="keyword">if</span>(prices[i] &lt; prices[i-<span class="number">1</span>])</span><br><span class="line">                min = prices[i];</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                profit = profit + prices[i] - prices[i-<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> profit;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="风起云涌——只能买两次"><a href="#风起云涌——只能买两次" class="headerlink" title="风起云涌——只能买两次"></a>风起云涌——只能买两次</h2><p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: [3,3,5,0,0,3,1,4]</span><br><span class="line">输出: 6</span><br><span class="line">解释: 在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。</span><br><span class="line">     随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,2,3,4,5]</span><br><span class="line">输出: 4</span><br><span class="line">解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。   </span><br><span class="line">     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。   </span><br><span class="line">     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。</span><br></pre></td></tr></table></figure>
+<h3 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h3><p>这道题有一个常人很容易陷入的误区，一开始我觉得这道题挺简单的，后来发现自己想的有问题,<br>我一开始的做法是，维护两个最大值，<code>max1</code>,<code>max2</code>，像上面那道题一样，只要下一次的比上一次的大，就把差值累计给 <code>profit</code> ，并和<code>max1</code>、<code>max2</code>对比，如果比其中任何一个大，替换掉那一个，如果下一次的比上一次的小，更新 <code>min</code>，重新计算 <code>profit</code>，但是这样有个问题，加入数组是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>我的方法是,<br>1-&gt;4</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max1 = <span class="number">3</span>, max2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>2-&gt;7更新</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max1 = <span class="number">5</span>,max2 = <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<p>2-&gt;9</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max1 = <span class="number">7</span>,max1 = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+<p>所以我的最终答案是12，然而，最优方法是1-&gt;7,2-&gt;9此时，最大利润是13.</p>
+<p>那么，我们究竟如何取舍呢？</p>
+<h4 id="方法一——四变量"><a href="#方法一——四变量" class="headerlink" title="方法一——四变量"></a>方法一——四变量</h4><p>其实在第二道题的基础上稍微修改一下思路就好，但不是很容易想到，首先我们要建立一个变量来存储第二次买股票时所花费的费用，这个变量存在的目的意义是为了计算第二次卖出股票时的利润<br>$$buyTwoProfit = prices[i] - buyTwoCost$$<br>而这个buyTwoCost至关重要，我们如何确定他的更新呢？其实仔细想想就知道；</p>
+<ul>
+<li>首先，第二次买入一定是股票下降的时候</li>
+<li>第二次买入一定是赚，<strong>确保赚的比之前的第二次买入多才会更新</strong></li>
+</ul>
+<p>$$buyTwoCost = prices[i] - buyOneProfit$$</p>
+<p>对应代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buyTwoCost = Math.min(buyTwoCost, prices[i] - buyOneProfit);</span><br></pre></td></tr></table></figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/05/19/leetcodeStock/买卖两次股票.png" alt="四变量过程" title>
+                </div>
+                <div class="image-caption">四变量过程</div>
+            </figure>
+<h4 id="方法二——分界线"><a href="#方法二——分界线" class="headerlink" title="方法二——分界线"></a>方法二——分界线</h4><p>我们可以换个角度想</p>
+<p>最多允许两次不相交的交易，也就意味着这两次交易间存在某一分界线，考虑到可只交易一次，也可交易零次，故分界线的变化范围为第一天至最后一天，只需考虑分界线两边各自的最大利润，最后选出利润和最大的即可。这种方法抽象之后则为首先将[1,n] 拆分为[1,i] 和[i+1,n], 参考卖股票系列的第一题计算各自区间内的最大利润即可。[1,i] 区间的最大利润很好算，但是如何计算[i+1,n] 区间的最大利润值呢？难道需要重复n 次才能得到？注意到区间的右侧n 是个不变值，我们从[1, i] 计算最大利润是更新波谷的值，那么我们可否逆序计算最大利润呢？这时候就需要更新记录波峰的值了</p>
+<h3 id="方法一代码"><a href="#方法一代码" class="headerlink" title="方法一代码"></a>方法一代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> buyOneCost = prices[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">int</span> buyOneProfit = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> buyTwoCost = Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">int</span> buyTwoProfit = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; prices.length; i ++) &#123;</span><br><span class="line">            buyOneProfit = Math.max(buyOneProfit, prices[i] - buyOneCost);</span><br><span class="line">            buyOneCost = Math.min(buyOneCost, prices[i]);</span><br><span class="line">            buyTwoProfit = Math.max(buyTwoProfit, prices[i] - buyTwoCost);</span><br><span class="line">            buyTwoCost = Math.min(buyTwoCost, prices[i] - buyOneProfit);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Math.max(buyOneProfit, buyTwoProfit);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="方法二代码"><a href="#方法二代码" class="headerlink" title="方法二代码"></a>方法二代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length &lt;= <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// get profit in the front of prices</span></span><br><span class="line">    <span class="keyword">int</span>[] profitFront = <span class="keyword">new</span> <span class="keyword">int</span>[prices.length];</span><br><span class="line">    profitFront[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>, valley = prices[<span class="number">0</span>]; i &lt; prices.length; i++) &#123;</span><br><span class="line">        profitFront[i] = Math.max(profitFront[i - <span class="number">1</span>], prices[i] - valley);</span><br><span class="line">        valley = Math.min(valley, prices[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// get profit in the back of prices, (i, n)</span></span><br><span class="line">    <span class="keyword">int</span>[] profitBack = <span class="keyword">new</span> <span class="keyword">int</span>[prices.length];</span><br><span class="line">    profitBack[prices.length - <span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = prices.length - <span class="number">2</span>, peak = prices[prices.length - <span class="number">1</span>]; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        profitBack[i] = Math.max(profitBack[i + <span class="number">1</span>], peak - p</span><br><span class="line">        rices[i]);</span><br><span class="line">        peak = Math.max(peak, prices[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// add the profit front and back</span></span><br><span class="line">    <span class="keyword">int</span> profit = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; prices.length; i++) &#123;</span><br><span class="line">        profit = Math.max(profit, profitFront[i] + profitBack[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> profit;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="惊涛骇浪——k次交易"><a href="#惊涛骇浪——k次交易" class="headerlink" title="惊涛骇浪——k次交易"></a>惊涛骇浪——k次交易</h2><p>示例 1:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: [2,4,1], k = 2</span><br><span class="line">输出: 2</span><br><span class="line">解释: 在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。</span><br></pre></td></tr></table></figure>
+<p>示例 2:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: [3,2,6,5,0,3], k = 2</span><br><span class="line">输出: 7</span><br><span class="line">解释: 在第 2 天 (股票价格 = 2) 的时候买入，在第 3 天 (股票价格 = 6) 的时候卖出, 这笔交易所能获得利润 = 6-2 = 4 。</span><br><span class="line">     随后，在第 5 天 (股票价格 = 0) 的时候买入，在第 6 天 (股票价格 = 3) 的时候卖出, 这笔交易所能获得利润 = 3-0 = 3 。</span><br></pre></td></tr></table></figure>
+<h3 id="分析-3"><a href="#分析-3" class="headerlink" title="分析"></a>分析</h3><p>我们仍然使用动态规划来完成。我们维护两种量，一个是当前到达第i天可以最多进行 j 次交易，最好的利润是多少（global[i][j] ），另一个是当前到达第i天，最多可进行j次交易，并且最后一次交易在当天卖出的最好的利润是多少（local[i][j] ）。下面我们来看递推式，全局的比较简单，global[i][j]=max(local[i][j],global[i-1][j]) ，也就是去当前局部最好的，和过往全局最好的中大的那个（因为最后一次交易如果包含当前天一定在局部最好的里面，否则一定在过往全局最优的里面）。全局（到达第i天进行j次交易的最大收益）= max{局部（在第i天交易后，恰好满足j次交易），全局（到达第i-1天时已经满足j次交易）}对于局部变量的维护，递推式是<br>$$local[i][j] = max(global[i-1][j-1] + \text{max}(diff,0),local[i-1][j] + diff)$$</p>
+<p>也就是看两个量</p>
+<ul>
+<li>第一个是全局到 i-1 天进行 j-1 次交易，然后加上今天的交易，如果今天是赚钱的话（也就是前面只要 j-1 次交易，最后一次交易取当前天）</li>
+<li>第二个量则是取 local 第 i-1 天j次交易，然后加上今天的差值（这里因为local[i-1][j] 比如包含第i-1天卖出的交易，所以现在变成第i天卖出，并不会增加交易次数，而且这里无论diff是不是大于0都一定要加上，因为否则就不满足local[i][j]必须在最后一天卖出的条件了）。</li>
+</ul>
+<p>局部（在第i天交易后，总共交易了j次）= max{情况2，情况1}<br>情况1：在第i-1天时，恰好已经交易了j次（local[i-1][j] ），那么如果i-1天到i天再交易一次：即在第i-1天买入，第i天卖出（diff），则这不并不会增加交易次数！【例如我在第一天买入，第二天卖出；然后第二天又买入，第三天再卖出的行为和第一天买入，第三天卖出的效果是一样的，其实只进行了一次交易！因为有连续性】<br>情况2：第i-1天后，共交易了 j-1 次（global[i-1][j-1] ），因此为了满足“第 i天过后共进行了 j次交易，且第i天必须进行交易”的条件：我们可以选择:</p>
+<ul>
+<li>在第i-1天买入，然后再第i天卖出（diff）</li>
+<li>在第i天买入，然后同样在第i天卖出（收益为0）。</li>
+</ul>
+<p>上面的算法中对于天数需要一次扫描，而每次要对交易次数进行递推式求解，所以时间复杂度是$O(n*k)$，如果是最多进行两次交易，那么复杂度还是$O(n)$。空间上只需要维护当天数据皆可以，所以是$O(k)$，当 k=2，则是$O(1)$。<br>补充：这道题还有一个陷阱，就是当k大于 n（天数）/2 时，其实就退化成第二个问题了</p>
+<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span> k, <span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> days = prices.length;</span><br><span class="line">    <span class="keyword">if</span> (days/<span class="number">2</span> &lt;= k) &#123;</span><br><span class="line">        <span class="keyword">return</span> maxProfit2(prices);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// local[i][j] 表示前i天，至多进行j次交易，第i天必须sell的最大获益</span></span><br><span class="line">    <span class="keyword">int</span>[][] local = <span class="keyword">new</span> <span class="keyword">int</span>[days][k + <span class="number">1</span>];</span><br><span class="line">    <span class="comment">// global[i][j] 表示前i天，至多进行j次交易，第i天可以不sell的最大获益</span></span><br><span class="line">    <span class="keyword">int</span>[][] global = <span class="keyword">new</span> <span class="keyword">int</span>[days][k + <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; days; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> diff = prices[i] - prices[i - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= k; j++) &#123;</span><br><span class="line">            local[i][j] = Math.max(global[i - <span class="number">1</span>][j-<span class="number">1</span>]</span><br><span class="line">                        + Math.max(diff, <span class="number">0</span>),local[i - <span class="number">1</span>][j] + diff);</span><br><span class="line">            global[i][j] = Math.max(global[i - <span class="number">1</span>][j], local[i][j]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> global[days - <span class="number">1</span>][k];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit2</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> maxProfit = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; prices.length; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (prices[i] &gt; prices[i-<span class="number">1</span>]) &#123;</span><br><span class="line">            maxProfit += prices[i] - prices[i-<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxProfit;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-05-20T14:27:40.804Z" itemprop="dateUpdated">2019-05-20 22:27:40</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/05/19/leetcodeStock/" target="_blank" rel="external">http://www.allenmistake.top/2019/05/19/leetcodeStock/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/动态规划/">动态规划</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/05/19/leetcodeStock/&title=《Leetcode日记：买卖股票的最佳时期系列》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/05/19/leetcodeStock/&title=《Leetcode日记：买卖股票的最佳时期系列》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/05/19/leetcodeStock/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：买卖股票的最佳时期系列》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/05/19/leetcodeStock/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/05/19/leetcodeStock/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/05/21/leetcode96/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Leetcode日记：95&amp;96：不同的二叉搜索树</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/05/19/JVM3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Java日常学习总结JVM之类加载与双亲委派模型</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/05/19/leetcodeStock/&title=《Leetcode日记：买卖股票的最佳时期系列》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/05/19/leetcodeStock/&title=《Leetcode日记：买卖股票的最佳时期系列》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/05/19/leetcodeStock/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：买卖股票的最佳时期系列》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/05/19/leetcodeStock/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/05/19/leetcodeStock/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/05/19/leetcodeStock/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

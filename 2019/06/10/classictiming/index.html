@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>经典定时同步算法与训练序列设计 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="定时同步">
+    <meta name="description" content="S&amp;amp;C算法S&amp;amp;C 算法是 Schimidl&amp;amp;Cox 同步算法的简称，是一种基于训练序列的同步估计算法，它是由 Schimidl 和 Cox 提出的。它是最经典的一种基于训练序列的同步估计算法，后续的 Minn 算法和 Park 算法都在它基础上做改进的。 S&amp;amp;C 算法的训练序列的结构图如图 3-2 所示。">
+<meta name="keywords" content="定时同步">
+<meta property="og:type" content="article">
+<meta property="og:title" content="经典定时同步算法与训练序列设计">
+<meta property="og:url" content="http://www.allenmistake.top/2019/06/10/classictiming/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="S&amp;amp;C算法S&amp;amp;C 算法是 Schimidl&amp;amp;Cox 同步算法的简称，是一种基于训练序列的同步估计算法，它是由 Schimidl 和 Cox 提出的。它是最经典的一种基于训练序列的同步估计算法，后续的 Minn 算法和 Park 算法都在它基础上做改进的。 S&amp;amp;C 算法的训练序列的结构图如图 3-2 所示。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/06/10/classictiming/sc.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/06/10/classictiming/minn.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/06/10/classictiming/park.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/06/10/classictiming/process.png">
+<meta property="og:updated_time" content="2019-06-10T07:03:39.284Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="经典定时同步算法与训练序列设计">
+<meta name="twitter:description" content="S&amp;amp;C算法S&amp;amp;C 算法是 Schimidl&amp;amp;Cox 同步算法的简称，是一种基于训练序列的同步估计算法，它是由 Schimidl 和 Cox 提出的。它是最经典的一种基于训练序列的同步估计算法，后续的 Minn 算法和 Park 算法都在它基础上做改进的。 S&amp;amp;C 算法的训练序列的结构图如图 3-2 所示。">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/06/10/classictiming/sc.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">经典定时同步算法与训练序列设计</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">经典定时同步算法与训练序列设计</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-06-10T00:58:27.000Z" itemprop="datePublished" class="page-time">
+  2019-06-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/通信/">通信</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#S-amp-C算法"><span class="post-toc-number">1.</span> <span class="post-toc-text">S&amp;C算法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Minn-算法"><span class="post-toc-number">2.</span> <span class="post-toc-text">Minn 算法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Park-算法"><span class="post-toc-number">3.</span> <span class="post-toc-text">Park 算法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三种算法效果"><span class="post-toc-number">4.</span> <span class="post-toc-text">三种算法效果</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-classictiming"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">经典定时同步算法与训练序列设计</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-06-10 08:58:27" datetime="2019-06-10T00:58:27.000Z"  itemprop="datePublished">2019-06-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/通信/">通信</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="S-amp-C算法"><a href="#S-amp-C算法" class="headerlink" title="S&amp;C算法"></a>S&amp;C算法</h2><p>S&amp;C 算法是 Schimidl&amp;Cox 同步算法的简称，是一种基于训练序列的同步估计算法，它是由 Schimidl 和 Cox 提出的。它是最经典的一种基于训练序列的同步估计算法，后续的 Minn 算法和 Park 算法都在它基础上做改进的。 S&amp;C 算法的训练序列的结构图如图 3-2 所示。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/06/10/classictiming/sc.png" alt="S&C训练序列结构图" title>
+                </div>
+                <div class="image-caption">S&C训练序列结构图</div>
+            </figure>
+<p>如图 3-2 所示，训练序列 1 由两个长度为 N/ 2 训练序列 A 组成，这两个 A 是完全一样的序列；训练序列 2 由长度为 N 的训练序列 B 组成。训练序列 1 通常是用来完成符号定时估计和小数倍载波偏移估计。训练序列 1 的 N 个子载波的频域特性表现为，在偶数子载波上放置一个长度为 N/ 2 的1PN 序列，在奇数子载波上全部置零，然后进行 N 点的 IFFT 变换，就能够创造出前后 N/2 个点值一样的训练序列 1。具体实现的时候，可以使用 N/2 个点的 PN 序列，进行 IFFT 之后，得到序列 A，把 A 重复放置一次就能得到训练序列 1。训练序列 2 通常是和训练序列 1一起来完成整数倍载波偏移估计的。训练序列 2 的 N 个子载波的频域特性表现为，在奇数子载波上放置一个长度为 N/ 2 的其他序列，在偶数子载波上放置一个长度为 N/ 2 的2PN 序列，然后进行 N 点的 IFFT 变换，就可以得到训练序列 2，其中，2PN 序列与1PN 序列的有一个差分关系，如下式所示，</p>
+<p>$v(k)=\frac{P N_{2}(k)}{P N_{1}(k)} \qquad k=1,2, \cdots N / 2$</p>
+<p>从训练序列 1 的第一个采样值开始，将前后对应的数据共轭相乘相加，可以得到相关函数，如下式所示：</p>
+<p>$P(d)=\sum_{n=0}^{N / 2-1} r^{*}(d+n) r(d+N / 2+n)$</p>
+<p>式中 d 表示估计到的滑动窗的起始位置，理想位置就是第一个采样点。峰值会受到 CP 的干扰，进而出现一个平台，我们一般把它称为<strong>平台效应</strong>。下式表示滑动窗内的信号能量：</p>
+<p>$R(d)=\sum_{n=0}^{N / 2-1}|r(d+n+N / 2)|^{2}$</p>
+<p>归一化后的定时测度函数可定义为</p>
+<p>$M(d)=\frac{|P(d)|^{2}}{R^{2}(d)}$</p>
+<p>使得 $M(d)$ 取得最大值的 d 就是估计出的符号起始位置，一般把这个位置记为 $\hat{d}$ ，如下式所示：</p>
+<p>$\hat{d}=\arg \max (M(d))$</p>
+<h2 id="Minn-算法"><a href="#Minn-算法" class="headerlink" title="Minn 算法"></a>Minn 算法</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/06/10/classictiming/minn.png" alt="Minn算法训练序列结构图" title>
+                </div>
+                <div class="image-caption">Minn算法训练序列结构图</div>
+            </figure>
+<p>从图 3-4 中可以看到，Minn 算法由 4 个训练符号构成，第一个和第二个训练符号都是 A，第三个和第四个训练符号都是 -A，其中，A 和 -A 互为相反数，A 是由伪随机 PN 序列进行 IFFT 之后得到的。 Minn 算法的运算过程和 S&amp;C 算法的运算过程基本一致，只是由于训练序列结构的改变，导致了相关函数和能量函数也一起发生了变化，具体变化如下式所示：</p>
+<p>$P(d)=\sum_{k=0}^{1} \sum_{m=0}^{N / 4-1} r^{*}\left(d+\frac{N \cdot k}{2}+m\right) \cdot r\left(d+\frac{N \cdot k}{2}+m+\frac{N}{4}\right)$</p>
+<p>$R(d)=\sum_{k=0}^{1} \sum_{m=0}^{N / 4-1}\left|r\left(d+\frac{N \cdot k}{2}+m+\frac{N}{4}\right)\right|^{2}$</p>
+<p>$M(d)=\frac{|P(d)|^{2}}{R^{2}(d)}$</p>
+<h2 id="Park-算法"><a href="#Park-算法" class="headerlink" title="Park 算法"></a>Park 算法</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/06/10/classictiming/park.png" alt="Park算法训练序列结构图" title>
+                </div>
+                <div class="image-caption">Park算法训练序列结构图</div>
+            </figure>
+<p>从图 3-5 中可以看出一个 Park 算法的训练序列由四个训练符号构成的。其中 A 是由长度为 N/4 的伪随机 PN 序列经过 IFFT 得到的，B 是 A 的逆向排列，A*是A 的共轭，B*是 B 的共轭。 Park 算法的相关函数，能量函数和定时测度函数定义为：</p>
+<p>$P(d)=\sum_{k=0}^{N / 2-1} r(d+k) \cdot r(d-k-1)$</p>
+<p>$R(d)=\sum_{k=0}^{N / 2-1}|r(d+k)|^{2}$</p>
+<p>$M(d)=\frac{|P(d)|^{2}}{R^{2}(d)}$</p>
+<p>Park 算法的训练序列虽然前后也是对称的，但是并没有利用前后对称这一特性，而是利用了训练序列中心共轭对称这个更难得的性质。从中间两个值向两边依次进行相关运算，才能够达到唯一的相关峰值，排除 CP 的干扰。而且使得归一化后的符号定时测度函数 $M(\hat{d})$ 达到最大的 $\hat{d}$ 对应的并不是 FFT 窗开始的位置，而是训练序列的中点。Park 算法的相关函数的运算过程如图 3-6 所示，</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/06/10/classictiming/process.png" alt="Park相关函数运算过程" title>
+                </div>
+                <div class="image-caption">Park相关函数运算过程</div>
+            </figure>
+<h2 id="三种算法效果"><a href="#三种算法效果" class="headerlink" title="三种算法效果"></a>三种算法效果</h2><p>以上这三种方法在AWGN信道下表现良好<br>对于 S&amp;C 算法，S&amp;C 算法在各种信道下，在找出理想的 FFT 窗附近都存在着一个“平台”。<br>对于 Minn 算法和 Park 算法，在 ETU 信道（一种多径干扰模型）下，随着多径衰落、时延和频偏的增加，定时测度函数峰值被削弱，且幅度变化较大，也有可能出现“双峰”的情况，造成定时同步判断的错误。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-06-10T07:03:39.284Z" itemprop="dateUpdated">2019-06-10 15:03:39</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/06/10/classictiming/" target="_blank" rel="external">http://www.allenmistake.top/2019/06/10/classictiming/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/定时同步/">定时同步</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/06/10/classictiming/&title=《经典定时同步算法与训练序列设计》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/06/10/classictiming/&title=《经典定时同步算法与训练序列设计》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/06/10/classictiming/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《经典定时同步算法与训练序列设计》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/06/10/classictiming/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/06/10/classictiming/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/06/14/startflutter/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">开始一场Flutter之旅</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/06/08/bookGaoXiao/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">读书笔记-高效15法则</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/06/10/classictiming/&title=《经典定时同步算法与训练序列设计》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/06/10/classictiming/&title=《经典定时同步算法与训练序列设计》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/06/10/classictiming/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《经典定时同步算法与训练序列设计》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/06/10/classictiming/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/06/10/classictiming/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/06/10/classictiming/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>dart中的异步初级+获取firebase数据 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Flutter,开源项目">
+    <meta name="description" content="概述Dart是一个单线程的语言，遇到有延迟的运算（比如IO操作、延时执行）时，线程中按顺序执行的运算就会阻塞，用户就会感觉到卡顿，于是通常用异步处理来解决这个问题。当遇到有需要延迟的运算（async）时，将其放入到延迟运算的队列（await）中去，把不需要延迟运算的部分先执行掉，最后再来处理延迟运算的部分。和 Java 中的多线程不同，dart 采用的基于事件的异步模型。简单说就是在某个单线程中存">
+<meta name="keywords" content="Flutter,开源项目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dart中的异步初级+获取firebase数据">
+<meta property="og:url" content="http://www.allenmistake.top/2019/06/27/flutterapp4/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="概述Dart是一个单线程的语言，遇到有延迟的运算（比如IO操作、延时执行）时，线程中按顺序执行的运算就会阻塞，用户就会感觉到卡顿，于是通常用异步处理来解决这个问题。当遇到有需要延迟的运算（async）时，将其放入到延迟运算的队列（await）中去，把不需要延迟运算的部分先执行掉，最后再来处理延迟运算的部分。和 Java 中的多线程不同，dart 采用的基于事件的异步模型。简单说就是在某个单线程中存">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/06/27/flutterapp4/async-await.png">
+<meta property="og:updated_time" content="2019-06-27T12:17:22.289Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="dart中的异步初级+获取firebase数据">
+<meta name="twitter:description" content="概述Dart是一个单线程的语言，遇到有延迟的运算（比如IO操作、延时执行）时，线程中按顺序执行的运算就会阻塞，用户就会感觉到卡顿，于是通常用异步处理来解决这个问题。当遇到有需要延迟的运算（async）时，将其放入到延迟运算的队列（await）中去，把不需要延迟运算的部分先执行掉，最后再来处理延迟运算的部分。和 Java 中的多线程不同，dart 采用的基于事件的异步模型。简单说就是在某个单线程中存">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/06/27/flutterapp4/async-await.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">dart中的异步初级+获取firebase数据</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">dart中的异步初级+获取firebase数据</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-06-27T12:14:19.000Z" itemprop="datePublished" class="page-time">
+  2019-06-27
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/跨平台/">跨平台</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#概述"><span class="post-toc-number">1.</span> <span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#async-和-await"><span class="post-toc-number">2.</span> <span class="post-toc-text">async 和 await</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#firebase"><span class="post-toc-number">3.</span> <span class="post-toc-text">firebase</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#获取数据"><span class="post-toc-number">4.</span> <span class="post-toc-text">获取数据</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-flutterapp4"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">dart中的异步初级+获取firebase数据</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-06-27 20:14:19" datetime="2019-06-27T12:14:19.000Z"  itemprop="datePublished">2019-06-27</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/跨平台/">跨平台</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Dart是一个<strong>单线程</strong>的语言，遇到有延迟的运算（比如IO操作、延时执行）时，线程中按顺序执行的运算就会阻塞，用户就会感觉到卡顿，于是通常用异步处理来解决这个问题。当遇到有需要延迟的运算（async）时，将其放入到延迟运算的队列（await）中去，把不需要延迟运算的部分先执行掉，最后再来处理延迟运算的部分。和 Java 中的多线程不同，dart 采用的基于事件的异步模型。简单说就是在某个单线程中存在一个事件循环和一个事件队列，事件循环不断的从事件队列中取出事件来执行，因此，耗时事件不会阻塞整个事件循环，这让它后面的事件也会有机会得到执行。讲到这里，你想起来什么了么。对！Android 中的多线程 Handler/Looper 也是采取这个模式！</p>
+<h2 id="async-和-await"><a href="#async-和-await" class="headerlink" title="async 和 await"></a>async 和 await</h2><p>async 和 await 在项目中的耗时操作有很大应用空间，例如登陆等待操作、网络请求操作。下面我们利用官方文档来具体说明 async 的用途和具体执行流程</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span>;</span><br><span class="line"></span><br><span class="line">Future&lt;<span class="keyword">void</span>&gt; printDailyNewsDigest() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> newsDigest = <span class="keyword">await</span> gatherNewsReports();</span><br><span class="line">  <span class="built_in">print</span>(newsDigest);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">  printDailyNewsDigest();</span><br><span class="line">  printWinningLotteryNumbers();</span><br><span class="line">  printWeatherForecast();</span><br><span class="line">  printBaseballScore();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">printWinningLotteryNumbers() &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Winning lotto numbers: [23, 63, 87, 26, 2]'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">printWeatherForecast() &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"Tomorrow's forecast: 70F, sunny."</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">printBaseballScore() &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Baseball score: Red Sox 10, Yankees 0'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> news = <span class="string">'&lt;gathered news goes here&gt;'</span>;</span><br><span class="line"><span class="keyword">const</span> oneSecond = <span class="built_in">Duration</span>(seconds: <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Imagine that this function is more complex and slow. :)</span></span><br><span class="line">Future&lt;<span class="built_in">String</span>&gt; gatherNewsReports() =&gt;</span><br><span class="line">    Future.delayed(oneSecond, () =&gt; news);</span><br></pre></td></tr></table></figure>
+<p>其中，gatherNewsReport 执行耗时操作，如果不将这个函数进行异步处理，代码执行将会受到阻塞。当使用了异步处理之后，执行顺序如下图所示：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/06/27/flutterapp4/async-await.png" alt="异步程序执行顺序" title>
+                </div>
+                <div class="image-caption">异步程序执行顺序</div>
+            </figure>
+<p>可以看到，程序的执行顺序如下</p>
+<ol>
+<li>程序开始执行</li>
+<li>main 函数同步执行 <code>printDailyNewsDigest()</code> 这个异步函数</li>
+<li><code>printDailyNewsDigest()</code> 利用 await 关键词调用<code>gatherNewsReports()</code>耗时操作，并开始执行.</li>
+<li><code>gatherNewsReports()</code> 函数返回一个未完成的 future (一个 <code>Future&lt;String&gt;</code> 实例).</li>
+<li>因为 <code>printDailyNewsDigest()</code> 是一个异步函数并且正在 await 一个返回值, 他<strong>暂停执行</strong>并给调用它的main函数返回一个未完成的 future (在这个例子中, 是一个 <code>Future&lt;void&gt;</code> 实例)</li>
+<li>剩余的 print 函数被执行，由于他们是同步的，每个函数都可以在下一个函数调用之前被完全执行. </li>
+<li>当 <code>main()</code> 函数结束, 异步函数被重新执行. 首先, gatherNewsReports() 返回一个已经完成确定的future值(<code>Future&lt;String&gt;</code>). 随后 <code>printDailyNewsDigest()</code> 函数继续执行打印 news.</li>
+<li>当 <code>printDailyNewsDigest()</code> 函数执行完毕, 给 main 函数返回的 future(<code>Future&lt;void&gt;</code>)也完成了, app 退出.</li>
+</ol>
+<p>关于异步的讨论，我们在这里先告一段落，之后会更详细的了解，现在只需要知道执行的顺序。下面我们来说一说 firebase。</p>
+<h2 id="firebase"><a href="#firebase" class="headerlink" title="firebase"></a>firebase</h2><p>Firebase 让移动端应用具有访问后端服务的能力，包括鉴权、存储、数据库以及无服务器托管的服务。国内的话应该类似于 Bmob 系统，不过感觉 firebase 网络体验要差一些，毕竟谷歌的东西。</p>
+<p>第一次配置firebase，首先要注册一个firebase账号，如果有的话直接登录就可以。接下来步骤依次是</p>
+<ol>
+<li>pubspec.yaml，添加 cloud_firestore 依赖包并保存（如果出现问题打开 <code>android/app/build.gradle</code>，然后找到 minSdkVersion 16 这一行，把这一行改为 minSdkVersion 21，并保存文件。）</li>
+<li>在你的 Firebase console 中，点击 Add project，新建一个 Firebase 项目；</li>
+<li>在 Flutter 项目目录中，打开文件 <code>android/app/src/main/AndroidManifest.xml</code>；在 manifest 中，找到 package 属性中的值，它代表的是 Android 的包名（类似于 com.yourcompany.yourproject 这样的）复制这个值；这个值填入 package name；</li>
+<li>点击 Register App；在 Firebase 中按照里面的步骤下载 google-services.json 文件；回到 Flutter 应用目录，将 google-services.json（就是你刚刚下载的文件）放入到 android/app 目录中；</li>
+<li>在 IDE 或者编辑器中，打开 android/app/build.gradle 文件，然后将下列这一行粘贴到文本中：</li>
+</ol>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.google.gms.google-services'</span></span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li><p>打开 android/build.gradle 文件，然后在里面的 buildscript 标签下，新增一个依赖：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  dependencies &#123;</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">      classpath <span class="string">'com.google.gms:google-services:3.2.1'</span>   <span class="comment">// new</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 cloud firestore 中添加自己的数据集</p>
+</li>
+</ol>
+<h2 id="获取数据"><a href="#获取数据" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Widget _buildBody(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> StreamBuilder&lt;QuerySnapshot&gt;(</span><br><span class="line">    stream: Firestore.instance.collection(<span class="string">'user'</span>).snapshots(),</span><br><span class="line">    builder: (context, snapshot) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!snapshot.hasData) </span><br><span class="line">        <span class="keyword">return</span> LinearProgressIndicator();</span><br><span class="line">      <span class="keyword">return</span> _buildList(context, snapshot.data.documents);</span><br><span class="line">    &#125;,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，在这之前别忘了导入包。然后我们利用 <code>Firestore.instance.collection(&#39;user&#39;).snapshots()</code> 语句得到对应的数据集，即声明中的Collection，将这些文件传给snapshot</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//读取firebase数据</span></span><br><span class="line">DocumentSnapshot ds;</span><br><span class="line"><span class="built_in">List</span>&lt;DocumentSnapshot&gt; l;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> userMap = <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">String</span>&gt;();</span><br><span class="line">l = snapshot.map((data) =&gt; ds = data).toList();</span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>;i&lt;l.length;i++)&#123;</span><br><span class="line">  record = Record.fromSnapshot(l[i]);</span><br><span class="line">  userMap.putIfAbsent(record.name, () =&gt; record.pw);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先我们定义了DocumentSnapshot类型变量，随后核心代码</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l = snapshot.map((data) =&gt; ds = data).toList();</span><br></pre></td></tr></table></figure>
+<p>(data)相当于一个迭代器(这个语法查了半天才知道)，随后我们将snapshot中存储的DocumentSnapshot 转换为 List 类型，方便我们读取。<br>在此之前，我们要定义一个接受数据的类型，在我的项目里定义了一个 Record 类型，来存储 firestore 中的数据类型 userName 和 passWord，代码如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Record</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> name;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> pw;</span><br><span class="line">  <span class="keyword">final</span> DocumentReference reference;</span><br><span class="line">  Record.fromMap(<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; map, &#123;<span class="keyword">this</span>.reference&#125;)</span><br><span class="line">      : <span class="keyword">assert</span>(map[<span class="string">'userName'</span>] != <span class="keyword">null</span>),</span><br><span class="line">        <span class="keyword">assert</span>(map[<span class="string">'passWord'</span>] != <span class="keyword">null</span>),</span><br><span class="line">        name = map[<span class="string">'userName'</span>],</span><br><span class="line">        pw = map[<span class="string">'passWord'</span>];</span><br><span class="line">  Record.fromSnapshot(DocumentSnapshot snapshot)</span><br><span class="line">      : <span class="keyword">this</span>.fromMap(snapshot.data, reference: snapshot.reference);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">String</span> toString() =&gt; <span class="string">"Record&lt;<span class="subst">$name</span>:<span class="subst">$pw</span>&gt;"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，为了方便在程序中使用，我们建立了一个 Map ，首先将我们需要的数据（在这个项目中是用户名和密码）加入 Map ，来使得数据之间通过映射关系可以相互查找，</p>
+<p>码那么多字好累啊，加油干！</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-06-27T12:17:22.289Z" itemprop="dateUpdated">2019-06-27 20:17:22</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/06/27/flutterapp4/" target="_blank" rel="external">http://www.allenmistake.top/2019/06/27/flutterapp4/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/开源项目/">开源项目</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/06/27/flutterapp4/&title=《dart中的异步初级+获取firebase数据》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/06/27/flutterapp4/&title=《dart中的异步初级+获取firebase数据》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/06/27/flutterapp4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《dart中的异步初级+获取firebase数据》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/06/27/flutterapp4/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/06/27/flutterapp4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/07/03/newtrip/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">7月——踏上新征程</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/06/23/flutterapp3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">自己动手Flutter——动画初步</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/06/27/flutterapp4/&title=《dart中的异步初级+获取firebase数据》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/06/27/flutterapp4/&title=《dart中的异步初级+获取firebase数据》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/06/27/flutterapp4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《dart中的异步初级+获取firebase数据》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/06/27/flutterapp4/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/06/27/flutterapp4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/06/27/flutterapp4/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

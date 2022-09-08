@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树树（递归与非递归） | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="树">
+    <meta name="description" content="Leetcode日记：94&amp;amp;144&amp;amp;145.前序、中序、后序遍历二叉树（递归与非递归）问题介绍这个不用多说，就是对二叉树的遍历，只用前序遍历举个例子。 12345678Input: [1,null,2,3]   1    \     2    /   3Output: [1,3,2] 基本就是按照遍历顺序打印结点。 递归解决方案递归前序12345678public List&amp;lt;">
+<meta name="keywords" content="树">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树树（递归与非递归）">
+<meta property="og:url" content="http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="Leetcode日记：94&amp;amp;144&amp;amp;145.前序、中序、后序遍历二叉树（递归与非递归）问题介绍这个不用多说，就是对二叉树的遍历，只用前序遍历举个例子。 12345678Input: [1,null,2,3]   1    \     2    /   3Output: [1,3,2] 基本就是按照遍历顺序打印结点。 递归解决方案递归前序12345678public List&amp;lt;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/二叉树遍历.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/stack.png">
+<meta property="og:image" content="http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/result.png">
+<meta property="og:updated_time" content="2019-03-24T11:02:55.776Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树树（递归与非递归）">
+<meta name="twitter:description" content="Leetcode日记：94&amp;amp;144&amp;amp;145.前序、中序、后序遍历二叉树（递归与非递归）问题介绍这个不用多说，就是对二叉树的遍历，只用前序遍历举个例子。 12345678Input: [1,null,2,3]   1    \     2    /   3Output: [1,3,2] 基本就是按照遍历顺序打印结点。 递归解决方案递归前序12345678public List&amp;lt;">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/二叉树遍历.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树树（递归与非递归）</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树树（递归与非递归）</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-24T02:04:53.000Z" itemprop="datePublished" class="page-time">
+  2019-03-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据结构/">数据结构</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Leetcode日记：94-amp-144-amp-145-前序、中序、后序遍历二叉树（递归与非递归）"><span class="post-toc-number">1.</span> <span class="post-toc-text">Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树（递归与非递归）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#问题介绍"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">问题介绍</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#递归解决方案"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">递归解决方案</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#递归前序"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">递归前序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#递归中序"><span class="post-toc-number">1.2.2.</span> <span class="post-toc-text">递归中序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#递归后序"><span class="post-toc-number">1.2.3.</span> <span class="post-toc-text">递归后序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#递归总结"><span class="post-toc-number">1.2.4.</span> <span class="post-toc-text">递归总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#非递归（利用栈）"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">非递归（利用栈）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#非递归前序"><span class="post-toc-number">1.3.1.</span> <span class="post-toc-text">非递归前序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#非递归中序"><span class="post-toc-number">1.3.2.</span> <span class="post-toc-text">非递归中序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#非递归后序"><span class="post-toc-number">1.3.3.</span> <span class="post-toc-text">非递归后序</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">总结</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-leetcodetreetraversal"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-24 10:04:53" datetime="2019-03-24T02:04:53.000Z"  itemprop="datePublished">2019-03-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据结构/">数据结构</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="Leetcode日记：94-amp-144-amp-145-前序、中序、后序遍历二叉树（递归与非递归）"><a href="#Leetcode日记：94-amp-144-amp-145-前序、中序、后序遍历二叉树（递归与非递归）" class="headerlink" title="Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树（递归与非递归）"></a>Leetcode日记：94&amp;144&amp;145.前序、中序、后序遍历二叉树（递归与非递归）</h1><h2 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h2><p>这个不用多说，就是对二叉树的遍历，只用前序遍历举个例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Input: [1,null,2,3]</span><br><span class="line">   1</span><br><span class="line">    \</span><br><span class="line">     2</span><br><span class="line">    /</span><br><span class="line">   3</span><br><span class="line"></span><br><span class="line">Output: [1,3,2]</span><br></pre></td></tr></table></figure>
+<p>基本就是按照遍历顺序打印结点。</p>
+<h2 id="递归解决方案"><a href="#递归解决方案" class="headerlink" title="递归解决方案"></a>递归解决方案</h2><h3 id="递归前序"><a href="#递归前序" class="headerlink" title="递归前序"></a>递归前序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">preorderTraversal</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; pre = <span class="keyword">new</span> LinkedList&lt;Integer&gt;();</span><br><span class="line">    <span class="keyword">if</span>(root==<span class="keyword">null</span>) <span class="keyword">return</span> pre;</span><br><span class="line">    pre.add(root.val);</span><br><span class="line">    pre.addAll(preorderTraversal(root.left));</span><br><span class="line">    pre.addAll(preorderTraversal(root.right));</span><br><span class="line">    <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="递归中序"><a href="#递归中序" class="headerlink" title="递归中序"></a>递归中序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">inorderTraversal</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="comment">// method 1: recursion</span></span><br><span class="line"></span><br><span class="line">    helper(root, res);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//helper function for method 1</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">helper</span><span class="params">(TreeNode root, List&lt;Integer&gt; res)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (root.left != <span class="keyword">null</span>) &#123;</span><br><span class="line">                helper(root.left, res);</span><br><span class="line">            &#125;</span><br><span class="line">            res.add(root.val);</span><br><span class="line">            <span class="keyword">if</span> (root.right != <span class="keyword">null</span>) &#123;</span><br><span class="line">                helper(root.right, res);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="递归后序"><a href="#递归后序" class="headerlink" title="递归后序"></a>递归后序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">postorderTraversal1</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; ret = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    dfs(root, ret);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode root, List&lt;Integer&gt; ret)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (root != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dfs(root.left, ret);</span><br><span class="line">        dfs(root.right, ret);</span><br><span class="line">        ret.add(root.val);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="递归总结"><a href="#递归总结" class="headerlink" title="递归总结"></a>递归总结</h3><p>其实就是打印语句或者说要求的操作摆放位置：</p>
+<ul>
+<li>前序：先执行操作，再访问左，再访问右</li>
+<li>中序：先访问左，再执行操作，再访问右</li>
+<li>后序：先访问左，再访问右，最后执行操作</li>
+</ul>
+<h2 id="非递归（利用栈）"><a href="#非递归（利用栈）" class="headerlink" title="非递归（利用栈）"></a>非递归（利用栈）</h2><h3 id="非递归前序"><a href="#非递归前序" class="headerlink" title="非递归前序"></a>非递归前序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">preorderTraversal</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    Deque&lt;TreeNode&gt; stack = <span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line">    TreeNode p = root;</span><br><span class="line">    <span class="keyword">while</span>(!stack.isEmpty() || p != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(p != <span class="keyword">null</span>) &#123;</span><br><span class="line">            stack.push(p);</span><br><span class="line">            result.add(p.val);  <span class="comment">// Add before going to children</span></span><br><span class="line">            p = p.left;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            TreeNode node = stack.pop();</span><br><span class="line">            p = node.right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="非递归中序"><a href="#非递归中序" class="headerlink" title="非递归中序"></a>非递归中序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">inorderTraversal</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    Deque&lt;TreeNode&gt; stack = <span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line">    TreeNode p = root;</span><br><span class="line">    <span class="keyword">while</span>(!stack.isEmpty() || p != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(p != <span class="keyword">null</span>) &#123;</span><br><span class="line">            stack.push(p);</span><br><span class="line">            p = p.left;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            TreeNode node = stack.pop();</span><br><span class="line">            result.add(node.val);  <span class="comment">// Add after all left children</span></span><br><span class="line">            p = node.right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们用中序遍历来做个图示：首先我们假定给定的树如下<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/03/24/leetcodetreetraversal/二叉树遍历.png" alt="二叉树遍历" title>
+                </div>
+                <div class="image-caption">二叉树遍历</div>
+            </figure><br>随后，代码用到了栈的数据结构，利用栈的性质来按顺序压栈出栈每一个结点。<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/03/24/leetcodetreetraversal/stack.png" alt="栈" title>
+                </div>
+                <div class="image-caption">栈</div>
+            </figure><br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/03/24/leetcodetreetraversal/result.png" alt="结果" title>
+                </div>
+                <div class="image-caption">结果</div>
+            </figure><br>可以看出，主要思路是只要节点不为空，就压栈，当节点为空时，弹出当前栈顶端元素，然后访问其右节点。<br>顺序的改变在于操作位于压栈还是弹栈，前序遍历是先进行操作（打印），再访问左元素。</p>
+<h3 id="非递归后序"><a href="#非递归后序" class="headerlink" title="非递归后序"></a>非递归后序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">postorderTraversal</span><span class="params">(TreeNode root)</span> </span>&#123;</span><br><span class="line">    LinkedList&lt;Integer&gt; result = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    Deque&lt;TreeNode&gt; stack = <span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line">    TreeNode p = root;</span><br><span class="line">    <span class="keyword">while</span>(!stack.isEmpty() || p != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(p != <span class="keyword">null</span>) &#123;</span><br><span class="line">            stack.push(p);</span><br><span class="line">            result.addFirst(p.val);  <span class="comment">// Reverse the process of preorder</span></span><br><span class="line">            p = p.right;             <span class="comment">// Reverse the process of preorder</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            TreeNode node = stack.pop();</span><br><span class="line">            p = node.left;           <span class="comment">// Reverse the process of preorder</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的后序遍历利用了一个很巧妙的转换，把它看作一个对于右子树的先序遍历，然后反转result。<br>具体实现方式即，优先访问右节点<code>p = p.right</code>，访问到的每个不为空的节点压入栈，当访问节点为空时，弹出栈的顶端元素。再访问其左节点。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>树的遍历问题是非常基础的问题，这个要牢记，无论是递归还是非递归，之后做其他类的题目会很有帮助。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-03-24T11:02:55.776Z" itemprop="dateUpdated">2019-03-24 19:02:55</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/03/24/leetcodetreetraversal/" target="_blank" rel="external">http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/树/">树</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/&title=《Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/&title=《Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/26/JVM1/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Java日常学习总结JVM之垃圾收集器与内存分配策略</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/23/leetcode15-16/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Leetcode日记：15&amp;16.三数之和</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/&title=《Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/&title=《Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Leetcode日记：94&144&145.前序、中序、后序遍历二叉树树（递归与非递归）》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/03/24/leetcodetreetraversal/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

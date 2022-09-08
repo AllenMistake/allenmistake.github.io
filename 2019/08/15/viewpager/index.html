@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?68fbde2c94f001e66a6b9c8800f7dd5b"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>浅谈 ViewPager 使用方法与原理 | AllenMistake的小屋 | The world changed so fast，Update everyday！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content>
+    <meta name="description" content="从功能说起ViewPager 是什么？是一种布局结构，并且还是一个类。当为UI添加ViewPager后，用户可左右滑动屏幕，切换查看不同列表项的明细页面。 需要做哪些工作为了添加ViewPager具体功能实现，我们要做以下工作：  创建 Activity 实例，这个 Activity 里来存放 ViewPager 视图 定义包含 ViewPager 的视图层级结构 在 Activity 类中关联使">
+<meta name="keywords" content="Android Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈 ViewPager 使用方法与原理">
+<meta property="og:url" content="http://www.allenmistake.top/2019/08/15/viewpager/index.html">
+<meta property="og:site_name" content="AllenMistake的小屋">
+<meta property="og:description" content="从功能说起ViewPager 是什么？是一种布局结构，并且还是一个类。当为UI添加ViewPager后，用户可左右滑动屏幕，切换查看不同列表项的明细页面。 需要做哪些工作为了添加ViewPager具体功能实现，我们要做以下工作：  创建 Activity 实例，这个 Activity 里来存放 ViewPager 视图 定义包含 ViewPager 的视图层级结构 在 Activity 类中关联使">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.allenmistake.top/2019/08/15/viewpager/结构.png">
+<meta property="og:updated_time" content="2019-08-20T07:00:48.068Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈 ViewPager 使用方法与原理">
+<meta name="twitter:description" content="从功能说起ViewPager 是什么？是一种布局结构，并且还是一个类。当为UI添加ViewPager后，用户可左右滑动屏幕，切换查看不同列表项的明细页面。 需要做哪些工作为了添加ViewPager具体功能实现，我们要做以下工作：  创建 Activity 实例，这个 Activity 里来存放 ViewPager 视图 定义包含 ViewPager 的视图层级结构 在 Activity 类中关联使">
+<meta name="twitter:image" content="http://www.allenmistake.top/2019/08/15/viewpager/结构.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="AllenMistake的小屋" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">weitanori</h5>
+          <a href="mailto:weitanori@hotmail.com" title="weitanori@hotmail.com" class="mail">weitanori@hotmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/AllenMistake" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">浅谈 ViewPager 使用方法与原理</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">浅谈 ViewPager 使用方法与原理</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-08-15T11:41:03.000Z" itemprop="datePublished" class="page-time">
+  2019-08-15
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从功能说起"><span class="post-toc-number">1.</span> <span class="post-toc-text">从功能说起</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#需要做哪些工作"><span class="post-toc-number">2.</span> <span class="post-toc-text">需要做哪些工作</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#PagerAdapter"><span class="post-toc-number">3.</span> <span class="post-toc-text">PagerAdapter</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#FragmentStatePagerAdapter-与FragmentPagerAdapter"><span class="post-toc-number">4.</span> <span class="post-toc-text">FragmentStatePagerAdapter 与FragmentPagerAdapter</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#工作原理"><span class="post-toc-number">5.</span> <span class="post-toc-text">工作原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#为何不用RecyclerView"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">为何不用RecyclerView</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#PagerAdapter-1"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">PagerAdapter</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-viewpager"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">浅谈 ViewPager 使用方法与原理</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-08-15 19:41:03" datetime="2019-08-15T11:41:03.000Z"  itemprop="datePublished">2019-08-15</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/Android基础/">Android基础</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="从功能说起"><a href="#从功能说起" class="headerlink" title="从功能说起"></a>从功能说起</h2><p>ViewPager 是什么？是一种布局结构，并且还是一个类。<br>当为UI添加ViewPager后，用户可左右滑动屏幕，切换查看不同列表项的明细页面。</p>
+<h2 id="需要做哪些工作"><a href="#需要做哪些工作" class="headerlink" title="需要做哪些工作"></a>需要做哪些工作</h2><p>为了添加ViewPager具体功能实现，我们要做以下工作：</p>
+<ul>
+<li>创建 Activity 实例，这个 Activity 里来存放 ViewPager 视图</li>
+<li>定义包含 ViewPager 的视图层级结构</li>
+<li>在 Activity 类中关联使用 ViewPager 以及 Adapter</li>
+</ul>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2019/08/15/viewpager/结构.png" alt="项目中MVC层级结构" title>
+                </div>
+                <div class="image-caption">项目中MVC层级结构</div>
+            </figure>
+<p>通过这个结构图我们可以看出，通过点击事件 CrimeListFragment 来启动 CrimePagerActivity ，并且CrimePagerActivity 中包含了一个 ViewPager</p>
+<h2 id="PagerAdapter"><a href="#PagerAdapter" class="headerlink" title="PagerAdapter"></a>PagerAdapter</h2><p>ViewPager 需要 PagerAdapter 的支持， Google提供了PagerAdapter的子类FragmentStatePaferAdapter ，它能协助处理许多事情。如下面代码所示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">FragmentManager fragmentManager = getSupportFragmentManager();</span><br><span class="line">mViewPager.setAdapter(<span class="keyword">new</span> FragmentStatePagerAdapter(fragmentManager) &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Fragment <span class="title">getItem</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        Crime crime = mCrimes.get(position);</span><br><span class="line">        <span class="keyword">return</span> CrimeFragment.newInstance(crime.getId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mCrimes.size();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>FragmentStatePagerAdapter 提供了两个有用的方法，我们必须进行方法覆盖</p>
+<ul>
+<li><code>getItem(int)</code> 获取并显示crime 数组中指定位置的Crime时，他会返回配置过得CrimeFragment来显示指定的Crime</li>
+<li><code>getCount()</code> 返回数组列表中包含的列表项数目</li>
+</ul>
+<p>注意，创建FragmentStatePagerAdapter实例需要FragmentManager</p>
+<h2 id="FragmentStatePagerAdapter-与FragmentPagerAdapter"><a href="#FragmentStatePagerAdapter-与FragmentPagerAdapter" class="headerlink" title="FragmentStatePagerAdapter 与FragmentPagerAdapter"></a>FragmentStatePagerAdapter 与FragmentPagerAdapter</h2><ul>
+<li>区别：前者在滑动过后，调用 remove() 方法将 fragment 移除。而后者不会移除，只是销毁了视图，fragment 实例还保存在 FragmentManager 中。</li>
+<li>应用：由此看来，后者会占用大量内存来换取加载速度，所以前者在大容量 fragment 的情况下，例如每个 fragment 都是一个高清图片且数量上百上千，那么适合用前者。如果数量少或者比较重视响应or加载速度，建议用后者，加载速度快。</li>
+</ul>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><h3 id="为何不用RecyclerView"><a href="#为何不用RecyclerView" class="headerlink" title="为何不用RecyclerView"></a>为何不用RecyclerView</h3><p>上一篇博客提到，RecyclerView也可以提供横着翻的实例，为什么不用它呢？</p>
+<p>由于无法使用现有的fragment， 因此在 CriminalIntent 应用中使用 RecyclerView 需处理大量内部实现工作。Adapter 需要我们及时地提供View。然而，决定 fragment 视图何时创建的是 FragmentManager 。因此， 当RecyclerView 要求Adapter提供fragment视图时，我们无法立即创建fragment并提供视图。<br>所以，核心的区别在于Adapter和PagerAdapter的区别。</p>
+<h3 id="PagerAdapter-1"><a href="#PagerAdapter-1" class="headerlink" title="PagerAdapter"></a>PagerAdapter</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destoryItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View view, Object object)</span></span></span><br></pre></td></tr></table></figure>
+<p>PagerAdapter.instantiateItem告诉pager adapter创建指定位置的列表项视图， 然后将其添加给ViewGroup视图容器， 而destroyItem告诉pager adapter销毁已建视图。<br>视图创建完成之后，ViewPager会在某个时间点看到它。未确定该视图所属对象， ViewPager会调用isViewFromObject，这里的Obj是instantiateItem返回的对象。因此假设ViewPager调用instantiateItem(ViewGroup, 5)返回A对象，那么只要传入的View参数是第5个对象的视图，isViewFromObject(View, A)方法就应该返回true，否则返回false。</p>
+<p>当然，以上这些其实都封装在了FragemntPagerAdapter和FragemntStatePagerAdapter 中，当我们使用的时候并不需要具体实现。</p>
+<p>(2019-8-20更新)<br>注意：这里面 FragmentStatePagerAdapter 并不是绝对的退出视野就调用 destoryItem ,当我在Android 模拟器里观察内部调用机制时，我们发现pagerAdapter会保留三个视图，当前视图，上一个视图和下一个视图，猜测是方便加载。举个例子，当我们从第二个视图跳转到第一个视图时，并不会调用 <code>creatItem()</code>，因为 3 -&gt; 2 时已经预先创建了 1。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-08-20T07:00:48.068Z" itemprop="dateUpdated">2019-08-20 15:00:48</time>
+</span><br>
+
+
+        
+        让我们一起加油啊！本文链接：<a href="/2019/08/15/viewpager/" target="_blank" rel="external">http://www.allenmistake.top/2019/08/15/viewpager/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://www.allenmistake.top">
+            <img src="/img/avatar.jpg" alt="weitanori">
+            weitanori
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/08/15/viewpager/&title=《浅谈 ViewPager 使用方法与原理》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/08/15/viewpager/&title=《浅谈 ViewPager 使用方法与原理》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/08/15/viewpager/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浅谈 ViewPager 使用方法与原理》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/08/15/viewpager/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/08/15/viewpager/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/08/16/fragmentdata/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Fragment间数据传递</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/08/13/recyclerview/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">RecyclerView基础</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: 'f2e7170563443c9d6dc6',
+          clientSecret: '4ea243a5d42f28c1df908257b38c4af96d0ff1cf',
+          repo: 'allenmistake.github.io',
+          owner: 'allenmistake',
+          admin: ['allenmistake'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>weitanori &copy; 2015 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.allenmistake.top/2019/08/15/viewpager/&title=《浅谈 ViewPager 使用方法与原理》 — AllenMistake的小屋&pic=http://www.allenmistake.top/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.allenmistake.top/2019/08/15/viewpager/&title=《浅谈 ViewPager 使用方法与原理》 — AllenMistake的小屋&source=一个ee转cs的变成小白" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.allenmistake.top/2019/08/15/viewpager/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浅谈 ViewPager 使用方法与原理》 — AllenMistake的小屋&url=http://www.allenmistake.top/2019/08/15/viewpager/&via=http://www.allenmistake.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.allenmistake.top/2019/08/15/viewpager/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://www.allenmistake.top/2019/08/15/viewpager/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '少年不要走！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '这里风景独好啊~';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
